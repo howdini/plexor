@@ -1,0 +1,128 @@
+{
+ "actions": [],
+ "allow_copy": 1,
+ "autoname": "autoincrement",
+ "creation": "2024-07-04 11:04:04.552158",
+ "default_view": "List",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_i2db",
+  "msg_type",
+  "message",
+  "error_level",
+  "dest_group",
+  "dest_user",
+  "read",
+  "sig_status"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_i2db",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "dest_group",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "label": "Target Roles",
+   "options": "Role"
+  },
+  {
+   "fieldname": "dest_user",
+   "fieldtype": "Link",
+   "in_filter": 1,
+   "label": "Target User",
+   "options": "User"
+  },
+  {
+   "columns": 2,
+   "fieldname": "message",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Message",
+   "print_width": "700"
+  },
+  {
+   "columns": 10,
+   "fieldname": "msg_type",
+   "fieldtype": "Select",
+   "in_filter": 1,
+   "label": "Type",
+   "options": "1\n2\n3"
+  },
+  {
+   "fieldname": "error_level",
+   "fieldtype": "Select",
+   "in_filter": 1,
+   "label": "Level",
+   "options": "1\n2\n3\n4\n5"
+  },
+  {
+   "default": "0",
+   "fieldname": "read",
+   "fieldtype": "Check",
+   "in_filter": 1,
+   "label": "Viewed"
+  },
+  {
+   "fieldname": "sig_status",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "sig_status"
+  }
+ ],
+ "hide_toolbar": 1,
+ "index_web_pages_for_search": 1,
+ "is_virtual": 1,
+ "links": [],
+ "modified": "2024-07-17 11:33:53.348981",
+ "modified_by": "Administrator",
+ "module": "Plexor CBS",
+ "name": "plexNotification",
+ "naming_rule": "Autoincrement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Plexor User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "name",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Purple",
+   "title": "type"
+  },
+  {
+   "color": "Gray",
+   "title": "type"
+  },
+  {
+   "color": "Light Blue",
+   "title": "type"
+  }
+ ],
+ "title_field": "message"
+}

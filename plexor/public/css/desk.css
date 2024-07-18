@@ -1,0 +1,42 @@
+a.fa-globe {
+  position: relative;
+  font-size: 2em;
+  color: black;
+  cursor: pointer;
+}
+a.fa-bell-o {
+  position: relative;
+  font-size: 1.5em;
+  color: #383838;
+  cursor: pointer;
+}
+a.fa-shield {
+  position: relative;
+  font-size: 1.5em;
+  color: #383838;
+  cursor: pointer;
+}
+a.fa-thumbs-up {
+  position: relative;
+  font-size: 1.5em;
+  color: #383838;
+  cursor: pointer;
+}
+
+span.fa-comment {
+  position: absolute;
+  font-size: 1em;
+  top: -12px;
+  color: blue;
+  right: -14px;
+}
+
+span.num {
+  position: absolute;
+  font-size: 0.4em;
+  font-weight: bold;
+  font-family: var(--font-stack);
+  top: -5px;
+  color: white;
+  right: -10px;
+}
