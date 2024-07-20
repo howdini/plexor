@@ -148,7 +148,7 @@ def get_addresses(doctype, txt, searchfield, start, page_len, filters):
     print("GETTING ADDRESSES")
     mydb = mysql_connection()
     cur = mydb.cursor()
-    sql = "SELECT `name` FROM `plexAddress` ORDER BY `name`"
+    sql = "SELECT `name` FROM `plexAddress` where `name` LIKE '%"+txt+"%' ORDER BY `name`"
     cur.execute(sql)
     rv = cur.fetchall()
     return rv
@@ -161,6 +161,54 @@ def get_countries(doctype, txt, searchfield, start, page_len, filters):
     mydb = mysql_connection()
     cur = mydb.cursor()
     sql = "SELECT `name` FROM `plexCountry` where `name` LIKE '%"+txt+"%' ORDER BY `name`"
+    cur.execute(sql)
+    rv = cur.fetchall()
+    return rv
+
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_users(doctype, txt, searchfield, start, page_len, filters):
+    print("GETTING COUNTRIES :"+json.dumps(frappe.local.form_dict))
+    mydb = mysql_connection()
+    cur = mydb.cursor()
+    sql = "SELECT `name` FROM `plexUser` where `name` LIKE '%"+txt+"%' ORDER BY `name`"
+    cur.execute(sql)
+    rv = cur.fetchall()
+    return rv
+
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_branches(doctype, txt, searchfield, start, page_len, filters):
+    print("GETTING COUNTRIES :"+json.dumps(frappe.local.form_dict))
+    mydb = mysql_connection()
+    cur = mydb.cursor()
+    sql = "SELECT `name` FROM `plexBranch` where `name` LIKE '%"+txt+"%' ORDER BY `name`"
+    cur.execute(sql)
+    rv = cur.fetchall()
+    return rv
+
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_debit_account(doctype, txt, searchfield, start, page_len, filters):
+    print("GETTING COUNTRIES :"+json.dumps(frappe.local.form_dict))
+    mydb = mysql_connection()
+    cur = mydb.cursor()
+    sql = "SELECT `name` FROM `plexAccountMapping` where `name` LIKE '%"+txt+"%' ORDER BY `name`"
+    cur.execute(sql)
+    rv = cur.fetchall()
+    return rv
+
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_credit_account(doctype, txt, searchfield, start, page_len, filters):
+    print("GETTING COUNTRIES :"+json.dumps(frappe.local.form_dict))
+    mydb = mysql_connection()
+    cur = mydb.cursor()
+    sql = "SELECT `name` FROM `plexAccountMapping` where `name` LIKE '%"+txt+"%' ORDER BY `name`"
     cur.execute(sql)
     rv = cur.fetchall()
     return rv

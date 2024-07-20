@@ -33,6 +33,19 @@ frappe.router.on('change', () => {
         console.log("Not Plexor");
 })
 
+function is_printerble_key(evt)
+{
+    if((evt.keyCode > 47 && evt.keyCode < 58)   || // number keys
+                        evt.keyCode == 32 || evt.keyCode == 13   || // spacebar & return key(s) (if you want to allow carriage returns)
+                        (evt.keyCode > 64 && evt.keyCode < 91)   || // letter keys
+                        (evt.keyCode > 95 && evt.keyCode < 112)  || // numpad keys
+                        (evt.keyCode > 185 && evt.keyCode < 193) || // ;=,-./` (in order)
+                        (evt.keyCode > 218 && evt.keyCode < 223))
+        return true;
+    else
+        return false;
+}
+
 function regizter()
 {
   frappe.call({

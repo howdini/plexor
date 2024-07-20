@@ -193,7 +193,7 @@ def validate_type(val, field, type):
         translate = "mobile number"
     elif(type=="alphanumericwithdash"):
         # compiling the pattern for alphanumericwithdash string
-        pat = re.compile(r"[A-Za-z0-9_ ]+")
+        pat = re.compile(r"[A-Za-z0-9_\- ]+")
         translate = "alphanumeric"
     elif(type=="numericvalue"):
         # compiling the pattern for numericvalue string

@@ -19,8 +19,7 @@ class Branches(Document):
 				 "mobile,1,50",
 				 "email,1,50",
 				 "mysqldatetime,1,50",
-				 "alphanumeric,1,50"
-				 ]
+				 "alphanumeric,1,50"]
 
 
 	def db_insert(self, *args, **kwargs):

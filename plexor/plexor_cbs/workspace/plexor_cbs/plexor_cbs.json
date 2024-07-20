@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"SzUljBNEKJ\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Plexor CBS</span>\",\"col\":12}},{\"id\":\"5M9u17b8KW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Members\",\"col\":3}}]",
+ "content": "[{\"id\":\"SzUljBNEKJ\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Plexor CBS</span>\",\"col\":12}},{\"id\":\"5M9u17b8KW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Addresses\",\"col\":3}},{\"id\":\"F8SewsGMpJ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Branches\",\"col\":3}},{\"id\":\"ZNQD3ugsQ7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Account Mapping\",\"col\":3}},{\"id\":\"C9lf-UrEdC\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Country\",\"col\":3}}]",
  "creation": "2024-07-15 11:51:14.263522",
  "custom_blocks": [],
  "docstatus": 0,
@@ -8,7 +8,7 @@
  "for_user": "",
  "hide_custom": 0,
  "icon": "income",
- "idx": 2,
+ "idx": 3,
  "indicator_color": "blue",
  "is_hidden": 0,
  "label": "Plexor CBS",
@@ -24,8 +24,8 @@
    "type": "Link"
   }
  ],
- "modified": "2024-07-16 13:40:40.834077",
- "modified_by": "admin@plexor.com",
+ "modified": "2024-07-19 16:00:09.396236",
+ "modified_by": "Administrator",
  "module": "Plexor CBS",
  "name": "Plexor CBS",
  "number_cards": [],
@@ -43,8 +43,32 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Members",
-   "link_to": "Member",
+   "label": "Addresses",
+   "link_to": "Addresses",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Branches",
+   "link_to": "Branches",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Account Mapping",
+   "link_to": "Account Mapping",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Country",
+   "link_to": "plexCountry",
    "stats_filter": "[]",
    "type": "DocType"
   }
