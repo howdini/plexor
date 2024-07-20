@@ -1,0 +1,74 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:user",
+ "creation": "2024-07-20 13:57:24.074799",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_xhb1",
+  "user",
+  "status",
+  "sig_status"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_xhb1",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Data",
+   "label": " User",
+   "unique": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Int",
+   "label": "Status"
+  },
+  {
+   "fieldname": "sig_status",
+   "fieldtype": "Int",
+   "label": "sig_status"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_virtual": 1,
+ "links": [],
+ "modified": "2024-07-20 14:00:21.436258",
+ "modified_by": "Administrator",
+ "module": "Plexor CBS",
+ "name": "plexUser",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Plexor User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

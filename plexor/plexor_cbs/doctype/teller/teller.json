@@ -1,0 +1,115 @@
+{
+ "actions": [],
+ "autoname": "field:user",
+ "creation": "2024-07-19 15:22:06.613065",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_5x4n",
+  "user",
+  "branch",
+  "debit_account",
+  "credit_account",
+  "description",
+  "valid_from",
+  "valid_to",
+  "state",
+  "sig_status"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_5x4n",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "plexUser",
+   "unique": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branches"
+  },
+  {
+   "fieldname": "debit_account",
+   "fieldtype": "Link",
+   "label": "Bebit Account",
+   "options": "Account Mapping"
+  },
+  {
+   "fieldname": "credit_account",
+   "fieldtype": "Link",
+   "label": "Credit Account",
+   "options": "Account Mapping"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Description"
+  },
+  {
+   "fieldname": "valid_from",
+   "fieldtype": "Date",
+   "label": "Valid From"
+  },
+  {
+   "fieldname": "valid_to",
+   "fieldtype": "Date",
+   "label": "Valid To"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Enabled\nDisabled"
+  },
+  {
+   "fieldname": "sig_status",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "sig_status"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_virtual": 1,
+ "links": [],
+ "modified": "2024-07-20 15:52:10.600283",
+ "modified_by": "Administrator",
+ "module": "Plexor CBS",
+ "name": "Teller",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Plexor User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

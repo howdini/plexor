@@ -1,0 +1,4 @@
+INSTALLATION NOTES
+==================
+Add user roles "Plex User" "Plex Teller"
+
