@@ -1,0 +1,98 @@
+{
+ "actions": [],
+ "autoname": "field:title",
+ "creation": "2024-07-22 12:29:05.116870",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_vwz0",
+  "title",
+  "description",
+  "section_break_9l1a",
+  "debit_accounts",
+  "section_break_ki5x",
+  "credit_accounts",
+  "sig_status"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_vwz0",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "unique": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Description"
+  },
+  {
+   "fieldname": "debit_accounts",
+   "fieldtype": "Table",
+   "label": "Debit Accounts",
+   "options": "Posting Rules Accounts"
+  },
+  {
+   "fieldname": "credit_accounts",
+   "fieldtype": "Table",
+   "label": "Credit Accounts",
+   "options": "Posting Rules Accounts"
+  },
+  {
+   "fieldname": "section_break_9l1a",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_ki5x",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "sig_status",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "sig_status"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_virtual": 1,
+ "links": [],
+ "modified": "2024-07-24 13:33:36.522448",
+ "modified_by": "Administrator",
+ "module": "Plexor CBS",
+ "name": "Posting Rules",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Plexor User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
