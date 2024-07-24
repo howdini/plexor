@@ -98,9 +98,10 @@ def create_trigger(table, pars):
     DELIMITER ;
     """
     logger.debug(f"{trigger}")
+    #print(trigger)
     mydb = mysql_connection()
     cur = mydb.cursor()
-    cur.execute("select all "+trigger, params=None, multi=True)
+    cur.execute(trigger, params=None, multi=True)
     mydb.commit()
 
 def generate_sig(pars, self):

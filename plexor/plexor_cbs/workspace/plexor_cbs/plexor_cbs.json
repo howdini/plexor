@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"SzUljBNEKJ\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Plexor CBS</span>\",\"col\":12}},{\"id\":\"5M9u17b8KW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Addresses\",\"col\":3}},{\"id\":\"F8SewsGMpJ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Branches\",\"col\":3}},{\"id\":\"ZNQD3ugsQ7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Account Mapping\",\"col\":3}},{\"id\":\"C9lf-UrEdC\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Country\",\"col\":3}}]",
+ "content": "[{\"id\":\"SzUljBNEKJ\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Plexor CBS</span>\",\"col\":12}},{\"id\":\"5M9u17b8KW\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Addresses\",\"col\":3}},{\"id\":\"F8SewsGMpJ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Branches\",\"col\":3}},{\"id\":\"aSNj0fXams\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Teller\",\"col\":3}},{\"id\":\"ZNQD3ugsQ7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Account Mapping\",\"col\":3}},{\"id\":\"C9lf-UrEdC\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Country\",\"col\":3}},{\"id\":\"hFlbrySYGp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Posting Rules\",\"col\":3}}]",
  "creation": "2024-07-15 11:51:14.263522",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,19 +12,8 @@
  "indicator_color": "blue",
  "is_hidden": 0,
  "label": "Plexor CBS",
- "links": [
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Members",
-   "link_count": 0,
-   "link_to": "Member",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  }
- ],
- "modified": "2024-07-19 16:00:09.396236",
+ "links": [],
+ "modified": "2024-07-22 12:43:19.285277",
  "modified_by": "Administrator",
  "module": "Plexor CBS",
  "name": "Plexor CBS",
@@ -61,6 +50,22 @@
    "doc_view": "List",
    "label": "Account Mapping",
    "link_to": "Account Mapping",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Teller",
+   "link_to": "Teller",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Posting Rules",
+   "link_to": "Posting Rules",
    "stats_filter": "[]",
    "type": "DocType"
   },

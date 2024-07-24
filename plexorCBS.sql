@@ -332,6 +332,32 @@ insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner
 insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values ('37','2024-07-04 15:38:05.000000','2024-07-04 15:38:05.947208','Administrator','Administrator',0,0,'Plexor User','admin@example.com','fasdfasdf asdfsdfa dfasd',2,2,0,'0aae98e14e48272f277e23d30cd2a6cf32500636fabe793475c3556246cbaf7c',1);
 insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values ('38','2024-07-04 15:40:30.503534','2024-07-04 15:40:30.503534','Administrator','Administrator',0,0,'Plexor User','None','Could it be',2,1,0,'0b53a52befaa1bb4b05dbcab3ff826fec5fe670a8e0f4cdafa6e907ecedcc5e0',0);
 
+/*Table structure for table `plexAccountMapping` */
+
+DROP TABLE IF EXISTS `plexAccountMapping`;
+
+CREATE TABLE `plexAccountMapping` (
+  `name` varchar(140) NOT NULL,
+  `creation` datetime(6) DEFAULT NULL,
+  `modified` datetime(6) DEFAULT NULL,
+  `modified_by` varchar(140) DEFAULT NULL,
+  `owner` varchar(140) DEFAULT NULL,
+  `docstatus` int(1) NOT NULL DEFAULT 0,
+  `idx` int(8) NOT NULL DEFAULT 0,
+  `mapper_name` varchar(30) DEFAULT NULL,
+  `account` varchar(100) DEFAULT NULL,
+  `description` varchar(100) DEFAULT NULL,
+  `sig` varchar(64) DEFAULT NULL,
+  `sig_status` int(11) DEFAULT 0,
+  PRIMARY KEY (`name`),
+  KEY `modified` (`modified`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `plexAccountMapping` */
+
+insert  into `plexAccountMapping`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`mapper_name`,`account`,`description`,`sig`,`sig_status`) values ('Cashier Deposits','2024-07-19 15:10:36.193717','2024-07-19 15:10:36.193717','Administrator','Administrator',0,0,'Cashier Deposits','Cash - BSLD','Cashier deposit container','fb933124e1062a2e10ecf2c3aa7c95bc0b3754de6f738b4c2e908f8ef0a678ef',0);
+insert  into `plexAccountMapping`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`mapper_name`,`account`,`description`,`sig`,`sig_status`) values ('Member Payments','2024-07-19 15:11:40.273312','2024-07-19 15:11:40.273312','Administrator','Administrator',0,0,'Member Payments','Accounts Payable - BSL','Money owed to clients','07c4f935bbbe8616db44d80d398f22512d4556cefb0d1341b7d6ec68aaa4de97',0);
+
 /*Table structure for table `plexAddress` */
 
 DROP TABLE IF EXISTS `plexAddress`;
@@ -367,6 +393,7 @@ CREATE TABLE `plexAddress` (
 /*Data for the table `plexAddress` */
 
 insert  into `plexAddress`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`short_name`,`street`,`address_line_1`,`address_line_2`,`address_line_3`,`town_village`,`county_district`,`country`,`postal_code`,`geolocation`,`sig`,`sig_status`) values ('Plexor Headquarters','2024-07-17 16:24:37.206242','2024-07-18 16:47:09.639000','Administrator','Administrator',0,0,'Plexor Headquarters','Menelik','40489','GPO','Nairobi','Nairobi','Nairobi','Kenya','00100','{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Point\",\"coordinates\":[72.842274,19.070839]}}]}','b6643636606c0eb4c2cb28b8e4d431b31e0ea98bc1c12eb64461e3d058e2224a',0);
+insert  into `plexAddress`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`short_name`,`street`,`address_line_1`,`address_line_2`,`address_line_3`,`town_village`,`county_district`,`country`,`postal_code`,`geolocation`,`sig`,`sig_status`) values ('Plexor Holidays','2024-07-20 13:48:22.391302','2024-07-20 13:48:22.391302','Administrator','Administrator',0,0,'Plexor Holidays','Nakuru','4849','Kampala Road','001100','Nakuru','Nakuru','Kenya','None','None','485b25a3e0045a4c0f0f040c8194ce840df2a853edd1e62d8da4d5e155f85504',0);
 
 /*Table structure for table `plexBranch` */
 
@@ -1737,6 +1764,8 @@ CREATE TABLE `plexPostingRules` (
   `owner` varchar(140) DEFAULT NULL,
   `docstatus` int(1) NOT NULL DEFAULT 0,
   `idx` int(8) NOT NULL DEFAULT 0,
+  `title` varchar(20) DEFAULT NULL,
+  `description` varchar(150) DEFAULT NULL,
   `sig` char(64) DEFAULT NULL,
   `sig_status` int(11) DEFAULT 0,
   PRIMARY KEY (`name`),
@@ -1748,6 +1777,37 @@ CREATE TABLE `plexPostingRules` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `plexPostingRules` */
+
+insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Cash Deposit','2024-07-24 13:15:08.235020','2024-07-24 18:12:29.565320','Administrator','Administrator',0,0,'Cash Deposit','Cash deposit received by teller','2065e91b1e5a2b8a02ab3175d9a908e10036dd43b72737952e0fb3e4ffd7bc21',0);
+
+/*Table structure for table `plexPostingRulesAccounts` */
+
+DROP TABLE IF EXISTS `plexPostingRulesAccounts`;
+
+CREATE TABLE `plexPostingRulesAccounts` (
+  `name` varchar(140) NOT NULL,
+  `creation` datetime(6) DEFAULT NULL,
+  `modified` datetime(6) DEFAULT NULL,
+  `modified_by` varchar(140) DEFAULT NULL,
+  `owner` varchar(140) DEFAULT NULL,
+  `docstatus` int(1) NOT NULL DEFAULT 0,
+  `idx` int(8) NOT NULL DEFAULT 0,
+  `postingRule` varchar(140) DEFAULT NULL,
+  `type` varchar(20) DEFAULT NULL,
+  `accoount` varchar(140) DEFAULT NULL,
+  `sig` varchar(64) DEFAULT NULL,
+  `sig_status` int(11) DEFAULT 0,
+  PRIMARY KEY (`name`),
+  KEY `modified` (`modified`),
+  KEY `postingRules` (`postingRule`),
+  KEY `postingRulesAcc` (`accoount`),
+  CONSTRAINT `postingRules` FOREIGN KEY (`postingRule`) REFERENCES `plexPostingRules` (`name`),
+  CONSTRAINT `postingRulesAcc` FOREIGN KEY (`accoount`) REFERENCES `plexAccountMapping` (`name`),
+  CONSTRAINT `postingRulesAccountsAccount` FOREIGN KEY (`accoount`) REFERENCES `plexAccountMapping` (`name`),
+  CONSTRAINT `postingRulesAccountsRule` FOREIGN KEY (`postingRule`) REFERENCES `plexPostingRules` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `plexPostingRulesAccounts` */
 
 /*Table structure for table `plexSavingAccount` */
 
@@ -2022,22 +2082,26 @@ CREATE TABLE `plexTeller` (
   `owner` varchar(140) DEFAULT NULL,
   `docstatus` int(1) NOT NULL DEFAULT 0,
   `idx` int(8) NOT NULL DEFAULT 0,
-  `User` varchar(140) DEFAULT NULL,
+  `user` varchar(140) DEFAULT NULL,
   `branch` varchar(140) DEFAULT NULL,
   `debit_account` varchar(140) DEFAULT NULL,
   `credit_account` varchar(140) DEFAULT NULL,
   `description` varchar(100) DEFAULT NULL,
   `valid_from` date DEFAULT NULL,
   `valid_to` date DEFAULT NULL,
-  `state` smallint(6) DEFAULT NULL,
+  `state` varchar(15) DEFAULT NULL,
   `sig` char(64) DEFAULT NULL,
   `sig_status` int(11) DEFAULT 0,
   PRIMARY KEY (`name`),
   KEY `modified` (`modified`),
   KEY `plexTellerusers` (`modified_by`),
   KEY `plexTellerusers2` (`owner`),
-  KEY `plexTellerUser` (`User`),
   KEY `plexTellerBranch` (`branch`),
+  KEY `plexTellerUser` (`user`),
+  KEY `plexTellerAccDebit` (`debit_account`),
+  KEY `plexTellerAccCredit` (`credit_account`),
+  CONSTRAINT `plexTellerAccCredit` FOREIGN KEY (`credit_account`) REFERENCES `plexAccountMapping` (`name`),
+  CONSTRAINT `plexTellerAccDebit` FOREIGN KEY (`debit_account`) REFERENCES `plexAccountMapping` (`name`),
   CONSTRAINT `plexTellerBranch` FOREIGN KEY (`branch`) REFERENCES `plexBranch` (`name`),
   CONSTRAINT `plexTellerUser` FOREIGN KEY (`User`) REFERENCES `plexUser` (`name`),
   CONSTRAINT `plexTellerusers` FOREIGN KEY (`modified_by`) REFERENCES `plexUser` (`name`),
@@ -2045,6 +2109,9 @@ CREATE TABLE `plexTeller` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `plexTeller` */
+
+insert  into `plexTeller`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`user`,`branch`,`debit_account`,`credit_account`,`description`,`valid_from`,`valid_to`,`state`,`sig`,`sig_status`) values ('admin@plexor.com','2024-07-20 16:05:17.030008','2024-07-20 16:05:17.030008','Administrator','Administrator',0,0,'admin@plexor.com','Ngong Branch','Cashier Deposits','Member Payments','None','2024-07-20','2024-07-27','Enabled','e79b84caa770d689817bbcf099b386adb09a653cd195bb390e754c802ebda78e',0);
+insert  into `plexTeller`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`user`,`branch`,`debit_account`,`credit_account`,`description`,`valid_from`,`valid_to`,`state`,`sig`,`sig_status`) values ('Administrator','2024-07-20 16:00:56.585606','2024-07-20 16:00:56.585606','Administrator','Administrator',0,0,'Administrator','Ngong Branch','Cashier Deposits','Member Payments','na','2024-07-30','2024-07-24','Enabled','009b94311d07152d794e59b0d551160acd02a0da414b69c04e17482d3a4ccb29',0);
 
 /*Table structure for table `plexTrxQueue` */
 

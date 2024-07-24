@@ -212,3 +212,44 @@ def get_credit_account(doctype, txt, searchfield, start, page_len, filters):
     cur.execute(sql)
     rv = cur.fetchall()
     return rv
+
+@frappe.whitelist()
+def save_posting_rule(postingRule, type, account):
+    print("Adding rule :" + account)
+    mydb = mysql_connection()
+    cur = mydb.cursor()
+    sql = "insert into plexPostingRulesAccounts(name, postingRule, type, accoount) values('" + postingRule.replace(' ','')+"_"+type.replace(' ','')+"_"+account.replace(' ','') + "', '" + postingRule +"', '" + type +"', '" + account +"') "
+    print(sql)
+    try:
+        cur.execute(sql)
+        mydb.commit()
+    except mysql.connector.Error as err:
+        frappe.msgprint(err.msg)
+        return "failed"
+    return "success"
+
+@frappe.whitelist()
+def delete_posting_rule(postingRule, type, account):
+    print("Deleting rule :" + account)
+    mydb = mysql_connection()
+    cur = mydb.cursor()
+    sql = "delete from plexPostingRulesAccounts where postingRule='" + postingRule +"' and type='" + type +"' and accoount='" + account +"' limit 1"
+    print(sql)
+    try:
+        cur.execute(sql)
+        mydb.commit()
+    except mysql.connector.Error as err:
+        frappe.msgprint(err.msg)
+        return "failed"
+    return "success"
+
+@frappe.whitelist()
+def get_posting_rule(postingRule, type):
+    print("Getting postingRule :" + postingRule)
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    sql = "SELECT postingRule, type, accoount FROM `plexPostingRulesAccounts` where `postingRule` = '"+postingRule+"' and `type`='"+type+"' ORDER BY `name`"
+    print(sql)
+    cur.execute(sql)
+    rv = cur.fetchall()
+    return rv
