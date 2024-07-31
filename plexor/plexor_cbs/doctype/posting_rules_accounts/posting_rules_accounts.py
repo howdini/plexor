@@ -5,7 +5,7 @@ class PostingRulesAccounts(Document):
 	table = "plexPostingRulesAccounts"
 	pars = ["postingRule",
 			"type",
-			"accoount"]
+			"account"]
 
 	# type, min, max, allowed,
 	validator = ["alphanumericwithdash,1,150",
@@ -13,16 +13,16 @@ class PostingRulesAccounts(Document):
 				 "alphanumericwithdash,1,150"]
 
 	def db_insert(self, *args, **kwargs):
-		crud_db_insert(self, *args, **kwargs)
+		crud_db_insert(self, PostingRulesAccounts, *args, **kwargs)
 
 	def load_from_db(self):
-		crud_load_from_db(self)
+		crud_load_from_db(self, PostingRulesAccounts)
 
 	def db_update(self):
-		crud_db_update(self)
+		crud_db_update(self, PostingRulesAccounts)
 
 	def delete(self):
-		crud_delete(self)
+		crud_delete(self, PostingRulesAccounts)
 
 	@staticmethod
 	def get_list(args):

@@ -17,16 +17,16 @@ class plexCountry(Document):
 
 
 	def db_insert(self, *args, **kwargs):
-		crud_db_insert(self, *args, **kwargs)
+		crud_db_insert(self, plexCountry, *args, **kwargs)
 
 	def load_from_db(self):
-		crud_load_from_db(self)
+		crud_load_from_db(self, plexCountry)
 
 	def db_update(self):
-		crud_db_update(self)
+		crud_db_update(self, plexCountry)
 
 	def delete(self):
-		crud_delete(self)
+		crud_delete(self, plexCountry)
 
 	@staticmethod
 	def get_list(args):

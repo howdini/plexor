@@ -15,16 +15,16 @@ class AccountMapping(Document):
 
 
 	def db_insert(self, *args, **kwargs):
-		crud_db_insert(self, *args, **kwargs)
+		crud_db_insert(self, AccountMapping, *args, **kwargs)
 
 	def load_from_db(self):
-		crud_load_from_db(self)
+		crud_load_from_db(self, AccountMapping)
 
 	def db_update(self):
-		crud_db_update(self)
+		crud_db_update(self, AccountMapping)
 
 	def delete(self):
-		crud_delete(self)
+		crud_delete(self, AccountMapping)
 
 	@staticmethod
 	def get_list(args):

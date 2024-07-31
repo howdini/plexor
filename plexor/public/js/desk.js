@@ -204,6 +204,253 @@ function get_alerts()
         });
 
 }
+function callme()
+{
+    //frappe.msgprint("Hello out there");
+}
+
+function plexSave(frm, doctype)
+{
+    if(frm.is_new())
+        is_maker_checker_enabled(frm, doctype,"INSERT");
+    else if(!frm.is_new())
+        is_maker_checker_enabled(frm, doctype,"UPDATE")
+    else
+    {
+        frm.dirty();
+        frm.save();
+    }
+    //if (frm.is_new())
+        //frm.reload_doc()
+}
+
+function is_maker_checker_enabled(frm, doctype,type)
+{
+    doctype = doctype.replace(" ","");
+    frappe.call({
+                    method: "plexor.plexlib_web.is_maker_checker_required",
+                    args: {doctype: doctype, type: type},
+                    callback: function(r) {
+                        responseText = r.message
+                        console.log("IS MAKE CHECKER:::"+responseText);
+                        if(responseText==true)
+                        {
+                            console.log("GETTING CHECKERS");
+                            getCheckers(frm);
+                        }
+                        else
+                        {
+                            frm.dirty();
+                            frm.save();
+                        }
+                    }
+                });
+}
+
+function getCheckers(frm)
+{
+    // MultiSelectDialog with custom query method
+    let query_args = {
+        query:"plexor.plexlib_web.get_credit_account",
+        filters: {  }
+    }
+
+    new frappe.ui.form.MultiSelectDialog({
+        doctype: "Account Mapping",
+        target: this.cur_frm,
+        setters: {
+            schedule_date: null,
+            status: 'Pending'
+        },
+        add_filters_group: 1,
+        date_field: "creation",
+        columns: ["name"],
+        get_query() {
+            return query_args;
+        },
+        action(selections) {
+            console.log(selections);
+        }
+    });
+}
+
+function setup_grid(frm, grid_name, load_function, load_args, add_title, add_doctype, add_filter_function, add_field, add_function, add_args, delete_function, delete_args )
+{
+    if(add_doctype!="ALLOW_FORM")
+    {
+        frm.set_df_property(grid_name, 'cannot_add_rows', true);
+        frm.fields_dict[grid_name].grid.wrapper.on('click', '.grid-row', function(event) {
+
+        });
+    }
+    frm.set_df_property(grid_name, 'cannot_delete_rows', true);
+
+    //=====================================LOADING GRIDS===================================================
+            //Load debit accounts
+             frappe.call({
+                    method: load_function,
+                    args: JSON.parse(load_args),
+                    callback: function(r) {
+                        responseText = r.message
+                        let items = responseText
+                        items.forEach(item=>{
+                            frm.add_child(grid_name, item);
+                        })
+                        frm.refresh_field(grid_name);
+                    }
+                });
+    //=====================================DELETING GRID ROWS===================================================
+            //if (!frm.is_new())
+            frm.fields_dict[grid_name].grid.add_custom_button(__('Delete'),
+                function() {
+                var grid = frm.fields_dict[grid_name].grid.grid_rows;
+
+                grid.forEach(function(row) {
+                    if (row && row.wrapper.find('.grid-row-check').is(':checked')) {
+                        var docname = row.doc.name;
+                        args = JSON.parse(delete_args);
+                        for (let x in args) {
+                           console.log(x + ": "+ args[x])
+                           if(args[x].startsWith("row.doc."))
+                           {
+                                doc_field = args[x].replace("row.doc.", "");
+                                args[x] = row.doc[doc_field];
+                           }
+                        }
+                        console.log(args);
+                        frappe.call({
+                            method: delete_function,
+                            args: args,
+                            callback: function(r) {
+                                responseText = r.message
+                                if(responseText=="success")
+                                {
+                                    row.remove();
+                                    frm.refresh_field(grid_name);
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+
+    //=====================================ADDING GRID ROWS===================================================
+            //if (!frm.is_new())
+            frm.fields_dict[grid_name].grid.add_custom_button(__('Add'),
+                function() {
+                    console.log(frm);
+                    if (frm.is_new())
+                    {
+                        frappe.msgprint("You need to save this document first before you can add items on this table.");
+                        return;
+                    }
+                    if(add_doctype=="ALLOW_FORM" || add_doctype=="CUSTOM_FORM")
+                        grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name);
+                    else
+                        grid_addrow_select(frm, add_title, add_field, add_doctype, add_filter_function, add_args, add_function, grid_name);
+            });
+            frm.fields_dict[grid_name].grid.grid_buttons.find('.btn-custom').removeClass('btn-default').addClass('btn-primary');
+}
+
+function grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name)
+{
+    //console.log("HELLO 2.1");
+    let d = new frappe.ui.Dialog({
+        title: add_title,
+        fields: add_filter_function,
+        size: 'small', // small, large, extra-large
+        primary_action_label: 'Save',
+        primary_action(values) {
+            args = JSON.parse(add_args);
+            for (let x in args) {
+               if(args[x].startsWith("values."))
+               {
+                    doc_field = args[x].replace("values.", "");
+                    args[x] = values[doc_field];
+               }
+               else if(args[x].startsWith("frm.doc."))
+               {
+                    doc_field = args[x].replace("frm.doc.", "");
+                    args[x] = frm.doc[doc_field];
+               }
+            }
+            console.log(args);
+            frappe.call({
+                method: add_function,
+                args: args,
+                callback: function(r) {
+                    responseText = r.message
+                    if(responseText=="success")
+                    {
+                        frm.add_child(grid_name, args);
+                        frm.refresh_field(grid_name);
+                    }
+                }
+            });
+            d.hide();
+        }
+    });
+    d.show();
+}
+
+function grid_addrow_select(frm, add_title, add_field, add_doctype, add_filter_function, add_args, add_function, grid_name)
+{
+        console.log("HELLO 1.1: "+ frm);
+        let d = new frappe.ui.Dialog({
+        title: add_title,
+        fields: [
+            {
+                label: 'Select Record',
+                fieldname: add_field,
+                fieldtype: 'Link',
+                options: add_doctype,
+                get_query() {
+                    return {
+                        query: add_filter_function,
+                        txt: d[add_field]
+                    };
+                  }
+            }
+        ],
+        size: 'small', // small, large, extra-large
+        primary_action_label: 'Save',
+        primary_action(values) {
+            args = JSON.parse(add_args);
+            for (let x in args) {
+               if(args[x].startsWith("values."))
+               {
+                    doc_field = args[x].replace("values.", "");
+                    args[x] = values[doc_field];
+               }
+               else if(args[x].startsWith("frm.doc."))
+               {
+                    doc_field = args[x].replace("frm.doc.", "");
+                    args[x] = frm.doc[doc_field];
+               }
+            }
+            console.log(args);
+            frappe.call({
+                method: add_function,
+                args: args,
+                callback: function(r) {
+                    responseText = r.message
+                    if(responseText=="success")
+                    {
+                        frm.add_child(grid_name, args);
+                        frm.refresh_field(grid_name);
+                    }
+                }
+            });
+            d.hide();
+        }
+    });
+    d.show();
+}
+
+function save_grid_form(frm)
+{
+    console.log(frm.doc);
+}
 
 function update_notification_icons(notices_approvals, notices_securities, notices_systems)
 {

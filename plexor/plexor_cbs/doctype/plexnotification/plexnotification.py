@@ -19,16 +19,16 @@ class plexNotification(Document):
 
 
 	def db_insert(self, *args, **kwargs):
-		crud_db_insert(self, *args, **kwargs)
+		crud_db_insert(self, plexNotification, *args, **kwargs)
 
 	def load_from_db(self):
-		crud_load_from_db(self)
+		crud_load_from_db(self, plexNotification)
 
 	def db_update(self):
-		crud_db_update(self)
+		crud_db_update(self, plexNotification)
 
 	def delete(self):
-		crud_delete(self)
+		crud_delete(self, plexNotification)
 
 	@staticmethod
 	def get_list(args):

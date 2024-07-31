@@ -30,16 +30,16 @@ class Addresses(Document):
 
 
 	def db_insert(self, *args, **kwargs):
-		crud_db_insert(self, *args, **kwargs)
+		crud_db_insert(self, Addresses, *args, **kwargs)
 
 	def load_from_db(self):
-		crud_load_from_db(self)
+		crud_load_from_db(self, Addresses)
 
 	def db_update(self):
-		crud_db_update(self)
+		crud_db_update(self, Addresses)
 
 	def delete(self):
-		crud_delete(self)
+		crud_delete(self, Addresses)
 
 	@staticmethod
 	def get_list(args):

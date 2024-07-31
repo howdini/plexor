@@ -23,16 +23,16 @@ class Branches(Document):
 
 
 	def db_insert(self, *args, **kwargs):
-		crud_db_insert(self, *args, **kwargs)
+		crud_db_insert(self, Branches, *args, **kwargs)
 
 	def load_from_db(self):
-		crud_load_from_db(self)
+		crud_load_from_db(self, Branches)
 
 	def db_update(self):
-		crud_db_update(self)
+		crud_db_update(self, Branches)
 
 	def delete(self):
-		crud_delete(self)
+		crud_delete(self, Branches)
 
 	@staticmethod
 	def get_list(args):

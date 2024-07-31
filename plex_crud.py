@@ -1,13 +1,43 @@
 import frappe
 import json
 import hashlib
-from plexlib import mysql_connection, validate_document, generate_sig, create_trigger
+from plexlib import mysql_connection, mysql_connection_MC, validate_document, generate_sig, create_trigger
 from frappe.model.document import Document
 import mysql.connector
 
+def create_maker_checker(type, selfclass, self, pars):
+    doctype = getDoctype(selfclass)
+    mydb = mysql_connection()
+    qry = ""
+    values = ""
+    first = True
+    for x in self.pars:
+        if (first):
+            qry = "`" + x + "`"
+            values =  x + " :\"" + str(self.get(x)) + "\""
+            first = False
+        else:
+            qry = qry + ", " + "`" + x + "`"
+            values = values + ",\n " + x + " :\"" + str(self.get(x)).replace('"', '\\"') + "\""
+    values = "{" + values + "}"
+    checkers = ""
+    mycursor = mydb.cursor()
+    sql = ("INSERT INTO `plexMakerChecker` (name, creation, modified, modified_by, owner, docstatus, idx,"
+           + "creator, stamp, document, `trx_type`, `values`, checkers,sig)"
+           + "VALUES( %s, %s, %s, %s, %s, 0, %s, %s, %s,%s, %s,%s,%s"
+           + ", ''  )")
+    print(sql)
+    val = (self.name, self.creation, self.modified, self.modified_by, self.owner, self.idx, self.owner, self.creation, doctype, type, values, checkers)
+    mycursor.execute(sql, val)
+    mydb.commit()
 
-def crud_db_insert(self, *args, **kwargs):
+def crud_db_insert(self, selfclass, *args, **kwargs):
     validate_document(self, self.pars, self.validator)
+    if(is_maker_checker_required(selfclass, "INSERT")):
+        create_maker_checker("INSERT", selfclass, self, self.pars)
+        mydb = mysql_connection_MC()
+    else:
+        mydb = mysql_connection()
     qry = ""
     qry_vals = ""
     first = True
@@ -20,7 +50,7 @@ def crud_db_insert(self, *args, **kwargs):
             qry = qry + ", " + "`" + x + "`"
             qry_vals = qry_vals + ", \"" + str(self.get(x)).replace('"', '\\"') + "\""
 
-    mydb = mysql_connection()
+
     mycursor = mydb.cursor()
     sql = ("INSERT INTO `" + self.table + "` (name, creation, modified, modified_by, owner, docstatus, idx,"
            + qry + ",sig)"
@@ -31,7 +61,7 @@ def crud_db_insert(self, *args, **kwargs):
     mydb.commit()
 
 
-def crud_load_from_db(self):
+def crud_load_from_db(self, selfclass):
     mydb = mysql_connection()
     cur = mydb.cursor(dictionary=True)
     val = (self.name)
@@ -41,7 +71,7 @@ def crud_load_from_db(self):
     super(Document, self).__init__(rv)
 
 
-def crud_db_update(self):
+def crud_db_update(self, selfclass):
     if (str(self.sig_status) == "1"):
         frappe.throw("You cannot update a locked document")
     validate_document(self, self.pars, self.validator)
@@ -62,7 +92,7 @@ def crud_db_update(self):
     mydb.commit()
 
 
-def crud_delete(self):
+def crud_delete(self, selfclass):
     if (str(self.sig_status) == "1"):
         frappe.throw("You cannot delete a locked document")
     mydb = mysql_connection()
@@ -75,6 +105,7 @@ def crud_delete(self):
 @staticmethod
 def crud_get_list(args, self):
     print("PASSES PARAMETER: "+get_filters(self))
+    is_maker_checker_required(self, "INSERT")
     create_trigger(self.table, self.pars)
     mydb = mysql_connection()
     cur = mydb.cursor(dictionary=True)
@@ -115,3 +146,22 @@ def crud_get_count(args, self):
 @staticmethod
 def crud_get_stats(args, self):
     pass
+
+def getDoctype(self):
+    doctype = self.__name__
+    print("DOCTYPE [[ "+doctype+" ]]")
+    return doctype
+
+def is_maker_checker_required(self, function):
+    doctype = getDoctype(self)
+    sql = "SELECT * FROM `plexSetting` WHERE `type`='MCHECKER' AND `codename`=UPPER(CONCAT('"+doctype+"','_"+function+"')) and `value`='yes' and `status`=1"
+    print(sql)
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    cur.execute(sql)
+    rv = cur.fetchall()
+    print("FOUND RECORDS:  "+ str(cur.rowcount))
+    if(cur.rowcount>0):
+        return True
+    else:
+        return False

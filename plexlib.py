@@ -13,7 +13,13 @@ def mysql_connection():
 	  database="plexorCBS"
     )
 
-
+def mysql_connection_MC():
+    return mysql.connector.connect(
+      host="localhost",
+      user="root",
+      password="mvpnaz",
+	  database="plexorCBS_MC"
+    )
 
 
 def create_trigger(table, pars):

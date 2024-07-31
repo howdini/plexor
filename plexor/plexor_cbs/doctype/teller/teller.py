@@ -26,16 +26,16 @@ class Teller(Document):
 
 
 	def db_insert(self, *args, **kwargs):
-		crud_db_insert(self, *args, **kwargs)
+		crud_db_insert(self, Teller, *args, **kwargs)
 
 	def load_from_db(self):
-		crud_load_from_db(self)
+		crud_load_from_db(self, Teller)
 
 	def db_update(self):
-		crud_db_update(self)
+		crud_db_update(self, Teller)
 
 	def delete(self):
-		crud_delete(self)
+		crud_delete(self, Teller)
 
 	@staticmethod
 	def get_list(args):

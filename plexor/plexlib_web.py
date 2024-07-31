@@ -1,5 +1,5 @@
 import mysql.connector
-from plexlib import mysql_connection, generate_sig
+from plexlib import mysql_connection, mysql_connection_MC, generate_sig
 import json
 from time import time as _time, sleep as _sleep
 from threading import Event
@@ -213,12 +213,48 @@ def get_credit_account(doctype, txt, searchfield, start, page_len, filters):
     rv = cur.fetchall()
     return rv
 
+def is_maker_checker(table, name):
+    sql = "SELECT * FROM `"+table+"` WHERE `name`='"+name+"'"
+    print(sql)
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    cur.execute(sql)
+    rv = cur.fetchall()
+    print("MAKER CHEKER FOUND RECORDS:  " + str(cur.rowcount))
+    if (cur.rowcount > 0):
+        return False
+    else:
+        return True
+
+@frappe.whitelist()
+def is_maker_checker_required(doctype, type):
+    sql = "SELECT * FROM `plexSetting` WHERE `type`='MCHECKER' AND `codename`=UPPER(CONCAT('"+doctype+"','_"+type+"')) and `value`='yes' and `status`=1"
+    print(sql)
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    cur.execute(sql)
+    rv = cur.fetchall()
+    print("FOUND RECORDS:  "+ str(cur.rowcount))
+    if(cur.rowcount>0):
+        return True
+    else:
+        return False
+
+def getDoctype(self):
+    doctype = self.__name__
+    print("DOCTYPE [[ " + doctype + " ]]")
+    return doctype
+
+
 @frappe.whitelist()
 def save_posting_rule(postingRule, type, account):
     print("Adding rule :" + account)
-    mydb = mysql_connection()
+    if(is_maker_checker("plexPostingRules",postingRule)):
+        mydb = mysql_connection_MC()
+    else:
+        mydb = mysql_connection()
     cur = mydb.cursor()
-    sql = "insert into plexPostingRulesAccounts(name, postingRule, type, accoount) values('" + postingRule.replace(' ','')+"_"+type.replace(' ','')+"_"+account.replace(' ','') + "', '" + postingRule +"', '" + type +"', '" + account +"') "
+    sql = "insert into plexPostingRulesAccounts(name, postingRule, type, account) values('" + postingRule.replace(' ','')+"_"+type.replace(' ','')+"_"+account.replace(' ','') + "', '" + postingRule +"', '" + type +"', '" + account +"') "
     print(sql)
     try:
         cur.execute(sql)
@@ -233,7 +269,7 @@ def delete_posting_rule(postingRule, type, account):
     print("Deleting rule :" + account)
     mydb = mysql_connection()
     cur = mydb.cursor()
-    sql = "delete from plexPostingRulesAccounts where postingRule='" + postingRule +"' and type='" + type +"' and accoount='" + account +"' limit 1"
+    sql = "delete from plexPostingRulesAccounts where postingRule='" + postingRule +"' and type='" + type +"' and account='" + account +"' limit 1"
     print(sql)
     try:
         cur.execute(sql)
@@ -248,8 +284,49 @@ def get_posting_rule(postingRule, type):
     print("Getting postingRule :" + postingRule)
     mydb = mysql_connection()
     cur = mydb.cursor(dictionary=True)
-    sql = "SELECT postingRule, type, accoount FROM `plexPostingRulesAccounts` where `postingRule` = '"+postingRule+"' and `type`='"+type+"' ORDER BY `name`"
+    sql = "SELECT postingRule, type, account FROM `plexPostingRulesAccounts` where `postingRule` = '"+postingRule+"' and `type`='"+type+"' ORDER BY `name`"
     print(sql)
     cur.execute(sql)
     rv = cur.fetchall()
     return rv
+
+@frappe.whitelist()
+def get_type_settings(type):
+    print("Getting settings :" + type)
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    sql = "SELECT * FROM `plexSetting` where `type` = '"+type+"' ORDER BY `setting`"
+    print(sql)
+    cur.execute(sql)
+    rv = cur.fetchall()
+    return rv
+
+@frappe.whitelist()
+def save_type_settings(type, setting, codename, value, status):
+    print("Adding setting :" + codename)
+    mydb = mysql_connection()
+    cur = mydb.cursor()
+    sql = "insert into plexSetting(name, type, setting, codename, value, status) values('" + codename + "', '" + type +"', '" + setting +"', '" +codename +"', '" +value +"', '" + status +"') "
+    print(sql)
+    try:
+        cur.execute(sql)
+        mydb.commit()
+    except mysql.connector.Error as err:
+        frappe.msgprint(err.msg)
+        return "failed"
+    return "success"
+
+@frappe.whitelist()
+def delete_type_settings(codename):
+    print("Deleting setting :" + codename)
+    mydb = mysql_connection()
+    cur = mydb.cursor()
+    sql = "delete from plexSetting where codename='" + codename +"' limit 1"
+    print(sql)
+    try:
+        cur.execute(sql)
+        mydb.commit()
+    except mysql.connector.Error as err:
+        frappe.msgprint(err.msg)
+        return "failed"
+    return "success"
