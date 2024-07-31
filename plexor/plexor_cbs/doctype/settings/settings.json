@@ -1,0 +1,165 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:title",
+ "creation": "2024-07-29 05:21:28.957983",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "general_tab",
+  "title",
+  "general",
+  "general_grid",
+  "tab_break_6acy",
+  "security",
+  "security_grid",
+  "tab_break_ttoj",
+  "savings",
+  "deposits_grid",
+  "tab_break_vo7r",
+  "loans",
+  "loans_grid",
+  "tab_break_3q9j",
+  "maker_checker",
+  "maker_checker_grid",
+  "sig_status"
+ ],
+ "fields": [
+  {
+   "fieldname": "general",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "General"
+  },
+  {
+   "fieldname": "security",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Security"
+  },
+  {
+   "fieldname": "loans",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Loans"
+  },
+  {
+   "fieldname": "maker_checker",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Maker-checker"
+  },
+  {
+   "fieldname": "tab_break_6acy",
+   "fieldtype": "Tab Break",
+   "label": "Security"
+  },
+  {
+   "fieldname": "tab_break_ttoj",
+   "fieldtype": "Tab Break",
+   "label": "Savings"
+  },
+  {
+   "fieldname": "tab_break_vo7r",
+   "fieldtype": "Tab Break",
+   "label": "Loans"
+  },
+  {
+   "fieldname": "tab_break_3q9j",
+   "fieldtype": "Tab Break",
+   "label": "Maker-checker"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "general_grid",
+   "fieldtype": "Table",
+   "label": "General Grid",
+   "options": "plexSettingValue"
+  },
+  {
+   "fieldname": "security_grid",
+   "fieldtype": "Table",
+   "label": "Security",
+   "options": "plexSettingValue"
+  },
+  {
+   "fieldname": "deposits_grid",
+   "fieldtype": "Table",
+   "label": "Deposits",
+   "options": "plexSettingValue"
+  },
+  {
+   "fieldname": "loans_grid",
+   "fieldtype": "Table",
+   "label": "Loans",
+   "options": "plexSettingValue"
+  },
+  {
+   "fieldname": "maker_checker_grid",
+   "fieldtype": "Table",
+   "label": "Maker Checker",
+   "options": "plexSettingValue"
+  },
+  {
+   "fieldname": "general_tab",
+   "fieldtype": "Tab Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "savings",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Savings"
+  },
+  {
+   "fieldname": "sig_status",
+   "fieldtype": "Data",
+   "label": "sig_status"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_virtual": 1,
+ "links": [],
+ "modified": "2024-07-29 14:48:48.018112",
+ "modified_by": "Administrator",
+ "module": "Plexor CBS",
+ "name": "Settings",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Plexor User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

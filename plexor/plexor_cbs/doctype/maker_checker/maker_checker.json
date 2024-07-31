@@ -1,0 +1,112 @@
+{
+ "actions": [],
+ "creation": "2024-07-30 06:21:43.427954",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_hsk8",
+  "document",
+  "trx_type",
+  "creator",
+  "check_status",
+  "stamp",
+  "values",
+  "checkers",
+  "checker_comments",
+  "action_result"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_hsk8",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "creator",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Creator",
+   "reqd": 1
+  },
+  {
+   "fieldname": "stamp",
+   "fieldtype": "Datetime",
+   "label": "Time"
+  },
+  {
+   "fieldname": "document",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Document",
+   "reqd": 1
+  },
+  {
+   "fieldname": "trx_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "values",
+   "fieldtype": "Text",
+   "label": "Values"
+  },
+  {
+   "fieldname": "checkers",
+   "fieldtype": "Text",
+   "label": "Verifiers"
+  },
+  {
+   "fieldname": "check_status",
+   "fieldtype": "Data",
+   "label": "Status"
+  },
+  {
+   "fieldname": "checker_comments",
+   "fieldtype": "Text",
+   "label": "Comments"
+  },
+  {
+   "fieldname": "action_result",
+   "fieldtype": "Text",
+   "label": "Action Result"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_virtual": 1,
+ "links": [],
+ "modified": "2024-07-31 04:49:40.648210",
+ "modified_by": "Administrator",
+ "module": "Plexor CBS",
+ "name": "Maker-Checker",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Plexor User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

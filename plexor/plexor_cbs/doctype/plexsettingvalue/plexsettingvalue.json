@@ -1,0 +1,67 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-07-29 06:08:21.095475",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_cpov",
+  "type",
+  "setting",
+  "codename",
+  "value",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_cpov",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Category",
+   "options": "GENERAL\nSECURITY\nSAVINGS\nLOANS\nMCHECKER"
+  },
+  {
+   "fieldname": "setting",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "value",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Value",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "status",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Active",
+   "reqd": 1
+  },
+  {
+   "fieldname": "codename",
+   "fieldtype": "Data",
+   "label": "Codename"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_virtual": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-07-29 14:32:45.937859",
+ "modified_by": "Administrator",
+ "module": "Plexor CBS",
+ "name": "plexSettingValue",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
