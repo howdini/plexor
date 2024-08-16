@@ -3,7 +3,7 @@ import re
 import hashlib
 import frappe
 
-
+#update
 @frappe.whitelist()
 def mysql_connection():
     return mysql.connector.connect(
@@ -21,6 +21,18 @@ def mysql_connection_MC():
 	  database="plexorCBS_MC"
     )
 
+def check_permissions(doctypeName, type):
+    if(frappe.session.user=="Administrator"):
+        return
+    permissions = frappe.cache.get_value("setperms|"+frappe.session.user)
+    print(f"Searching permissions for {doctypeName}:{type}")
+    print(permissions)
+    perm = doctypeName+" - "+type
+    if(perm in permissions):
+        #frappe.msgprint("Permission granted")
+        pass
+    else:
+        frappe.throw("Access not granted for this action.")
 
 def create_trigger(table, pars):
     frappe.utils.logger.set_log_level("DEBUG")

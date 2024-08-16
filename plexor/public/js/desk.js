@@ -33,6 +33,18 @@ frappe.router.on('change', () => {
         console.log("Not Plexor");
 })
 
+function get_current_datetime()
+{
+    var currentdate = new Date();
+    var datetime =  currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/"
+                + currentdate.getFullYear() + " "
+                + currentdate.getHours() + ":"
+                + currentdate.getMinutes() + ":"
+                + currentdate.getSeconds();
+    return datetime;
+}
+
 function is_printerble_key(evt)
 {
     if((evt.keyCode > 47 && evt.keyCode < 58)   || // number keys
@@ -48,16 +60,35 @@ function is_printerble_key(evt)
 
 function regizter()
 {
-  frappe.call({
-            method: "plexor.plexlib_web.reg_user", //dotted path to server method
+    frappe.call({
+        method: "plexor.plexlib_web.reg_user", //dotted path to server method
+        callback: function(r) {
+            responseText = r.message
+            console.log("REG COMPLETE :"+responseText);
+        }
+    });
+
+}
+
+function reroute(classname, docid)
+{
+    sql = "SELECT `name` FROM tabDocType WHERE REPLACE(`name`, ' ', '')='"+classname+"'";
+    frappe.call({
+            method: "plexor.plexlib_web.db_query", //dotted path to server method
+            args: {sql:sql, db:"main"},
             callback: function(r) {
-                responseText = r.message
-                console.log("REG COMPLETE :"+responseText);
+                doctype = String(r.message);
+                console.log("query doctype= :"+doctype+ ", document:"+docid);
+                doctype = doctype.replace(" ", "-").toLowerCase();
+                //frappe.route_options = {
+				//	"xxx": "TextCode"
+				//};
+                frappe.set_route("Form", doctype, docid);
+                //return responseText;
             }
         });
 
 }
-
 
 function stateChange(newState) {
     setTimeout(function () {
@@ -204,9 +235,21 @@ function get_alerts()
         });
 
 }
-function callme()
+function post_trx(docname)
 {
-    //frappe.msgprint("Hello out there");
+    frappe.call({
+                    method: "plexor.plexlib_web.post_mc_transaction",
+                    args: {docname: docname},
+                    callback: function(r) {
+                        responseText = r.message
+                        if(responseText=="success")
+                        {
+                            frappe.msgprint("This docuemnt has been successfully approved and posted.")
+                            frm.dirty();
+                            frm.save();
+                        }
+                    }
+                });
 }
 
 function plexSave(frm, doctype)
@@ -236,7 +279,23 @@ function is_maker_checker_enabled(frm, doctype,type)
                         if(responseText==true)
                         {
                             console.log("GETTING CHECKERS");
-                            getCheckers(frm);
+                            frappe.call({
+                                method: "plexor.plexlib_web.get_checkers",
+                                args: {},
+                                callback: function(r) {
+                                    responseText = r.message
+                                    console.log(responseText);
+                                    data = "[";
+                                    for(let x in responseText)
+                                        {
+                                            data = data + "{\"checker\":\""+responseText[x]+"\"},";
+                                        }
+                                        data = data.substring(0, data.length - 1);
+                                    data = data + "]";
+                                    console.log(data);
+                                    selectCheckers(frm, JSON.parse(data));
+                                }
+                            });
                         }
                         else
                         {
@@ -247,32 +306,182 @@ function is_maker_checker_enabled(frm, doctype,type)
                 });
 }
 
-function getCheckers(frm)
+function selectCheckers(frm, data)
 {
-    // MultiSelectDialog with custom query method
-    let query_args = {
-        query:"plexor.plexlib_web.get_credit_account",
-        filters: {  }
-    }
+    let d = new frappe.ui.Dialog({
+        title: 'Select Checkers',
+        fields: [
+            {
+                label: 'Maker-checker is enabled for this action. Please Select verifiers from list below.',
+                fieldname: 'checkers',
+                fieldtype: 'Table',
+                cannot_add_rows: true,
+                in_place_edit: false,
+                cannot_add_rows: 1,
+                cannot_delete_rows : 1,
+                data: data,
+                //data: [{checker:'Row1.1'}, {checker:'Row2.1'}, {checker:'Row3.1'}, {checker:'Row4.1'}, {checker:'Row5.1'}],
+                fields: [
+                    { fieldname: 'checker', fieldtype: 'Data', in_list_view: 1, read_only: 1, label: 'Checkers' }
+                ]
+            },
+        ],
+        size: 'small', // small, large, extra-large
+        primary_action_label: 'Submit',
+        primary_action(values) {
+            checkers = "";
+            for(let key in values)
+            {
+                //console.log(values[key]);
+                obj = values[key];
+                for(let x in obj)
+                {
+                    if(obj[x].__checked)
+                    {
+                        console.log(obj[x].checker);
+                        checkers = checkers + obj[x].checker + ",";
+                    }
+                }
+            }
+            frm.set_value('checkers', checkers);
+            frm.dirty();
+            if(frm.is_new())
+                frm.save();
+            else
+                frm.dirty();
+                frm.save();//("Update");
+            console.log("POST CHECKERS:"+checkers)
+            d.hide();
 
-    new frappe.ui.form.MultiSelectDialog({
-        doctype: "Account Mapping",
-        target: this.cur_frm,
-        setters: {
-            schedule_date: null,
-            status: 'Pending'
-        },
-        add_filters_group: 1,
-        date_field: "creation",
-        columns: ["name"],
-        get_query() {
-            return query_args;
-        },
-        action(selections) {
-            console.log(selections);
         }
     });
+
+    d.show();
 }
+
+
+function selectCheckersChild(frm, datas, add_title, add_filter_function, add_args, add_function, grid_name)
+{
+    let d = new frappe.ui.Dialog({
+        title: 'Select Checkers',
+        fields: [
+            {
+                label: 'Maker-checker is enabled for this action. Please Select verifiers from list below.',
+                fieldname: 'checkers',
+                fieldtype: 'Table',
+                cannot_add_rows: true,
+                in_place_edit: false,
+                cannot_add_rows: 1,
+                cannot_delete_rows : 1,
+                data: datas,
+                //data: [{checker:'Row1.1'}, {checker:'Row2.1'}, {checker:'Row3.1'}, {checker:'Row4.1'}, {checker:'Row5.1'}],
+                fields: [
+                    { fieldname: 'checker', fieldtype: 'Data', in_list_view: 1, read_only: 1, label: 'Checkers' }
+                ]
+            },
+        ],
+        size: 'small', // small, large, extra-large
+        primary_action_label: 'Submit',
+        primary_action(values) {
+            checkers = "";
+            for(let key in values)
+            {
+                //console.log(values[key]);
+                obj = values[key];
+                for(let x in obj)
+                {
+                    if(obj[x].__checked)
+                    {
+                        console.log(obj[x].checker);
+                        checkers = checkers + obj[x].checker + ": pending,";
+                        //frm.set_value('checkers', checkers);
+                        //frm.dirty();
+                        //frm.save();
+                    }
+                }
+            }
+            console.log("POST CHECKERS:"+checkers)
+            d.hide();
+            grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name, checkers);
+        }
+    });
+
+    d.show();
+}
+
+function selectCheckersChildDelete(frm, data, del_title, title, args, delete_function, grid_name, child_id)
+{
+    //No update an d so
+    let d = new frappe.ui.Dialog({
+        title: 'Select Checkers',
+        fields: [
+            {
+                label: 'Maker-checker is enabled for this action. Please Select verifiers from list below.',
+                fieldname: 'checkers',
+                fieldtype: 'Table',
+                cannot_add_rows: true,
+                in_place_edit: false,
+                cannot_add_rows: 1,
+                cannot_delete_rows : 1,
+                data: data,
+                //data: [{checker:'Row1.1'}, {checker:'Row2.1'}, {checker:'Row3.1'}, {checker:'Row4.1'}, {checker:'Row5.1'}],
+                fields: [
+                    { fieldname: 'checker', fieldtype: 'Data', in_list_view: 1, read_only: 1, label: 'Checkers' }
+                ]
+            },
+        ],
+        size: 'small', // small, large, extra-large
+        primary_action_label: 'Submit',
+        primary_action(values) {
+            checkers = "";
+            for(let key in values)
+            {
+                //console.log(values[key]);
+                obj = values[key];
+                for(let x in obj)
+                {
+                    if(obj[x].__checked)
+                    {
+                        console.log(obj[x].checker);
+                        checkers = checkers + obj[x].checker + ": pending,";
+                        //frm.set_value('checkers', checkers);
+                        //frm.dirty();
+                        //frm.save();
+                    }
+                }
+            }
+            console.log("POST CHECKERS:"+checkers)
+            args["checkers"] = checkers;
+            args["child_id"] = child_id;
+            d.hide();
+            frappe.call({
+                    method: delete_function,
+                    args: args,
+                    callback: function(r) {
+                        responseText = r.message
+
+                        if(args["checkers"].length >= 2 )
+                            frappe.msgprint("Deletion request has been successfully queued.");
+                        else
+                        {
+                            //frm.add_child(grid_name, args);
+                            frm.refresh_field(grid_name);
+                            //frm.dirty();
+                            //frm.save('Update');
+                        }
+                        //if(responseText=="success")
+                        //{
+                        //    row.remove();
+                        //    frm.refresh_field(grid_name);
+                        //}
+                    }
+                });
+        }
+    });
+
+    d.show();
+}
+
 
 function setup_grid(frm, grid_name, load_function, load_args, add_title, add_doctype, add_filter_function, add_field, add_function, add_args, delete_function, delete_args )
 {
@@ -287,14 +496,25 @@ function setup_grid(frm, grid_name, load_function, load_args, add_title, add_doc
 
     //=====================================LOADING GRIDS===================================================
             //Load debit accounts
+            var docname = row.doc.name;
+            args = JSON.parse(load_args);
+            for (let x in args) {
+               console.log(x + ": "+ args[x])
+               if(args[x].startsWith("frm.doc."))
+               {
+                    doc_field = args[x].replace("frm.doc.", "");
+                    args[x] = frm.doc[doc_field];
+               }
+            }
              frappe.call({
                     method: load_function,
-                    args: JSON.parse(load_args),
+                    args: args,
                     callback: function(r) {
                         responseText = r.message
                         let items = responseText
                         items.forEach(item=>{
                             frm.add_child(grid_name, item);
+                            console.log(item);
                         })
                         frm.refresh_field(grid_name);
                     }
@@ -307,7 +527,9 @@ function setup_grid(frm, grid_name, load_function, load_args, add_title, add_doc
 
                 grid.forEach(function(row) {
                     if (row && row.wrapper.find('.grid-row-check').is(':checked')) {
-                        var docname = row.doc.name;
+                        var docname = row.doc.child_id;
+                        //console.log(docname);
+                        //frappe.throw(docname)
                         args = JSON.parse(delete_args);
                         for (let x in args) {
                            console.log(x + ": "+ args[x])
@@ -316,17 +538,59 @@ function setup_grid(frm, grid_name, load_function, load_args, add_title, add_doc
                                 doc_field = args[x].replace("row.doc.", "");
                                 args[x] = row.doc[doc_field];
                            }
+                           if(args[x].startsWith("frm.doc."))
+                           {
+                                doc_field = args[x].replace("frm.doc.", "");
+                                args[x] = frm.doc[doc_field];
+                           }
                         }
                         console.log(args);
-                        frappe.call({
-                            method: delete_function,
-                            args: args,
+
+                        //doctype = doctypeName.replace(" ","");
+                        //console.log(frm.doc.name)
+                    frappe.call({
+                            method: "plexor.plexlib_web.check_parent_makerchecker_status",
+                            args: {form: frm.doc, type: "UPDATE"},
                             callback: function(r) {
                                 responseText = r.message
-                                if(responseText=="success")
+                                console.log("IS MAKE CHECKER:::"+responseText);
+                                if(responseText=="is_mc_req")
                                 {
-                                    row.remove();
-                                    frm.refresh_field(grid_name);
+                                    console.log("GETTING CHECKERS");
+                                    frappe.call({
+                                        method: "plexor.plexlib_web.get_checkers",
+                                        args: {},
+                                        callback: function(r) {
+                                            responseText = r.message
+                                            console.log(responseText);
+                                            data = "[";
+                                            for(let x in responseText)
+                                                {
+                                                    data = data + "{\"checker\":\""+responseText[x]+"\"},";
+                                                }
+                                                data = data.substring(0, data.length - 1);
+                                            data = data + "]";
+                                            console.log(data);
+                                            selectCheckersChildDelete(frm, JSON.parse(data), "Confirm Delete", "-", args, delete_function, grid_name, docname);
+                                        }
+                                    });
+                                }
+                                else  // No maker checker dialog required
+                                {
+                                    args["checkers"] = "";
+                                    args["child_id"] = docname;
+                                        frappe.call({
+                                            method: delete_function,
+                                            args: args,
+                                            callback: function(r) {
+                                                responseText = r.message
+                                                if(responseText=="success")
+                                                {
+                                                    row.remove();
+                                                    frm.refresh_field(grid_name);
+                                                }
+                                            }
+                                        });
                                 }
                             }
                         });
@@ -344,15 +608,52 @@ function setup_grid(frm, grid_name, load_function, load_args, add_title, add_doc
                         frappe.msgprint("You need to save this document first before you can add items on this table.");
                         return;
                     }
-                    if(add_doctype=="ALLOW_FORM" || add_doctype=="CUSTOM_FORM")
-                        grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name);
-                    else
-                        grid_addrow_select(frm, add_title, add_field, add_doctype, add_filter_function, add_args, add_function, grid_name);
+                    //doctype = doctypeName.replace(" ","");
+                    frappe.call({
+                            method: "plexor.plexlib_web.check_parent_makerchecker_status",
+                            args: {form: frm.doc, type: "UPDATE"},
+                            callback: function(r) {
+                                responseText = r.message
+                                console.log("IS MAKE CHECKER:::"+responseText);
+                                if(responseText=="is_mc_req")
+                                {
+                                    console.log("GETTING CHECKERS");
+                                    frappe.call({
+                                        method: "plexor.plexlib_web.get_checkers",
+                                        args: {},
+                                        callback: function(r) {
+                                            responseText = r.message
+                                            console.log(responseText);
+                                            data = "[";
+                                            for(let x in responseText)
+                                                {
+                                                    data = data + "{\"checker\":\""+responseText[x]+"\"},";
+                                                }
+                                                data = data.substring(0, data.length - 1);
+                                            data = data + "]";
+                                            console.log(data);
+                                            selectCheckersChild(frm, JSON.parse(data), add_title, add_filter_function, add_args, add_function, grid_name);
+                                        }
+                                    });
+                                }
+                                else  // No maker checker dialog required
+                                {
+                                    //if(add_doctype=="ALLOW_FORM" || add_doctype=="CUSTOM_FORM")
+                                        grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name, "");
+                                    //else
+                                    //    grid_addrow_select(frm, add_title, add_field, add_doctype, add_filter_function, add_args, add_function, grid_name);
+                                }
+                            }
+                        });
+                    //if(add_doctype=="ALLOW_FORM" || add_doctype=="CUSTOM_FORM")
+                    //    grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name);
+                    //else
+                    //    grid_addrow_select(frm, add_title, add_field, add_doctype, add_filter_function, add_args, add_function, grid_name);
             });
             frm.fields_dict[grid_name].grid.grid_buttons.find('.btn-custom').removeClass('btn-default').addClass('btn-primary');
 }
 
-function grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name)
+function grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name, checkers)
 {
     //console.log("HELLO 2.1");
     let d = new frappe.ui.Dialog({
@@ -373,7 +674,13 @@ function grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, 
                     doc_field = args[x].replace("frm.doc.", "");
                     args[x] = frm.doc[doc_field];
                }
+               else if(args[x].startsWith("THIS_FORM"))
+               {
+                    //doc_field = args[x].replace("frm.doc.", "");
+                    args[x] = values;
+               }
             }
+            args["checkers"] = checkers;
             console.log(args);
             frappe.call({
                 method: add_function,
@@ -382,8 +689,17 @@ function grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, 
                     responseText = r.message
                     if(responseText=="success")
                     {
-                        frm.add_child(grid_name, args);
-                        frm.refresh_field(grid_name);
+                        if(args["checkers"].length >= 2 )
+                            frappe.msgprint("The update has been submitted but will only appear when approval is complete.");
+                        else
+                        {
+                            frm.add_child(grid_name, args);
+                            frm.refresh_field(grid_name);
+                            //frm.dirty();
+                            //frm.save('Update');
+                            //frm.refresh();
+                            //frm.refresh_field(grid_name);
+                        }
                     }
                 }
             });
@@ -395,7 +711,7 @@ function grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, 
 
 function grid_addrow_select(frm, add_title, add_field, add_doctype, add_filter_function, add_args, add_function, grid_name)
 {
-        console.log("HELLO 1.1: "+ frm);
+        //console.log("HELLO 1.1: "+ frm);
         let d = new frappe.ui.Dialog({
         title: add_title,
         fields: [
@@ -426,6 +742,11 @@ function grid_addrow_select(frm, add_title, add_field, add_doctype, add_filter_f
                {
                     doc_field = args[x].replace("frm.doc.", "");
                     args[x] = frm.doc[doc_field];
+               }
+               else if(args[x].startsWith("THIS_FORM"))
+               {
+                    //doc_field = args[x].replace("frm.doc.", "");
+                    args[x] = values;
                }
             }
             console.log(args);

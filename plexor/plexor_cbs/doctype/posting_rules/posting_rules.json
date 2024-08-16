@@ -12,7 +12,8 @@
   "debit_accounts",
   "section_break_ki5x",
   "credit_accounts",
-  "sig_status"
+  "sig_status",
+  "checkers"
  ],
  "fields": [
   {
@@ -55,12 +56,18 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "sig_status"
+  },
+  {
+   "fieldname": "checkers",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "checkers"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_virtual": 1,
  "links": [],
- "modified": "2024-07-27 11:43:35.163307",
+ "modified": "2024-08-16 14:33:00.092364",
  "modified_by": "Administrator",
  "module": "Plexor CBS",
  "name": "Posting Rules",

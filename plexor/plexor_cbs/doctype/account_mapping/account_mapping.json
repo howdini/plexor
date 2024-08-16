@@ -9,7 +9,8 @@
   "mapper_name",
   "account",
   "description",
-  "sig_status"
+  "sig_status",
+  "checkers"
  ],
  "fields": [
   {
@@ -38,12 +39,18 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "sig_status"
+  },
+  {
+   "fieldname": "checkers",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "checkers"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_virtual": 1,
  "links": [],
- "modified": "2024-07-19 15:09:55.004145",
+ "modified": "2024-08-02 01:17:29.865543",
  "modified_by": "Administrator",
  "module": "Plexor CBS",
  "name": "Account Mapping",

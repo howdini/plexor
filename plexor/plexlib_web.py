@@ -1,9 +1,11 @@
 import mysql.connector
 from plexlib import mysql_connection, mysql_connection_MC, generate_sig
+from plex_crud import create_maker_checker, create_maker_checker_child
 import json
 from time import time as _time, sleep as _sleep
 from threading import Event
 import frappe
+import re
 
 @frappe.whitelist()
 def getDocModified(table, docname):
@@ -55,6 +57,64 @@ def reg_user():
     except:
         mydb.commit()
 
+@frappe.whitelist()
+def load_permissions():
+    print("LOADING ....")
+    user = str(frappe.session.user)
+    print(user)
+    role = get_role(user)
+    if(role=="FORBIDDEN"):
+        print("None banking user...")
+        return
+
+    # PERMISSION ROLES
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    sql = (f"SELECT * FROM plexRolesPermissions where `role`='{role}' order by permission")
+    print(sql)
+    cur.execute(sql)
+    rv = cur.fetchall()
+    if cur.rowcount > 0:
+        permission = ""
+        try:
+            for rec in rv:
+                permission = permission + "{\"" + rec["permission"] + "\"},"
+        except:
+            frappe.throw("Access Forbidden")
+        frappe.cache.set_value("setperms|"+frappe.session.user, permission);
+    else:
+        return "FORBIDDEN2"
+    print(frappe.cache.get_value("setperms|"+frappe.session.user))
+
+    # TABLE MAPPINGS
+    sql = (f"SELECT * FROM plexTableMapping order by `doctype`")
+    print(sql)
+    cur.execute(sql)
+    rv = cur.fetchall()
+    if cur.rowcount > 0:
+        doctype = ""
+        try:
+            for rec in rv:
+                doctype = doctype + "\"" + rec["doctype_name"] + "\" : { \"doctype\" : \"" + rec["doctype"] + "\", \"table_name\" : \"" + rec["table_name"] + "\"},"
+        except:
+            frappe.throw("Access Forbidden")
+        frappe.cache.set_value("TableMapping", "{"+doctype[:-1]+"}");
+    else:
+        return "FORBIDDEN2"
+    print(frappe.cache.get_value("TableMapping"))
+
+def get_role(user):
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    qry = "SELECT * FROM `plexUser` where `name`='" + str(user) + "' limit 1"
+    sql = (qry)
+    print(sql)
+    cur.execute(sql)
+    rv = cur.fetchone()
+    try:
+        return rv["role"]
+    except:
+        return "FORBIDDEN"
 
 @frappe.whitelist()
 def get_user_messages():
@@ -177,6 +237,15 @@ def get_users(doctype, txt, searchfield, start, page_len, filters):
     rv = cur.fetchall()
     return rv
 
+@frappe.whitelist()
+def get_checkers():
+    print("GETTING USERS :"+json.dumps(frappe.local.form_dict))
+    mydb = mysql_connection()
+    cur = mydb.cursor()
+    sql = "SELECT `name` FROM `plexUser` where `name` != '"+frappe.session.user+"' ORDER BY `name`"
+    cur.execute(sql)
+    rv = cur.fetchall()
+    return rv
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
@@ -213,6 +282,17 @@ def get_credit_account(doctype, txt, searchfield, start, page_len, filters):
     rv = cur.fetchall()
     return rv
 
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_permissions(doctype, txt, searchfield, start, page_len, filters):
+    print("GETTING get_permissions :"+json.dumps(frappe.local.form_dict))
+    mydb = mysql_connection()
+    cur = mydb.cursor()
+    sql = "SELECT `name` FROM `plexPermissions` where `name` LIKE '%"+txt+"%' ORDER BY `name`"
+    cur.execute(sql)
+    rv = cur.fetchall()
+    return rv
+
 def is_maker_checker(table, name):
     sql = "SELECT * FROM `"+table+"` WHERE `name`='"+name+"'"
     print(sql)
@@ -228,6 +308,7 @@ def is_maker_checker(table, name):
 
 @frappe.whitelist()
 def is_maker_checker_required(doctype, type):
+    doctype = doctype.replace(" ","")
     sql = "SELECT * FROM `plexSetting` WHERE `type`='MCHECKER' AND `codename`=UPPER(CONCAT('"+doctype+"','_"+type+"')) and `value`='yes' and `status`=1"
     print(sql)
     mydb = mysql_connection()
@@ -240,34 +321,212 @@ def is_maker_checker_required(doctype, type):
     else:
         return False
 
+@frappe.whitelist()
+def check_parent_makerchecker_status(form,  type):
+    #print("LOGGED")
+    data = json.loads(form)
+    doctype = data["doctype"]
+    parent =  data["name"]
+    #print(doctype)
+    table = get_current_table(doctype)
+    is_mc = is_maker_checker(table, parent)
+    is_mc_req = is_maker_checker_required(doctype, type)
+    if(is_mc==True and is_mc_req==True):
+        return "is_mc|is_mc_req"
+    elif(is_mc==True and is_mc_req==False):
+        return "is_mc"
+    elif(is_mc==False and is_mc_req==True):
+        return "is_mc_req"
+    elif(is_mc==False and is_mc_req==False):
+        return False
+    else:
+        return False
+
+def get_current_table(doctype):
+    mappings = frappe.cache.get_value("TableMapping")
+    print(mappings)
+    # Parse the JSON string into a Python dictionary
+    data = json.loads(mappings)
+
+    # Extract the username value for sammy
+    table_name = data[doctype.replace(" ","")]["table_name"]
+    print("FOUND TABLE::: "+table_name)
+    return table_name
+
+def get_current_doctype():
+    return "Settings"
+
+
+@frappe.whitelist()
+def post_mc_transaction(docname):
+    sql = "SELECT * FROM `plexMakerChecker` WHERE `name`='"+docname+"' "
+    print(sql)
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    cur.execute(sql)
+    rv = cur.fetchone()
+    print("FOUND RECORDS:  " + str(cur.rowcount))
+    table_name = get_tablename(rv["document"])
+    document_id = rv["document_id"]
+    if(rv["trx_type"]=="INSERT"):
+        qry = "INSERT INTO plexorCBS.`"+table_name+"` (select * from plexorCBS_MC.`"+table_name+"` where `name` = '"+document_id+"')"
+        print(qry)
+        cur.execute(qry)
+        mydb.commit()
+        #post_table_data(table_name, document_id, str(rv["values"]))
+        post_mc_transaction_children(document_id)
+    elif (rv["trx_type"]=="UPDATE"):
+        if(rv["parent"] is None):
+            print("PARENT update detected")
+        else:
+            print("CHILD Insert detected")
+    elif (rv["trx_type"] == "DELETE"):
+        print("DELETE logic required!!!")
+
+    qry2 = "UPDATE `plexMakerChecker` SET  posted_status=1, posted_result='ok' where `name` = '" + docname + "'"
+    print(qry2)
+    cur.execute(qry2)
+    mydb.commit()
+
+    qry3 = "INSERT INTO `plexMakerCheckerLogs` (SELECT * FROM `plexMakerChecker` where `name` = '" + docname + "')"
+    print(qry3)
+    cur.execute(qry3)
+    mydb.commit()
+
+    qry4 = "DELETE FROM `plexMakerChecker` where `name` = '" + docname + "'"
+    print(qry4)
+    cur.execute(qry4)
+    mydb.commit()
+    return "success"
+
+@frappe.whitelist()
+def post_mc_transaction_children(parent_id):
+    sql = "SELECT * FROM `plexMakerChecker` WHERE `parent`='"+parent_id+"' order by creation asc"
+    print(sql)
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    cur.execute(sql)
+    rv = cur.fetchall()
+    print("FOUND RECORDS:  " + str(cur.rowcount))
+    for rec in rv:
+        table_name = get_tablename(rec["document"])
+        #qry = "INSERT INTO plexorCBS.`"+table_name+"` (select * from plexorCBS_MC.`"+table_name+"` where `name` = '"+rec["document_id"]+"')"
+        #docname = rec["name"]
+        #print(qry)
+        #cur.execute(qry)
+        #mydb.commit()
+        post_table_data(table_name, rec["document_id"], str(rec["values"]))
+    qry2 = "UPDATE `plexMakerChecker` SET  posted_status=1, posted_result='ok' where `parent` = '" + parent_id + "'"
+    print(qry2)
+    cur.execute(qry2)
+    mydb.commit()
+
+    qry3 = "INSERT INTO `plexMakerCheckerLogs` (SELECT * FROM `plexMakerChecker` where `parent` = '" + parent_id + "')"
+    print(qry3)
+    cur.execute(qry3)
+    mydb.commit()
+
+    qry4 = "DELETE FROM `plexMakerChecker` where `parent` = '" + parent_id + "'"
+    print(qry4)
+    cur.execute(qry4)
+    mydb.commit()
+    return "success"
+
+
+def post_table_data(table_name, document_id, vals):
+    # docl_ist = ['creation', 'modified', 'modified_by', 'owner', 'docstatus', 'idx']
+    # Fix the JSON string format
+    # Replace single quotes with double quotes and ensure that the property names are quoted
+    corrected_json_string = re.sub(r"(\w+)\s*:", r'"\1":', vals)
+    corrected_json_string = corrected_json_string.replace("'", '"')
+    # Ensure the JSON string starts and ends with curly braces
+    corrected_json_string = f'{{{corrected_json_string.strip("{}")}}}'
+    vals = corrected_json_string
+    print("GETTING VALUES :: " + vals)
+    data = json.loads(vals)
+    keys = data.keys()
+    keys_list = list(keys)
+    qry = "INSERT INTO plexorCBS.`" + table_name + "` (select NULL, `creation`, `modified`, `modified_by`, `owner`, `docstatus`, `idx`"
+    for key in keys_list:
+        qry = qry + ", `" + key + "`"
+        # docl_ist.append(key)
+    qry = qry + ", `sig`, `sig_status` from plexorCBS_MC.`" + table_name + "` where `name` = '" + document_id + "')"
+    # docl_ist.append("sig")
+    # docl_ist.append("sig_status")
+
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    print(qry)
+    cur.execute(qry)
+    mydb.commit()
+
+def get_tablename(classname):
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    sql = ("SELECT * FROM plexTableMapping where `doctype_name`='" + classname + "' limit 1")
+    cur.execute(sql)
+    rv = cur.fetchone()
+    if cur.rowcount > 0:
+        try:
+            print("Found tablename: "+str(rv["table_name"]))
+            return rv["table_name"]
+        except:
+            frappe.throw("Error getting table_name from classname")
+    else:
+        return "---"
+
 def getDoctype(self):
     doctype = self.__name__
     print("DOCTYPE [[ " + doctype + " ]]")
     return doctype
 
+@frappe.whitelist()
+def db_query(sql, db):
+    rez = frappe.db.sql(sql)
+    return rez
 
 @frappe.whitelist()
-def save_posting_rule(postingRule, type, account):
-    print("Adding rule :" + account)
-    if(is_maker_checker("plexPostingRules",postingRule)):
+def save_role_permission(doc, role, account, checkers):
+    print("Adding rule :" + str(json.dumps(doc)))
+    pars = ["postingRule",
+            "type",
+            "account"]
+    #if(is_maker_checker("plexPostingRules",postingRule)):
+    maker_check = False
+    if(is_maker_checker("plexPostingRules",postingRule) or is_maker_checker_required("PostingRules", "UPDATE")):
+        maker_check = True
         mydb = mysql_connection_MC()
     else:
         mydb = mysql_connection()
     cur = mydb.cursor()
-    sql = "insert into plexPostingRulesAccounts(name, postingRule, type, account) values('" + postingRule.replace(' ','')+"_"+type.replace(' ','')+"_"+account.replace(' ','') + "', '" + postingRule +"', '" + type +"', '" + account +"') "
+    sql = "insert into plexPostingRulesAccounts(name, postingRule, type, account) values(NULL, '" + postingRule +"', '" + type +"', '" + account +"') "
     print(sql)
     try:
         cur.execute(sql)
+        child_id = cur.lastrowid
+        #child_id = mydb.insert_id()
         mydb.commit()
+        if(maker_check == True):
+            raw = "{\"postingRule\": \"" + postingRule + "\", \"type\": \"" + type + "\", \"account\": \"" + account + "\"}"
+            print(raw)
+            jdoc = json.loads(raw)
+            create_maker_checker_child("UPDATE", "PostingRulesAccounts", jdoc, pars, postingRule, child_id, checkers)
     except mysql.connector.Error as err:
         frappe.msgprint(err.msg)
         return "failed"
     return "success"
 
 @frappe.whitelist()
-def delete_posting_rule(postingRule, type, account):
+def delete_role_permission(role, account, checkers):
     print("Deleting rule :" + account)
-    mydb = mysql_connection()
+    if (is_maker_checker("plexPostingRules", postingRule) or is_maker_checker_required("PostingRules", "DELETE")):
+        raw = "{\"postingRule\": \"" + postingRule + "\", \"type\": \"" + type + "\", \"account\": \"" + account + "\"}"
+        print(raw)
+        jdoc = json.loads(raw)
+        create_maker_checker_child("DELETE", "PostingRulesAccounts", jdoc, pars, postingRule, checkers)
+        mydb = mysql_connection_MC()
+    else:
+        mydb = mysql_connection()
     cur = mydb.cursor()
     sql = "delete from plexPostingRulesAccounts where postingRule='" + postingRule +"' and type='" + type +"' and account='" + account +"' limit 1"
     print(sql)
@@ -280,11 +539,89 @@ def delete_posting_rule(postingRule, type, account):
     return "success"
 
 @frappe.whitelist()
+def get_role_permission(role):
+    print("Getting get_role_permission :" + role)
+    if (is_maker_checker("plexRoles", role)):
+        mydb = mysql_connection_MC()
+    else:
+        mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    sql = "SELECT `role`, `permission` FROM `plexRolesPermissions` where `role` = '"+role+"' ORDER BY `permission`"
+    print(sql)
+    cur.execute(sql)
+    rv = cur.fetchall()
+    return rv
+
+
+
+
+
+@frappe.whitelist()
+def save_posting_rule(doc, postingRule, type, account, checkers):
+    print("Adding rule :" + str(json.dumps(doc)))
+    pars = ["postingRule",
+            "type",
+            "account"]
+    #if(is_maker_checker("plexPostingRules",postingRule)):
+    maker_check = False
+    if(is_maker_checker("plexPostingRules",postingRule) or is_maker_checker_required("PostingRules", "UPDATE")):
+        maker_check = True
+        mydb = mysql_connection_MC()
+    else:
+        mydb = mysql_connection()
+    cur = mydb.cursor()
+    sql = "insert into plexPostingRulesAccounts(name, postingRule, type, account) values(NULL, '" + postingRule +"', '" + type +"', '" + account +"') "
+    print(sql)
+    try:
+        cur.execute(sql)
+        child_id = cur.lastrowid
+        #child_id = mydb.insert_id()
+        mydb.commit()
+        if(maker_check == True):
+            raw = "{\"postingRule\": \"" + postingRule + "\", \"type\": \"" + type + "\", \"account\": \"" + account + "\"}"
+            print(raw)
+            jdoc = json.loads(raw)
+            create_maker_checker_child("UPDATE", "PostingRulesAccounts", jdoc, pars, postingRule, child_id, checkers)
+    except mysql.connector.Error as err:
+        frappe.msgprint(err.msg)
+        return "failed"
+    return "success"
+
+@frappe.whitelist()
+def delete_posting_rule(postingRule, type, account, checkers, child_id):
+    print("Deleting rule :" + account + "   Checkers: "+checkers)
+    pars = ["postingRule",
+            "type",
+            "account"]
+    if (is_maker_checker("plexPostingRules", postingRule) or is_maker_checker_required("PostingRules", "DELETE")):
+        raw = "{\"postingRule\": \"" + postingRule + "\", \"type\": \"" + type + "\", \"account\": \"" + account + "\"}"
+        print(raw)
+        jdoc = json.loads(raw)
+        create_maker_checker_child("DELETE", "PostingRulesAccounts", jdoc, pars, postingRule, child_id, checkers)
+        mydb = mysql_connection_MC()
+        return  #Cannot proceed until approved
+    else:
+        mydb = mysql_connection()
+    cur = mydb.cursor()
+    sql = "delete from plexPostingRulesAccounts where name='" + child_id +"' limit 1"
+    print(sql)
+    try:
+        cur.execute(sql)
+        mydb.commit()
+    except mysql.connector.Error as err:
+        frappe.msgprint(err.msg)
+        return "failed"
+    return "success"
+
+@frappe.whitelist()
 def get_posting_rule(postingRule, type):
     print("Getting postingRule :" + postingRule)
-    mydb = mysql_connection()
+    if (is_maker_checker("plexPostingRules", postingRule)):
+        mydb = mysql_connection_MC()
+    else:
+        mydb = mysql_connection()
     cur = mydb.cursor(dictionary=True)
-    sql = "SELECT postingRule, type, account FROM `plexPostingRulesAccounts` where `postingRule` = '"+postingRule+"' and `type`='"+type+"' ORDER BY `name`"
+    sql = "SELECT name as child_id, postingRule, type, account FROM `plexPostingRulesAccounts` where `postingRule` = '"+postingRule+"' and `type`='"+type+"' ORDER BY `name`"
     print(sql)
     cur.execute(sql)
     rv = cur.fetchall()

@@ -1,18 +1,27 @@
-frappe.ui.form.on("Settings", {
+doctypeName = "Settings";
 
+frappe.ui.form.on("Settings", {
          refresh: function(frm) {
                 frm.disable_save();
-                frm.add_custom_button('Save', () => {
-                    plexSave(frm);
+                frm.add_custom_button('Save <div style=\"font-size: 50%;\"><b>plexor</b></div>', () => {
+                    delete frm.doc.credit_accounts;
+                    delete frm.doc.debit_accounts;
+                    plexSave(frm,"Posting Rules");
                 }).removeClass('btn-default').addClass('btn-primary').css({'color':'white','font-weight': 'normal'});
          },
         onload: function(frm) {
+            add_grids(frm);
+        },
+        after_save: function(frm) {
+            add_grids(frm);
+        }
+});
 
-//      setup_grid(frm, grid_name,
-//                    load_function, load_args,
-//                    add_title, add_doctype, add_filter_function,
-//                    add_field, add_function, add_args,
-//                    delete_function, delete_args )
+
+
+function add_grids(frm)
+{
+            row = frm;
             add_filter_function = [
                                         {
                                             label: 'Category',
@@ -70,11 +79,11 @@ frappe.ui.form.on("Settings", {
                              "Enter New Setting And Value", "CUSTOM_FORM", add_filter_function,
                              "name", "plexor.plexlib_web.save_type_settings", JSON.stringify({type:  "values.type", setting: "values.setting", codename: "values.codename", value: "values.value", status: "values.status"}),
                              "plexor.plexlib_web.delete_type_settings", JSON.stringify({codename: "row.doc.codename"}));
-        }
-});
+            document.getElementsByClassName('indicator-pill')[0].remove();
+}
 
 
 frappe.ui.form.on("plexSettingValue", "status", function(frm, cdt, cdn) {
-    save_grid_form(frm);
+    //save_grid_form(frm);
 });
 

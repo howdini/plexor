@@ -6,3 +6,12 @@
 
 // 	},
 // });
+frappe.ui.form.on("Account Mapping", {
+
+         refresh: function(frm) {
+                frm.disable_save();
+                frm.add_custom_button('Submit', () => {
+                    plexSave(frm,"Account Mapping");
+                }).removeClass('btn-default').addClass('btn-primary').css({'color':'white','font-weight': 'normal'});
+         }
+});

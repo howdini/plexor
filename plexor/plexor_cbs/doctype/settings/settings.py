@@ -3,6 +3,7 @@ from plex_crud import crud_db_insert, crud_load_from_db, crud_db_update, crud_de
 from frappe.model.document import Document
 
 class Settings(Document):
+	doctypeName = "Settings"
 	table = "plexSettingType"
 	pars = ["title",
 			"general",
@@ -34,7 +35,8 @@ class Settings(Document):
 
 	@staticmethod
 	def get_list(args):
-		return crud_get_list(args, Settings)
+		query = "SELECT * FROM `" + Settings.table + "` ORDER BY creation DESC"
+		return crud_get_list(args, Settings, query)
 
 	@staticmethod
 	def get_count(args):

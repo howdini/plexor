@@ -3,6 +3,7 @@ from frappe.model.document import Document
 
 class PostingRules(Document):
 	table = "plexPostingRules"
+	doctypeName = "Posting Rules"
 	pars = [
 			"title",
 			"description"]
@@ -27,7 +28,8 @@ class PostingRules(Document):
 
 	@staticmethod
 	def get_list(args):
-		return crud_get_list(args, PostingRules)
+		query = "SELECT * FROM `" + PostingRules.table + "` ORDER BY creation DESC"
+		return crud_get_list(args, PostingRules, query)
 
 	@staticmethod
 	def get_count(args):

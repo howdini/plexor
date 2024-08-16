@@ -3,6 +3,7 @@ from frappe.model.document import Document
 
 class PostingRulesAccounts(Document):
 	table = "plexPostingRulesAccounts"
+	doctypeName = "Posting Rules"
 	pars = ["postingRule",
 			"type",
 			"account"]

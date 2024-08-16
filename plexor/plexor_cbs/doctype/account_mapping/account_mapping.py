@@ -4,13 +4,14 @@ from frappe.model.document import Document
 
 class AccountMapping(Document):
 	table = "plexAccountMapping"
+	doctypeName = "Account Mapping"
 	pars = ["mapper_name",
 			"account",
 			"description"]
 
 	# type, min, max, allowed,
 	validator = ["alphanumericwithdash,1,50",
-				 "alphanumericwithdash,1,50",
+				 "any,1,50",
 				 "alphanumericwithdash,1,100"]
 
 
@@ -28,7 +29,8 @@ class AccountMapping(Document):
 
 	@staticmethod
 	def get_list(args):
-		return crud_get_list(args,AccountMapping)
+		query = "SELECT * FROM `" + AccountMapping.table + "` ORDER BY creation DESC"
+		return crud_get_list(args,AccountMapping, query)
 
 	@staticmethod
 	def get_count(args):

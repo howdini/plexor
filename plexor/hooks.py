@@ -6,6 +6,8 @@ app_email = "borealis@gmail.com"
 app_license = "mit"
 # required_apps = []
 
+on_session_creation = "plexor.plexlib_web.load_permissions"
+
 # Includes in <head>
 # ------------------
 

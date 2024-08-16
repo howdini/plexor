@@ -125,7 +125,11 @@ CREATE TABLE `plexAccountMapping` (
 /*Data for the table `plexAccountMapping` */
 
 insert  into `plexAccountMapping`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`mapper_name`,`account`,`description`,`sig`,`sig_status`) values ('Cashier Deposits','2024-07-19 15:10:36.193717','2024-07-19 15:10:36.193717','Administrator','Administrator',0,0,'Cashier Deposits','Cash - BSLD','Cashier deposit container','fb933124e1062a2e10ecf2c3aa7c95bc0b3754de6f738b4c2e908f8ef0a678ef',0);
+insert  into `plexAccountMapping`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`mapper_name`,`account`,`description`,`sig`,`sig_status`) values ('Loan Charges','2024-08-02 00:56:36.872177','2024-08-02 00:56:36.872177','Administrator','Administrator',0,0,'Loan Charges','Debtors - BSL','Loan charges account','9e2acbfb2447467a41b2ac23f03959dc181631e65b97b722ccd43568242790b6',0);
+insert  into `plexAccountMapping`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`mapper_name`,`account`,`description`,`sig`,`sig_status`) values ('Loan Penalty','2024-08-02 00:35:47.253038','2024-08-02 00:35:47.253038','Administrator','Administrator',0,0,'Loan Penalty','Cash - BSL','Account designed for loans','a01b09075ef5014ee10a46725cacbe651c1daa094e3c5eac57f5a9253a56493d',0);
 insert  into `plexAccountMapping`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`mapper_name`,`account`,`description`,`sig`,`sig_status`) values ('Member Payments','2024-07-19 15:11:40.273312','2024-07-19 15:11:40.273312','Administrator','Administrator',0,0,'Member Payments','Accounts Payable - BSL','Money owed to clients','07c4f935bbbe8616db44d80d398f22512d4556cefb0d1341b7d6ec68aaa4de97',0);
+insert  into `plexAccountMapping`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`mapper_name`,`account`,`description`,`sig`,`sig_status`) values ('Penalties','2024-08-05 09:14:48.367352','2024-08-05 09:14:48.367352','Administrator','Administrator',0,0,'Penalties','Freight and Forwarding Charges - BSL','Penalties','3f3ef4d2346fc56fd4f11156ad3937e1ca2a0301596e71936954f9cd91210f7e',0);
+insert  into `plexAccountMapping`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`mapper_name`,`account`,`description`,`sig`,`sig_status`) values ('Refunds','2024-08-05 14:39:48.603220','2024-08-05 14:39:48.603220','Administrator','Administrator',0,0,'Refunds','Creditors - BSL','Refund','ec1e0b972a5eac40425cd650b6902beaeba7b62a649c1b4eff8a9bda3a3907db',0);
 
 /*Table structure for table `plexAddress` */
 
@@ -1480,15 +1484,19 @@ CREATE TABLE `plexMakerChecker` (
   `creator` varchar(140) DEFAULT NULL,
   `stamp` datetime(6) DEFAULT NULL,
   `document` varchar(200) DEFAULT NULL,
+  `document_id` varchar(140) DEFAULT NULL,
   `trx_type` varchar(20) DEFAULT NULL,
   `values` varchar(2500) DEFAULT NULL,
-  `checkers` varchar(250) DEFAULT NULL,
+  `checkers` varchar(250) NOT NULL,
   `check_status` int(8) NOT NULL DEFAULT 0,
   `checker_comments` varchar(1500) DEFAULT NULL,
-  `action_result` varchar(500) DEFAULT NULL,
+  `posted_status` int(11) DEFAULT 0,
+  `posted_result` varchar(500) DEFAULT NULL,
+  `parent` varchar(140) DEFAULT NULL,
   `sig` char(64) DEFAULT NULL,
   `sig_status` int(11) DEFAULT 0,
   PRIMARY KEY (`name`),
+  UNIQUE KEY `makercheckerUniquer` (`document`,`document_id`),
   KEY `modified` (`modified`),
   KEY `makercheckermodified` (`modified_by`),
   KEY `makercheckerowner` (`owner`),
@@ -1500,13 +1508,15 @@ CREATE TABLE `plexMakerChecker` (
 
 /*Data for the table `plexMakerChecker` */
 
-insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`action_result`,`sig`,`sig_status`) values ('jjkjjj','2024-07-31 12:06:57.781075','2024-07-31 12:06:57.781075','Administrator','Administrator',0,0,'Administrator','2024-07-31 12:06:57.781075','PostingRules','INSERT','{title :\"jjkjjj\",\n description :\"jjjjjj\"}','',0,NULL,NULL,'',0);
-insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`action_result`,`sig`,`sig_status`) values ('ooooo','2024-07-31 12:13:51.492430','2024-07-31 12:13:51.492430','Administrator','Administrator',0,0,'Administrator','2024-07-31 12:13:51.492430','PostingRules','INSERT','{title :\"ooooo\",\n description :\"pppppp\"}','',0,NULL,NULL,'',0);
-insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`action_result`,`sig`,`sig_status`) values ('rrrrrrr','2024-07-31 12:16:45.274052','2024-07-31 12:16:45.274052','Administrator','Administrator',0,0,'Administrator','2024-07-31 12:16:45.274052','PostingRules','INSERT','{title :\"rrrrrrr\",\n description :\"eeeeee\"}','',0,NULL,NULL,'',0);
-insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`action_result`,`sig`,`sig_status`) values ('rrrrrrrr','2024-07-31 12:08:12.409041','2024-07-31 12:08:12.409041','Administrator','Administrator',0,0,'Administrator','2024-07-31 12:08:12.409041','PostingRules','INSERT','{title :\"rrrrrrrr\",\n description :\"tttttttttttt\"}','',0,NULL,NULL,'',0);
-insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`action_result`,`sig`,`sig_status`) values ('rwer','2024-07-31 03:27:49.880663','2024-07-31 03:27:49.880663','Administrator','Administrator',0,0,'Administrator','2024-07-31 03:27:49.880663','PostingRules','INSERT','{title :\"rwer\",\n description :\"erwer\"}','',0,NULL,NULL,'',0);
-insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`action_result`,`sig`,`sig_status`) values ('tytytyty','2024-07-31 12:15:24.334100','2024-07-31 12:15:24.334100','Administrator','Administrator',0,0,'Administrator','2024-07-31 12:15:24.334100','PostingRules','INSERT','{title :\"tytytyty\",\n description :\"tytytytyt\"}','',0,NULL,NULL,'',0);
-insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`action_result`,`sig`,`sig_status`) values ('wwwwwwww','2024-07-31 12:10:55.119735','2024-07-31 12:10:55.119735','Administrator','Administrator',0,0,'Administrator','2024-07-31 12:10:55.119735','PostingRules','INSERT','{title :\"wwwwwwww\",\n description :\"wwwwwwwwww\"}','',0,NULL,NULL,'',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1508152024162926245363','2024-08-15 16:29:26.237541','2024-08-16 12:08:35.387604','Administrator','admin@plexor.com',0,0,'admin@plexor.com','2024-08-15 16:29:26.237541','PostingRules','Test 2','INSERT','{title :\"Test 2\",\n description :\"test 2\"}','{Administrator: approved}',2,'undefined\n\nadmin@plexor.com @16/8/2024 6:6:0\n  -  Approved this update.\n\nadmin@plexor.com @16/8/2024 6:9:1\n  -  Approved this update.\n\nadmin@plexor.com @16/8/2024 6:9:33\n  -  Approved this update.\n\nadmin@plexor.com @16/8/2024 6:10:37\n  -  Approved this update.\n\nAdministrator @16/8/2024 6:11:23\n  -  Approved this update.\n\nAdministrator @16/8/2024 11:15:4\n  -  Approved this update.\n\nAdministrator @16/8/2024 11:37:41\n  -  Approved this update.\n\nAdministrator @16/8/2024 11:37:58\n  -  Approved this update.\n\nAdministrator @16/8/2024 11:41:13\n  -  Approved this update.\n\nAdministrator @16/8/2024 11:42:35\n  -  Approved this update.\n\nAdministrator @16/8/2024 11:44:12\n  -  Approved this update.\n\nAdministrator @16/8/2024 11:54:29\n  -  Approved this update.\n\nAdministrator @16/8/2024 11:55:33\n  -  Approved this update.\n\nAdministrator @16/8/2024 11:55:44\n  -  Approved this update.\n\nAdministrator @16/8/2024 11:57:30\n  -  Approved this update.\n\nAdministrator @16/8/2024 12:8:35\n  -  Approved this update.',0,'None',NULL,'357664fe558433042f37d85b421b749067fb8ba6aa095cd4f682d17f0c74d1c3',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1508152024162935728923','2024-08-15 16:29:35.000000','2024-08-15 16:29:35.000000','admin@plexor.com','admin@plexor.com',0,1,'admin@plexor.com','2024-08-15 16:29:35.000000','PostingRulesAccounts','39','UPDATE','{postingRule :\"Test 2\",\n type :\"Debit\",\n account :\"Cashier Deposits\"}','{Administrator: pending,\n}',0,NULL,0,NULL,'Test 2','',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1508152024162940896871','2024-08-15 16:29:40.000000','2024-08-15 16:29:40.000000','admin@plexor.com','admin@plexor.com',0,1,'admin@plexor.com','2024-08-15 16:29:40.000000','PostingRulesAccounts','40','UPDATE','{postingRule :\"Test 2\",\n type :\"Debit\",\n account :\"Loan Charges\"}','{Administrator: pending,\n}',0,NULL,0,NULL,'Test 2','',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1608162024130902033376','2024-08-16 12:10:44.884885','2024-08-16 13:09:02.012595','Administrator','Administrator',0,0,'Administrator','2024-08-16 12:10:44.884885','PostingRules','newPosst','UPDATE','{title :\"newPosst\",\n description :\"newPos\"}','{admin@plexor.com: pending,\n}',0,NULL,0,NULL,NULL,'',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1608162024134219461915','2024-08-16 13:42:19.445507','2024-08-16 13:42:19.445507','admin@plexor.com','admin@plexor.com',0,0,'admin@plexor.com','2024-08-16 13:42:19.445507','PostingRules','Fromadmin2','INSERT','{title :\"Fromadmin2\",\n description :\"Fromadmin2\"}','{Administrator: pending,\n}',0,NULL,0,NULL,NULL,'',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1608162024134238278756','2024-08-16 13:42:38.000000','2024-08-16 13:42:38.000000','admin@plexor.com','admin@plexor.com',0,1,'admin@plexor.com','2024-08-16 13:42:38.000000','PostingRulesAccounts','45','UPDATE','{postingRule :\"Fromadmin2\",\n type :\"Debit\",\n account :\"Cashier Deposits\"}','{Administrator: pending,\n}',0,NULL,0,NULL,'Fromadmin2','',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1608162024134242317303','2024-08-16 13:42:42.000000','2024-08-16 13:42:42.000000','admin@plexor.com','admin@plexor.com',0,1,'admin@plexor.com','2024-08-16 13:42:42.000000','PostingRulesAccounts','46','UPDATE','{postingRule :\"Fromadmin2\",\n type :\"Debit\",\n account :\"Loan Charges\"}','{Administrator: pending,\n}',0,NULL,0,NULL,'Fromadmin2','',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1608162024134247686624','2024-08-16 13:42:47.000000','2024-08-16 13:42:47.000000','admin@plexor.com','admin@plexor.com',0,1,'admin@plexor.com','2024-08-16 13:42:47.000000','PostingRulesAccounts','47','UPDATE','{postingRule :\"Fromadmin2\",\n type :\"Credit\",\n account :\"Loan Penalty\"}','{Administrator: pending,\n}',0,NULL,0,NULL,'Fromadmin2','',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1608162024134253871672','2024-08-16 13:42:53.000000','2024-08-16 13:42:53.000000','admin@plexor.com','admin@plexor.com',0,1,'admin@plexor.com','2024-08-16 13:42:53.000000','PostingRulesAccounts','48','UPDATE','{postingRule :\"Fromadmin2\",\n type :\"Credit\",\n account :\"Member Payments\"}','{Administrator: pending,\n}',0,NULL,0,NULL,'Fromadmin2','',0);
 
 /*Table structure for table `plexMakerCheckerLogs` */
 
@@ -1523,25 +1533,35 @@ CREATE TABLE `plexMakerCheckerLogs` (
   `creator` varchar(140) DEFAULT NULL,
   `stamp` datetime(6) DEFAULT NULL,
   `document` varchar(200) DEFAULT NULL,
+  `document_id` varchar(140) DEFAULT NULL,
   `trx_type` varchar(20) DEFAULT NULL,
   `values` varchar(2500) DEFAULT NULL,
-  `checkers` varchar(250) DEFAULT NULL,
+  `checkers` varchar(250) NOT NULL,
   `check_status` int(8) NOT NULL DEFAULT 0,
   `checker_comments` varchar(1500) DEFAULT NULL,
-  `action_result` varchar(500) DEFAULT NULL,
+  `posted_status` int(11) DEFAULT 0,
+  `posted_result` varchar(500) DEFAULT NULL,
+  `parent` varchar(140) DEFAULT NULL,
   `sig` char(64) DEFAULT NULL,
   `sig_status` int(11) DEFAULT 0,
   PRIMARY KEY (`name`),
   KEY `modified` (`modified`),
-  KEY `makercheckermodifiedl` (`modified_by`),
-  KEY `makercheckerownerl` (`owner`),
-  KEY `makercheckercreatorl` (`creator`),
-  CONSTRAINT `makercheckercreatorl` FOREIGN KEY (`creator`) REFERENCES `plexUser` (`name`),
-  CONSTRAINT `makercheckermodifiedl` FOREIGN KEY (`modified_by`) REFERENCES `plexUser` (`name`),
-  CONSTRAINT `makercheckerownerl` FOREIGN KEY (`owner`) REFERENCES `plexUser` (`name`)
+  KEY `makercheckermodified` (`modified_by`),
+  KEY `makercheckerowner` (`owner`),
+  KEY `makercheckercreator` (`creator`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `plexMakerCheckerLogs` */
+
+insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1308132024121137680883','2024-08-07 11:43:24.982624','2024-08-13 12:11:37.646717','Administrator','Administrator',0,0,'Administrator','2024-08-07 11:43:24.982624','PostingRules','Bad Credit','UPDATE','{title :\"Bad Credit\",\n description :\"Bad Creditsasfsd\"}','{admin@plexor.com: pending,\n}',0,NULL,1,'ok',NULL,'',0);
+insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1308132024130748402388','2024-08-13 13:07:48.000000','2024-08-13 13:07:48.000000','Administrator','Administrator',0,1,'Administrator','2024-08-13 13:07:48.000000','PostingRulesAccounts','35','UPDATE','{postingRule :\"Bad Credit\",\n type :\"Debit\",\n account :\"Member Payments\"}','{admin@plexor.com: pending,}',0,NULL,1,'ok','Bad Credit','',0);
+insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1608162024121044896228','2024-08-16 12:10:44.884885','2024-08-16 12:56:29.510943','admin@plexor.com','Administrator',0,0,'Administrator','2024-08-16 12:10:44.884885','PostingRules','newPosst','INSERT','{title :\"newPosst\",\n description :\"newPosst\"}','{admin@plexor.com: approved}',2,'undefined\n\nadmin@plexor.com @16/8/2024 12:16:34\n  -  Approved this update.\n\nadmin@plexor.com @16/8/2024 12:56:29\n  -  Approved this update.',1,'ok',NULL,'31c3949215ff2b27d85357ab2670ea673a5a269b2ade0bdaa869c5d262accebd',0);
+insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1608162024121051777670','2024-08-16 12:10:51.000000','2024-08-16 12:10:51.000000','Administrator','Administrator',0,1,'Administrator','2024-08-16 12:10:51.000000','PostingRulesAccounts','41','UPDATE','{postingRule :\"newPosst\",\n type :\"Debit\",\n account :\"Cashier Deposits\"}','{admin@plexor.com: pending,\n}',0,NULL,1,'ok','newPosst','',0);
+insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1608162024121056403716','2024-08-16 12:10:56.000000','2024-08-16 12:10:56.000000','Administrator','Administrator',0,1,'Administrator','2024-08-16 12:10:56.000000','PostingRulesAccounts','42','UPDATE','{postingRule :\"newPosst\",\n type :\"Debit\",\n account :\"Loan Charges\"}','{admin@plexor.com: pending,\n}',0,NULL,1,'ok','newPosst','',0);
+insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1608162024121101193102','2024-08-16 12:11:01.000000','2024-08-16 12:11:01.000000','Administrator','Administrator',0,1,'Administrator','2024-08-16 12:11:01.000000','PostingRulesAccounts','43','UPDATE','{postingRule :\"newPosst\",\n type :\"Credit\",\n account :\"Loan Penalty\"}','{admin@plexor.com: pending,\n}',0,NULL,1,'ok','newPosst','',0);
+insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1608162024121108498046','2024-08-16 12:11:08.000000','2024-08-16 12:11:08.000000','Administrator','Administrator',0,1,'Administrator','2024-08-16 12:11:08.000000','PostingRulesAccounts','44','UPDATE','{postingRule :\"newPosst\",\n type :\"Credit\",\n account :\"Member Payments\"}','{admin@plexor.com: pending,\n}',0,NULL,1,'ok','newPosst','',0);
+insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1608162024122154832590','2024-08-16 12:21:54.000000','2024-08-16 12:21:54.000000','Administrator','Administrator',0,1,'Administrator','2024-08-16 12:21:54.000000','PostingRulesAccounts','53','DELETE','{postingRule :\"newPosst\",\n type :\"Debit\",\n account :\"Loan Charges\"}','{admin@plexor.com: pending,}',0,NULL,1,'ok','newPosst','',0);
+insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('1608162024122203946293','2024-08-16 12:22:03.000000','2024-08-16 12:22:03.000000','Administrator','Administrator',0,1,'Administrator','2024-08-16 12:22:03.000000','PostingRulesAccounts','55','DELETE','{postingRule :\"newPosst\",\n type :\"Credit\",\n account :\"Member Payments\"}','{admin@plexor.com: pending,}',0,NULL,1,'ok','newPosst','',0);
 
 /*Table structure for table `plexPayment` */
 
@@ -1569,6 +1589,48 @@ CREATE TABLE `plexPayment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `plexPayment` */
+
+/*Table structure for table `plexPermissions` */
+
+DROP TABLE IF EXISTS `plexPermissions`;
+
+CREATE TABLE `plexPermissions` (
+  `name` varchar(140) NOT NULL,
+  `creation` datetime(6) DEFAULT NULL,
+  `modified` datetime(6) DEFAULT NULL,
+  `modified_by` varchar(140) DEFAULT NULL,
+  `owner` varchar(140) DEFAULT NULL,
+  `docstatus` int(1) NOT NULL DEFAULT 0,
+  `idx` int(8) NOT NULL DEFAULT 0,
+  `title` varchar(40) DEFAULT NULL,
+  `description` varchar(140) DEFAULT NULL,
+  `sig` varchar(64) DEFAULT NULL,
+  `sig_status` int(11) DEFAULT 0,
+  PRIMARY KEY (`name`),
+  UNIQUE KEY `permissiontitle` (`title`),
+  KEY `modified` (`modified`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `plexPermissions` */
+
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Account Mapping - View',NULL,NULL,NULL,NULL,0,0,'Account Mapping - View',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Maker-Checker - Edit',NULL,NULL,NULL,NULL,0,0,'Maker-Checker - Edit',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Maker-Checker - View',NULL,NULL,NULL,NULL,0,0,'Maker-Checker - View',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Posting Rules - Add',NULL,NULL,NULL,NULL,0,0,'Posting Rules - Add',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Posting Rules - Approve',NULL,NULL,NULL,NULL,0,0,'Posting Rules - Approve',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Posting Rules - Delete',NULL,NULL,NULL,NULL,0,0,'Posting Rules - Delete',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Posting Rules - Edit',NULL,NULL,NULL,NULL,0,0,'Posting Rules - Edit',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Posting Rules - View',NULL,NULL,NULL,NULL,0,0,'Posting Rules - View',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Settings - Add',NULL,NULL,NULL,NULL,0,0,'Settings - Add',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Settings - Approve',NULL,NULL,NULL,NULL,0,0,'Settings - Approve',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Settings - Delete',NULL,NULL,NULL,NULL,0,0,'Settings - Delete',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Settings - Edit',NULL,NULL,NULL,NULL,0,0,'Settings - Edit',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Settings - View',NULL,NULL,NULL,NULL,0,0,'Settings - View',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('User Roles - Add',NULL,NULL,NULL,NULL,0,0,'User Roles - Add',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('User Roles - Approve',NULL,NULL,NULL,NULL,0,0,'User Roles - Approve',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('User Roles - Delete',NULL,NULL,NULL,NULL,0,0,'User Roles - Delete',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('User Roles - Edit',NULL,NULL,NULL,NULL,0,0,'User Roles - Edit',NULL,NULL,0);
+insert  into `plexPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('User Roles - View',NULL,NULL,NULL,NULL,0,0,'User Roles - View',NULL,NULL,0);
 
 /*Table structure for table `plexPostingJournals` */
 
@@ -1625,29 +1687,18 @@ CREATE TABLE `plexPostingRules` (
 
 /*Data for the table `plexPostingRules` */
 
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('asasasas','2024-07-31 02:08:24.870729','2024-07-31 02:08:24.870729','Administrator','Administrator',0,0,'asasasas','qqqqqq','a073c240dc0abd3f88304576e8fe7675eecedc1554a148f417fee5a3ed2818a2',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('bbb','2024-07-30 16:22:12.952595','2024-07-30 16:22:12.952595','Administrator','Administrator',0,0,'bbb','vbb','3284bf8d4b51f612884c810a6d90cab94d53e8726139b88f3425166d8aed4151',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Cash Deposit','2024-07-24 13:15:08.235020','2024-07-29 04:54:29.069395','Administrator','Administrator',0,0,'Cash Deposit','Cash deposit received by tellerssddsf','71480299f6244f7b120fdbc6aad94cd35c289da60602050053f4fb5384a4f4ac',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('cccc','2024-07-30 16:17:48.406475','2024-07-30 16:17:48.406475','Administrator','Administrator',0,0,'cccc','vvv','e318ef8409bc4f00ebb95510c5bddabae560f26f879ab64615aa62772c5193e4',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('ccqqq','2024-07-30 16:23:59.101646','2024-07-30 16:23:59.101646','Administrator','Administrator',0,0,'ccqqq','dsfdfdds','1247e23913b089feb0da645dc71b91319cbe5bfad90d6b6066a25ef18d8d57f8',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('dsa','2024-07-30 15:46:03.621550','2024-07-30 15:46:03.621550','Administrator','Administrator',0,0,'dsa','afsdf','ba41a063f8455101e3e2983e72f211a9b21d8bc55a854503d1b785db59bc2409',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('fafddddd','2024-07-30 16:07:05.869571','2024-07-30 16:07:05.869571','Administrator','Administrator',0,0,'fafddddd','fffd','9d6a1fbc98c2ba5b6b5cc9fd30b3ea1c8cb673030e6d815e6ae42e5505da362b',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('gggggg','2024-07-30 16:11:01.549890','2024-07-30 16:11:01.549890','Administrator','Administrator',0,0,'gggggg','ddddd','e1ed14bbca7e460096380ac7d926ee308af80cb438fed07454863bbb2e3e5a73',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Loan Penalty','2024-07-30 12:44:44.376352','2024-07-30 12:44:44.376352','Administrator','Administrator',0,0,'Loan Penalty','Loan penalty','2253a3446dc9ef6e514b678c707673bbc5cdedf0848db90f27d4e602d11122b0',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('mm','2024-07-30 16:27:44.908552','2024-07-30 16:27:44.908552','Administrator','Administrator',0,0,'mm','mmm','ddd1e3cf9ae29a5d873a90fb295d8b48cddb54e9b92661d98926d9fa39b4a174',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('pppp','2024-07-30 16:29:51.910469','2024-07-30 16:29:51.910469','Administrator','Administrator',0,0,'pppp','opop','759a8a231df84bf20fbd5a847a3f7923e00410866bab8992a2665d05e3d3619e',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('qqqqqq','2024-07-30 16:16:17.595164','2024-07-30 16:16:17.595164','Administrator','Administrator',0,0,'qqqqqq','aaaaa','5245e91916aa8dc6d8e30c716055f743c2e8390a93cdc7b1375b8d67bc9e92e0',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('sdfsd','2024-07-30 15:02:59.453170','2024-07-30 15:02:59.453170','Administrator','Administrator',0,0,'sdfsd','fsdfsdf','202ac3ad2edc5f3dffe56ee9efb12c090ec1ab0efb9af62d96073a8a1f392571',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Teller Float','2024-07-30 12:38:27.434520','2024-07-30 12:38:27.434520','Administrator','Administrator',0,0,'Teller Float','Teller Float','ea46581001419bae2a646a568d9c3af0d79b5461941de6c2ffcc09bfcac68130',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('test','2024-07-27 11:42:52.595476','2024-07-27 14:27:14.512441','Administrator','Administrator',0,0,'test','test','10611571a940d147f200b4d128c5dac1191b3d31261cf4ecd59a100a566a331a',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('vcvcvvc','2024-07-31 01:58:22.216352','2024-07-31 01:58:22.216352','Administrator','Administrator',0,0,'vcvcvvc','sdfs','0280c19aa32890a4ccabc67888c1ce81fd210161806d8afb596cacc47b149342',0);
+insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Bad Credit','2024-08-07 11:43:24.982624','2024-08-13 20:17:27.203356','Administrator','Administrator',0,0,'Bad Credit','Bad Creditos','136a7ea3c56f10fe6e652790e75c7dc78f71f0fe3c7c283349475dd73427be0f',0);
+insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('newPosst','2024-08-16 12:10:44.884885','2024-08-16 12:10:44.884885','Administrator','Administrator',0,0,'newPosst','newPosst','26e5b214b4bc83f404396797b7735e3580d34d34fe9de664167086e4f19328d5',0);
+insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Savings Deposits','2024-08-15 09:19:01.010987','2024-08-15 09:30:21.954754','Administrator','Administrator',0,0,'Savings Deposits','Savings Deposits Tsken','67b1fe4b62f36d300af04055d3184cbb74c1c922a4d562cd853c614dea178eed',0);
+insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Test','2024-08-15 16:25:52.814480','2024-08-15 16:25:52.814480','admin@plexor.com','admin@plexor.com',0,0,'Test','Testing','bbf2e68424311e7b2cf431dcc0abf1818618100cdf08fc7ea12532f6b3889853',0);
+insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Test 2','2024-08-15 16:29:26.237541','2024-08-15 16:29:26.237541','admin@plexor.com','admin@plexor.com',0,0,'Test 2','test 2','b0c19a85e02e8936f88d09f46c4edc8a582b53c828a9da4f6cecbea12aa66dc1',0);
 
 /*Table structure for table `plexPostingRulesAccounts` */
 
 DROP TABLE IF EXISTS `plexPostingRulesAccounts`;
 
 CREATE TABLE `plexPostingRulesAccounts` (
-  `name` varchar(140) NOT NULL,
+  `name` int(140) NOT NULL AUTO_INCREMENT,
   `creation` datetime(6) DEFAULT NULL,
   `modified` datetime(6) DEFAULT NULL,
   `modified_by` varchar(140) DEFAULT NULL,
@@ -1665,26 +1716,102 @@ CREATE TABLE `plexPostingRulesAccounts` (
   KEY `postingRules` (`postingRule`),
   CONSTRAINT `postingRules` FOREIGN KEY (`postingRule`) REFERENCES `plexPostingRules` (`name`),
   CONSTRAINT `postingRulesAccount` FOREIGN KEY (`account`) REFERENCES `plexAccountMapping` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `plexPostingRulesAccounts` */
 
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('CashDeposit_Credit_CashierDeposits',NULL,NULL,NULL,NULL,0,0,'Cash Deposit','Credit','Cashier Deposits',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('CashDeposit_Credit_MemberPayments',NULL,NULL,NULL,NULL,0,0,'Cash Deposit','Credit','Member Payments',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('CashDeposit_Debit_CashierDeposits',NULL,NULL,NULL,NULL,0,0,'Cash Deposit','Debit','Cashier Deposits',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('CashDeposit_Debit_MemberPayments',NULL,NULL,NULL,NULL,0,0,'Cash Deposit','Debit','Member Payments',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('cccc_Debit_CashierDeposits',NULL,NULL,NULL,NULL,0,0,'cccc','Debit','Cashier Deposits',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('ccqqq_Debit_CashierDeposits',NULL,NULL,NULL,NULL,0,0,'ccqqq','Debit','Cashier Deposits',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('dsa_Debit_CashierDeposits',NULL,NULL,NULL,NULL,0,0,'dsa','Debit','Cashier Deposits',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('dsa_Debit_MemberPayments',NULL,NULL,NULL,NULL,0,0,'dsa','Debit','Member Payments',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('fafddddd_Debit_MemberPayments',NULL,NULL,NULL,NULL,0,0,'fafddddd','Debit','Member Payments',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('mm_Debit_MemberPayments',NULL,NULL,NULL,NULL,0,0,'mm','Debit','Member Payments',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('qqqqqq_Debit_MemberPayments',NULL,NULL,NULL,NULL,0,0,'qqqqqq','Debit','Member Payments',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('test_Credit_CashierDeposits',NULL,NULL,NULL,NULL,0,0,'test','Credit','Cashier Deposits',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('test_Credit_MemberPayments',NULL,NULL,NULL,NULL,0,0,'test','Credit','Member Payments',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('test_Debit_CashierDeposits',NULL,NULL,NULL,NULL,0,0,'test','Debit','Cashier Deposits',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('test_Debit_MemberPayments',NULL,NULL,NULL,NULL,0,0,'test','Debit','Member Payments',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values ('vcvcvvc_Debit_CashierDeposits',NULL,NULL,NULL,NULL,0,0,'vcvcvvc','Debit','Cashier Deposits',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (25,NULL,NULL,NULL,NULL,0,0,'Bad Credit','Debit','Loan Penalty',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (26,NULL,NULL,NULL,NULL,0,0,'Bad Credit','Debit','Penalties',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (27,NULL,NULL,NULL,NULL,0,0,'Bad Credit','Credit','Cashier Deposits',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (28,NULL,NULL,NULL,NULL,0,0,'Bad Credit','Credit','Loan Charges',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (29,NULL,NULL,NULL,NULL,0,0,'Bad Credit','Debit','Refunds',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (30,NULL,NULL,NULL,NULL,0,0,'Bad Credit','Debit','Loan Charges',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (32,NULL,NULL,NULL,NULL,0,0,'Bad Credit','Debit','Member Payments',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (33,NULL,NULL,NULL,NULL,0,0,'Bad Credit','Credit','Loan Penalty',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (34,NULL,NULL,NULL,NULL,0,0,'Bad Credit','Credit','Member Payments',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (35,NULL,NULL,NULL,NULL,0,0,'Bad Credit','Credit','Penalties',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (36,NULL,NULL,NULL,NULL,0,0,'Bad Credit','Credit','Refunds',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (37,NULL,NULL,NULL,NULL,0,0,'Bad Credit','Credit','Cashier Deposits',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (39,NULL,NULL,NULL,NULL,0,0,'Bad Credit','Debit','Loan Penalty',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (40,NULL,NULL,NULL,NULL,0,0,'Bad Credit','Credit','Loan Charges',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (41,NULL,NULL,NULL,NULL,0,0,'Savings Deposits','Debit','Cashier Deposits',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (43,NULL,NULL,NULL,NULL,0,0,'Savings Deposits','Debit','Loan Charges',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (44,NULL,NULL,NULL,NULL,0,0,'Savings Deposits','Debit','Refunds',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (45,NULL,NULL,NULL,NULL,0,0,'Savings Deposits','Debit','Refunds',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (46,NULL,NULL,NULL,NULL,0,0,'Savings Deposits','Debit','Penalties',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (47,NULL,NULL,NULL,NULL,0,0,'Savings Deposits','Credit','Cashier Deposits',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (48,NULL,NULL,NULL,NULL,0,0,'Savings Deposits','Credit','Loan Penalty',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (49,NULL,NULL,NULL,NULL,0,0,'Savings Deposits','Credit','Penalties',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (50,NULL,NULL,NULL,NULL,0,0,'Savings Deposits','Credit','Refunds',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (51,NULL,NULL,NULL,NULL,0,0,'Savings Deposits','Credit','Penalties',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (56,NULL,NULL,NULL,NULL,0,0,'newPosst','Debit','Cashier Deposits',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (57,NULL,NULL,NULL,NULL,0,0,'newPosst','Debit','Loan Charges',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (58,NULL,NULL,NULL,NULL,0,0,'newPosst','Credit','Loan Penalty',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (59,NULL,NULL,NULL,NULL,0,0,'newPosst','Credit','Member Payments',NULL,0);
+
+/*Table structure for table `plexRoles` */
+
+DROP TABLE IF EXISTS `plexRoles`;
+
+CREATE TABLE `plexRoles` (
+  `name` varchar(140) NOT NULL,
+  `creation` datetime(6) DEFAULT NULL,
+  `modified` datetime(6) DEFAULT NULL,
+  `modified_by` varchar(140) DEFAULT NULL,
+  `owner` varchar(140) DEFAULT NULL,
+  `docstatus` int(1) NOT NULL DEFAULT 0,
+  `idx` int(8) NOT NULL DEFAULT 0,
+  `title` varchar(40) DEFAULT NULL,
+  `description` varchar(140) DEFAULT NULL,
+  `sig` varchar(64) DEFAULT NULL,
+  `sig_status` int(11) DEFAULT 0,
+  PRIMARY KEY (`name`),
+  KEY `modified` (`modified`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `plexRoles` */
+
+insert  into `plexRoles`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('SuperUser',NULL,NULL,NULL,NULL,0,0,'SuperUser','System Administrator',NULL,0);
+
+/*Table structure for table `plexRolesPermissions` */
+
+DROP TABLE IF EXISTS `plexRolesPermissions`;
+
+CREATE TABLE `plexRolesPermissions` (
+  `name` int(11) NOT NULL AUTO_INCREMENT,
+  `creation` datetime(6) DEFAULT NULL,
+  `modified` datetime(6) DEFAULT NULL,
+  `modified_by` varchar(140) DEFAULT NULL,
+  `owner` varchar(140) DEFAULT NULL,
+  `docstatus` int(1) NOT NULL DEFAULT 0,
+  `idx` int(8) NOT NULL DEFAULT 0,
+  `role` varchar(40) DEFAULT NULL,
+  `permission` varchar(140) DEFAULT NULL,
+  `sig` varchar(64) DEFAULT NULL,
+  `sig_status` int(11) DEFAULT 0,
+  PRIMARY KEY (`name`),
+  KEY `modified` (`modified`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `plexRolesPermissions` */
+
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (1,NULL,NULL,NULL,NULL,0,0,'SuperUser','Posting Rules - View',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (2,NULL,NULL,NULL,NULL,0,0,'SuperUser','Posting Rules - Add',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (3,NULL,NULL,NULL,NULL,0,0,'SuperUser','Posting Rules - Edit',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (4,NULL,NULL,NULL,NULL,0,0,'SuperUser','Posting Rules - Delete',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (5,NULL,NULL,NULL,NULL,0,0,'SuperUser','Posting Rules - Approve',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (6,NULL,NULL,NULL,NULL,0,0,'SuperUser','Account Mapping - View',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (7,NULL,NULL,NULL,NULL,0,0,'SuperUser','Maker-Checker - View',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (8,NULL,NULL,NULL,NULL,0,0,'SuperUser','Settings - View',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (9,NULL,NULL,NULL,NULL,0,0,'SuperUser','Settings - Edit',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (10,NULL,NULL,NULL,NULL,0,0,'SuperUser','Settings - Delete',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (11,NULL,NULL,NULL,NULL,0,0,'SuperUser','Settings - Approve',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (12,NULL,NULL,NULL,NULL,0,0,'SuperUser','User Roles - View',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (13,NULL,NULL,NULL,NULL,0,0,'SuperUser','User Roles - Edit',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (14,NULL,NULL,NULL,NULL,0,0,'SuperUser','User Roles - Add',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (15,NULL,NULL,NULL,NULL,0,0,'SuperUser','User Roles - Delete',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (16,NULL,NULL,NULL,NULL,0,0,'SuperUser','User Roles - Approve',NULL,0);
+insert  into `plexRolesPermissions`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`role`,`permission`,`sig`,`sig_status`) values (17,NULL,NULL,NULL,NULL,0,0,'SuperUser','Maker-Checker - Edit',NULL,0);
 
 /*Table structure for table `plexSavingAccount` */
 
@@ -1948,11 +2075,11 @@ CREATE TABLE `plexSetting` (
 
 /*Data for the table `plexSetting` */
 
-insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`status`,`sig`,`sig_status`) values ('1',NULL,NULL,NULL,NULL,0,0,'GENERAL','Enable maker-checker','enable_mchecker','Yes',1,NULL,0);
-insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`status`,`sig`,`sig_status`) values ('erwe',NULL,NULL,NULL,NULL,0,0,'SECURITY','fwer','erwe','werw',1,NULL,0);
-insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`status`,`sig`,`sig_status`) values ('POSTINGRULES_INSERT',NULL,NULL,NULL,NULL,0,0,'MCHECKER','Posting Rules Insert','POSTINGRULES_INSERT','yes',1,NULL,0);
-insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`status`,`sig`,`sig_status`) values ('rwer',NULL,NULL,NULL,NULL,0,0,'SAVINGS','ewrwer','rwer','werwe',1,NULL,0);
-insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`status`,`sig`,`sig_status`) values ('sgsfgs',NULL,NULL,NULL,NULL,0,0,'SAVINGS','gsfg','sgsfgs','sfgsfg',0,NULL,0);
+insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`status`,`sig`,`sig_status`) values ('1',NULL,NULL,NULL,NULL,0,0,'GENERAL','Enable maker-checker','ENABLE_MKCHKR','yes',1,NULL,0);
+insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`status`,`sig`,`sig_status`) values ('MAKERCHECKER_EDIT',NULL,NULL,NULL,NULL,0,0,'MCHECKER','Maker-Checker - Edit','MAKERCHECKER_EDIT','yes',1,NULL,0);
+insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`status`,`sig`,`sig_status`) values ('POSTINGRULES_DELETE',NULL,NULL,NULL,NULL,0,0,'MCHECKER','Posting Rules - Delete','POSTINGRULES_DELETE','yes',1,NULL,0);
+insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`status`,`sig`,`sig_status`) values ('POSTINGRULES_INSERT',NULL,NULL,NULL,NULL,0,0,'MCHECKER','Posting Rules - Insert','POSTINGRULES_INSERT','yes',1,NULL,0);
+insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`status`,`sig`,`sig_status`) values ('POSTINGRULES_UPDATE',NULL,NULL,NULL,NULL,0,0,'MCHECKER','Posting Rules - Update','POSTINGRULES_UPDATE','yes',1,NULL,0);
 
 /*Table structure for table `plexSettingType` */
 
@@ -1981,6 +2108,56 @@ CREATE TABLE `plexSettingType` (
 /*Data for the table `plexSettingType` */
 
 insert  into `plexSettingType`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`general`,`security`,`savings`,`loans`,`maker_checker`,`sig`,`sig_status`) values ('Default Settings','2024-07-29 05:48:13.126241','2024-07-29 13:37:07.524615','Administrator','Administrator',0,0,'Default Settings','None','None','None','None','None','d63265ccad088af3a2744cde3d814dd6994f7da8a29d5352c2aab8e847c2e119',0);
+
+/*Table structure for table `plexTableMapping` */
+
+DROP TABLE IF EXISTS `plexTableMapping`;
+
+CREATE TABLE `plexTableMapping` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `doctype_name` varchar(150) DEFAULT NULL,
+  `doctype` varchar(150) DEFAULT NULL,
+  `table_name` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `plexTableMapping` */
+
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (1,'AccountMapping','Account Mapping','plexAccountMapping');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (2,'LoanProduct','Loan Product','plexLoanProduct');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (3,'SavingAccount','Saving Account','plexSavingAccount');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (4,'Branch','Branch','plexBranch');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (5,'Address','Address','plexAddress');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (6,'AccountMapping','Account Mapping','plexAccountMapping');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (8,'PostingRules','Posting Rules','plexPostingRules');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (9,'Employer','Employer','plexEmployer');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (10,'ClientCharge','Client Charge','plexClientCharge');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (11,'PostingJournals','Posting Journals','plexPostingJournals');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (12,'Currency','Currency','plexCurrency');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (13,'Payment','Payment','plexPayment');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (14,'GroupMember','Group Member','plexGroupMember');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (15,'MakerChecker','Maker-Checker','plexMakerChecker');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (16,'TrxQueue','TrxQueue','plexTrxQueue');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (18,'Loan','Loan','plexLoan');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (19,'Client','Client','plexClient');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (22,'Teller','Teller','plexTeller');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (23,'SavingCharge','Saving Charge','plexSavingCharge');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (24,'SettingType','Setting Type','plexSettingType');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (25,'MakerCheckerLogs','Maker-Checker-Logs','plexMakerCheckerLogs');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (26,'Settings','Settings','plexSetting');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (27,'LoanApplication','Loan Application','plexLoanApplication');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (28,'Country','Country','plexCountry');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (29,'LoanCharge','Loan Charge','plexLoanCharge');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (31,'Guarantor','Guarantor','plexGuarantor');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (33,'Document','Document','plexDocument');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (34,'LoanAccount','Loan Account','plexLoanAccount');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (35,'ClientType','Client Type','plexClientType');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (36,'User','User','plexUser');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (37,'PostingRulesAccounts','Posting Rules Accounts','plexPostingRulesAccounts');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (38,'notify_messages','notify_messages','notify_messages');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (39,'SavingProduct','Saving Product','plexSavingProduct');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (40,'LoanSchedule','Loan Schedule','plexLoanSchedule');
+insert  into `plexTableMapping`(`id`,`doctype_name`,`doctype`,`table_name`) values (41,'UserRoles','User Roles','plexRoles');
 
 /*Table structure for table `plexTeller` */
 
@@ -2063,6 +2240,7 @@ CREATE TABLE `plexUser` (
   `idx` int(8) NOT NULL DEFAULT 0,
   `user` varchar(140) NOT NULL,
   `status` int(11) DEFAULT 0,
+  `role` varchar(140) DEFAULT NULL,
   `sig` varchar(64) DEFAULT NULL,
   `sig_status` int(11) DEFAULT 0,
   PRIMARY KEY (`name`),
@@ -2072,8 +2250,8 @@ CREATE TABLE `plexUser` (
 
 /*Data for the table `plexUser` */
 
-insert  into `plexUser`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`user`,`status`,`sig`,`sig_status`) values ('admin@plexor.com','2024-07-16 13:35:42.000000','2024-07-16 13:35:42.000000','admin@plexor.com','admin@plexor.com',1,1,'admin@plexor.com',1,'-',0);
-insert  into `plexUser`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`user`,`status`,`sig`,`sig_status`) values ('Administrator','2024-07-13 13:03:36.000000','2024-07-13 13:03:32.000000','Administrator','Administrator',0,0,'Administrator',1,NULL,0);
+insert  into `plexUser`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`user`,`status`,`role`,`sig`,`sig_status`) values ('admin@plexor.com','2024-07-16 13:35:42.000000','2024-07-16 13:35:42.000000','admin@plexor.com','admin@plexor.com',1,1,'admin@plexor.com',1,'SuperUser','-',0);
+insert  into `plexUser`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`user`,`status`,`role`,`sig`,`sig_status`) values ('Administrator','2024-07-13 13:03:36.000000','2024-07-13 13:03:32.000000','Administrator','Administrator',0,0,'Administrator',1,'SuperUser',NULL,0);
 
 /*Table structure for table `sig_failures` */
 
