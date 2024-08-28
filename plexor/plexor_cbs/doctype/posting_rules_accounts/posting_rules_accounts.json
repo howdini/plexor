@@ -19,12 +19,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "postingrule",
-   "fieldtype": "Link",
-   "label": "Rule",
-   "options": "Posting Rules"
-  },
-  {
    "fieldname": "type",
    "fieldtype": "Select",
    "label": "Posting Type",
@@ -36,24 +30,30 @@
    "label": "sig_status"
   },
   {
+   "fieldname": "child_id",
+   "fieldtype": "Data",
+   "label": "child_id"
+  },
+  {
+   "fieldname": "postingrule",
+   "fieldtype": "Link",
+   "label": "Rule",
+   "options": "Posting Rules"
+  },
+  {
    "fieldname": "account",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Account",
    "options": "Account Mapping",
    "reqd": 1
-  },
-  {
-   "fieldname": "child_id",
-   "fieldtype": "Data",
-   "label": "child_id"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_virtual": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-12 15:27:37.462486",
+ "modified": "2024-08-28 09:53:08.995616",
  "modified_by": "Administrator",
  "module": "Plexor CBS",
  "name": "Posting Rules Accounts",

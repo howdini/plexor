@@ -309,7 +309,7 @@ function is_maker_checker_enabled(frm, doctype,type)
 function selectCheckers(frm, data)
 {
     let d = new frappe.ui.Dialog({
-        title: 'Select Checkers',
+        title: 'Select Insert Checkers',
         fields: [
             {
                 label: 'Maker-checker is enabled for this action. Please Select verifiers from list below.',
@@ -363,7 +363,7 @@ function selectCheckers(frm, data)
 function selectCheckersChild(frm, datas, add_title, add_filter_function, add_args, add_function, grid_name)
 {
     let d = new frappe.ui.Dialog({
-        title: 'Select Checkers',
+        title: 'Select Insert Child Checkers',
         fields: [
             {
                 label: 'Maker-checker is enabled for this action. Please Select verifiers from list below.',
@@ -409,11 +409,84 @@ function selectCheckersChild(frm, datas, add_title, add_filter_function, add_arg
     d.show();
 }
 
-function selectCheckersChildDelete(frm, data, del_title, title, args, delete_function, grid_name, child_id)
+
+function selectCheckersParentDelete(frm, data, del_title, title, args, children="", children_fields="")
 {
     //No update an d so
     let d = new frappe.ui.Dialog({
-        title: 'Select Checkers',
+        title: 'Select Delete Parent Checkers',
+        fields: [
+            {
+                label: 'Maker-checker is enabled for this action. Please Select verifiers from list below.',
+                fieldname: 'checkers',
+                fieldtype: 'Table',
+                cannot_add_rows: true,
+                in_place_edit: false,
+                cannot_add_rows: 1,
+                cannot_delete_rows : 1,
+                data: data,
+                //data: [{checker:'Row1.1'}, {checker:'Row2.1'}, {checker:'Row3.1'}, {checker:'Row4.1'}, {checker:'Row5.1'}],
+                fields: [
+                    { fieldname: 'checker', fieldtype: 'Data', in_list_view: 1, read_only: 1, label: 'Checkers' }
+                ]
+            },
+        ],
+        size: 'small', // small, large, extra-large
+        primary_action_label: 'Submit',
+        primary_action(values) {
+            checkers = "";
+            for(let key in values)
+            {
+                //console.log(values[key]);
+                obj = values[key];
+                for(let x in obj)
+                {
+                    if(obj[x].__checked)
+                    {
+                        console.log(obj[x].checker);
+                        checkers = checkers + obj[x].checker + ",";
+                    }
+                }
+            }
+            console.log("POST CHECKERS:"+checkers)
+            args["checkers"] = checkers;
+            frm.doc["checkers"] = checkers;
+            frm.doc["children"] = children;
+            frm.doc["children_fields"] = children_fields;
+            d.hide();
+            frappe.call({
+                    method: "plexor.plexlib_web.deleteDoc",
+                    args: {form: frm.doc, children: children, children_fields: children_fields},
+                    callback: function(r) {
+                        responseText = r.message
+
+                        if(args["checkers"].length >= 2 )
+                            frappe.msgprint("Deletion request has been successfully queued.");
+                        else
+                        {
+                            //frm.add_child(grid_name, args);
+                            frm.refresh_field(grid_name);
+                            //frm.dirty();
+                            //frm.save('Update');
+                        }
+                        //if(responseText=="success")
+                        //{
+                        //    row.remove();
+                        //    frm.refresh_field(grid_name);
+                        //}
+                    }
+                });
+        }
+    });
+
+    d.show();
+}
+
+function selectCheckersChildDelete(frm, data, del_title, title, args,  grid_name)
+{
+    //No update an d so
+    let d = new frappe.ui.Dialog({
+        title: 'Select Child Delete Checkers',
         fields: [
             {
                 label: 'Maker-checker is enabled for this action. Please Select verifiers from list below.',
@@ -452,10 +525,12 @@ function selectCheckersChildDelete(frm, data, del_title, title, args, delete_fun
             }
             console.log("POST CHECKERS:"+checkers)
             args["checkers"] = checkers;
-            args["child_id"] = child_id;
+            //args["child_id"] = child_id;
+            console.log(frm.doc);
+            args["doc"] = frm.doc;
             d.hide();
             frappe.call({
-                    method: delete_function,
+                    method: "plexor.plexlib_web.delete_child_row",
                     args: args,
                     callback: function(r) {
                         responseText = r.message
@@ -483,7 +558,7 @@ function selectCheckersChildDelete(frm, data, del_title, title, args, delete_fun
 }
 
 
-function setup_grid(frm, grid_name, load_function, load_args, add_title, add_doctype, add_filter_function, add_field, add_function, add_args, delete_function, delete_args )
+function setup_grid(frm, grid_name, load_function, load_args, add_title, add_doctype, add_filter_function, add_field, add_function, add_args )
 {
     if(add_doctype!="ALLOW_FORM")
     {
@@ -527,21 +602,26 @@ function setup_grid(frm, grid_name, load_function, load_args, add_title, add_doc
 
                 grid.forEach(function(row) {
                     if (row && row.wrapper.find('.grid-row-check').is(':checked')) {
-                        var docname = row.doc.child_id;
-                        //console.log(docname);
+                        //var docname = row.doc.child_id;
+                        console.log(">>>>")
+                        console.log(row.doc);
                         //frappe.throw(docname)
-                        args = JSON.parse(delete_args);
+                        //console.log("delete_args :: "+delete_args)
+                        args = JSON.parse("{}");
+                        frm["doc"]["child"]=row.doc;
                         for (let x in args) {
                            console.log(x + ": "+ args[x])
                            if(args[x].startsWith("row.doc."))
                            {
                                 doc_field = args[x].replace("row.doc.", "");
                                 args[x] = row.doc[doc_field];
+                                console.log("Converted:: "+args[x])
                            }
-                           if(args[x].startsWith("frm.doc."))
+                           else if(args[x].startsWith("frm.doc."))
                            {
                                 doc_field = args[x].replace("frm.doc.", "");
                                 args[x] = frm.doc[doc_field];
+                                console.log("Converted:: "+args[x])
                            }
                         }
                         console.log(args);
@@ -561,6 +641,8 @@ function setup_grid(frm, grid_name, load_function, load_args, add_title, add_doc
                                         method: "plexor.plexlib_web.get_checkers",
                                         args: {},
                                         callback: function(r) {
+                                            console.log("Here It Is....");
+                                            args['form'] = frm.doc;
                                             responseText = r.message
                                             console.log(responseText);
                                             data = "[";
@@ -571,16 +653,19 @@ function setup_grid(frm, grid_name, load_function, load_args, add_title, add_doc
                                                 data = data.substring(0, data.length - 1);
                                             data = data + "]";
                                             console.log(data);
-                                            selectCheckersChildDelete(frm, JSON.parse(data), "Confirm Delete", "-", args, delete_function, grid_name, docname);
+                                            frm["doc"]["c_doctype"] = add_doctype;
+                                            selectCheckersChildDelete(frm, JSON.parse(data), "Confirm Delete", "-", args, grid_name);
                                         }
                                     });
                                 }
                                 else  // No maker checker dialog required
                                 {
                                     args["checkers"] = "";
-                                    args["child_id"] = docname;
+                                    frm["doc"]["c_doctype"] = add_doctype;
+                                    args["form"] = frm.doc;
+                                    //args["child_id"] = docname;
                                         frappe.call({
-                                            method: delete_function,
+                                            method: "plexor.plexlib_web.delete_child_row",
                                             args: args,
                                             callback: function(r) {
                                                 responseText = r.message
@@ -602,7 +687,6 @@ function setup_grid(frm, grid_name, load_function, load_args, add_title, add_doc
             //if (!frm.is_new())
             frm.fields_dict[grid_name].grid.add_custom_button(__('Add'),
                 function() {
-                    console.log(frm);
                     if (frm.is_new())
                     {
                         frappe.msgprint("You need to save this document first before you can add items on this table.");
@@ -677,11 +761,18 @@ function grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, 
                else if(args[x].startsWith("THIS_FORM"))
                {
                     //doc_field = args[x].replace("frm.doc.", "");
-                    args[x] = values;
+                    console.log("||||||||")
+                    console.log(frm.doc);
+                    console.log("||||||||")
                }
             }
+            //args["row"] = JSON.stringify(frm.doc);
+            args["row"] = JSON.stringify(args)
             args["checkers"] = checkers;
+            args["parent_id"] = frm.doc.name;
+            console.log(">>>>>>>>>")
             console.log(args);
+            console.log("<<<<<<<<<")
             frappe.call({
                 method: add_function,
                 args: args,

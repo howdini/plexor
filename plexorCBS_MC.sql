@@ -139,6 +139,7 @@ CREATE TABLE `plexPostingRules` (
 /*Data for the table `plexPostingRules` */
 
 insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Fromadmin2','2024-08-16 13:42:19.445507','2024-08-16 13:42:19.445507','admin@plexor.com','admin@plexor.com',0,0,'Fromadmin2','Fromadmin2','56f38050095ba794fa744300483b450a1b17bc85d1aa8b6bfd04e917142b6e92',0);
+insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('hward','2024-08-21 10:07:43.084909','2024-08-21 10:07:43.084909','admin@plexor.com','admin@plexor.com',0,0,'hward','howard uma','eeb5d5fbe4587f87a1e3e0bc8aac86ddf530918e3d677332961461f308c97cf6',0);
 insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('newPosst','2024-08-16 12:10:44.884885','2024-08-16 12:10:44.884885','Administrator','Administrator',0,0,'newPosst','newPosst','26e5b214b4bc83f404396797b7735e3580d34d34fe9de664167086e4f19328d5',0);
 insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Test 2','2024-08-15 16:29:26.237541','2024-08-15 16:29:26.237541','admin@plexor.com','admin@plexor.com',0,0,'Test 2','test 2','b0c19a85e02e8936f88d09f46c4edc8a582b53c828a9da4f6cecbea12aa66dc1',0);
 
@@ -163,7 +164,7 @@ CREATE TABLE `plexPostingRulesAccounts` (
   KEY `modified` (`modified`),
   KEY `postingRulesAcc` (`account`),
   KEY `postingRules` (`postingRule`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `plexPostingRulesAccounts` */
 
@@ -177,6 +178,16 @@ insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_b
 insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (46,NULL,NULL,NULL,NULL,0,0,'Fromadmin2','Debit','Loan Charges',NULL,0);
 insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (47,NULL,NULL,NULL,NULL,0,0,'Fromadmin2','Credit','Loan Penalty',NULL,0);
 insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (48,NULL,NULL,NULL,NULL,0,0,'Fromadmin2','Credit','Member Payments',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (49,NULL,NULL,NULL,NULL,0,0,'Test 2','Debit','Cashier Deposits',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (50,NULL,NULL,NULL,NULL,0,0,'Bad Credit','Debit','Penalties',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (51,NULL,NULL,NULL,NULL,0,0,'hward','Debit','Cashier Deposits',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (52,NULL,NULL,NULL,NULL,0,0,'hward','Debit','Member Payments',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (53,NULL,NULL,NULL,NULL,0,0,'hward','Debit','Loan Charges',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (54,NULL,NULL,NULL,NULL,0,0,'hward','Debit','Member Payments',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (55,NULL,NULL,NULL,NULL,0,0,'Savings Deposits','Debit','Member Payments',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (56,NULL,NULL,NULL,NULL,0,0,'Savings Deposits','Credit','Loan Penalty',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (57,NULL,NULL,NULL,NULL,0,0,'Savings Deposits','Credit','Loan Charges',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (58,NULL,NULL,NULL,NULL,0,0,'Savings Deposits','Debit','Loan Charges',NULL,0);
 
 /*Table structure for table `plexUser` */
 

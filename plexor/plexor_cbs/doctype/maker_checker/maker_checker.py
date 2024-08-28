@@ -10,6 +10,7 @@ class MakerChecker(Document):
 			"stamp",
 			"document",
 			"trx_type",
+			"child_trx_type",
 			"values",
 			"checkers",
 			"check_status",
@@ -20,6 +21,7 @@ class MakerChecker(Document):
 	validator = [
 				 "any,1,50",
 				 "any,1,150",
+				 "alphanumericwithdash,1,150",
 				 "alphanumericwithdash,1,150",
 				 "alphanumericwithdash,1,150",
 				 "any,1,150",
@@ -33,7 +35,7 @@ class MakerChecker(Document):
 		crud_db_insert(self, MakerChecker, *args, **kwargs)
 
 	def load_from_db(self):
-		crud_load_from_db(self, MakerChecker)
+		crud_load_from_db(self, MakerChecker, mappers=",parent as parent_id")
 
 	def db_update(self):
 		crud_db_update(self, MakerChecker)
@@ -46,10 +48,10 @@ class MakerChecker(Document):
 		#user = frappe.get_user().doc.email
 		#my_dest_group = json.dumps(frappe.get_roles(frappe.session.user)).replace('[', '').replace(']', '')
 		filter = ""
-		if (frappe.get_user().doc.name == "Administrator"):
-			query = "SELECT * FROM `" + MakerChecker.table + "` as a WHERE posted_status = 0 AND parent IS NULL OR ((SELECT b.posted_status FROM plexMakerChecker AS b WHERE b.document_id=a.parent) = 1 AND posted_status=0) OR (SELECT b.document_id FROM plexMakerChecker AS b WHERE b.document_id=a.parent) IS NULL ORDER BY creation ASC"
-		else:
-			query = "SELECT * FROM `" + MakerChecker.table + "` as a WHERE posted_status = 0 AND parent IS NULL OR ((SELECT b.posted_status FROM plexMakerChecker AS b WHERE b.document_id=a.parent) = 1 AND posted_status=0) OR (SELECT b.document_id FROM plexMakerChecker AS b WHERE b.document_id=a.parent) IS NULL ORDER BY creation ASC"
+		#if (frappe.get_user().doc.name == "Administrator"):
+		#	query = "SELECT *, parent as parent_id FROM `" + MakerChecker.table + "` as a WHERE posted_status = 0 AND parent IS NULL OR ((SELECT b.posted_status FROM plexMakerChecker AS b WHERE b.document_id=a.parent) = 1 AND posted_status=0) OR (SELECT b.document_id FROM plexMakerChecker AS b WHERE b.document_id=a.parent) IS NULL ORDER BY creation ASC"
+		#else:
+		query = "SELECT *, parent as parent_id FROM `" + MakerChecker.table + "` as a  ORDER BY creation ASC"
 		print(query)
 		return crud_get_list(args, MakerChecker, query)
 

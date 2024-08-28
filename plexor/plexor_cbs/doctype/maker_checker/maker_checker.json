@@ -8,6 +8,7 @@
   "document",
   "document_id",
   "trx_type",
+  "child_trx_type",
   "parent_id",
   "check_status",
   "creator",
@@ -101,12 +102,18 @@
    "fieldname": "parent_id",
    "fieldtype": "Data",
    "label": "Parent"
+  },
+  {
+   "fieldname": "child_trx_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Child Update Type"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_virtual": 1,
  "links": [],
- "modified": "2024-08-06 13:31:53.993684",
+ "modified": "2024-08-19 13:16:47.465629",
  "modified_by": "Administrator",
  "module": "Plexor CBS",
  "name": "Maker-Checker",
