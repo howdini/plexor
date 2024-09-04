@@ -1,3 +1,5 @@
+
+
 import mysql.connector
 import re
 import hashlib
@@ -28,11 +30,14 @@ def check_permissions(doctypeName, type):
     print(f"Searching permissions for {doctypeName}:{type}")
     print(permissions)
     perm = doctypeName+" - "+type
-    if(perm in permissions):
-        #frappe.msgprint("Permission granted")
-        pass
-    else:
-        frappe.throw("Access not granted for this action.")
+    try:
+        if(perm in permissions):
+            #frappe.msgprint("Permission granted")
+            pass
+        else:
+            frappe.throw("Access not granted for this action.")
+    except:
+        frappe.throw("Your session has expired. Please log out and login again.")
 
 def create_trigger(table, pars):
     frappe.utils.logger.set_log_level("DEBUG")

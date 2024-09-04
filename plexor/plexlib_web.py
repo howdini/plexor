@@ -334,22 +334,30 @@ def check_parent_makerchecker_status(form,  type):
     table = get_current_table(doctype)
     is_mc = is_maker_checker(table, parent)
     is_mc_req = is_maker_checker_required(doctype, type)
-    if(is_mc==True and is_mc_req==True):
-        return "is_mc|is_mc_req"
-    elif(is_mc==True and is_mc_req==False):
-        return "is_mc"
-    elif(is_mc==False and is_mc_req==True):
-        return "is_mc_req"
-    elif(is_mc==False and is_mc_req==False):
-        return False
-    else:
-        return False
+    try:
+        if(is_mc==True and is_mc_req==True):
+            return "is_mc|is_mc_req"
+        elif(is_mc==True and is_mc_req==False):
+            return "is_mc"
+        elif(is_mc==False and is_mc_req==True):
+            return "is_mc_req"
+        elif(is_mc==False and is_mc_req==False):
+            return False
+        else:
+            return False
+    except Typerror:  # includes simplejson.decoder.JSONDecodeError
+        print('Decoding JSON has failed')
 
 def get_current_table(doctype):
     mappings = frappe.cache.get_value("TableMapping")
     print(mappings)
     # Parse the JSON string into a Python dictionary
-    data = json.loads(mappings)
+    try:
+        data = json.loads(mappings)
+    except TypeError:  # includes simplejson.decoder.JSONDecodeError
+        print('Error gettting session details. Login required.')
+        load_permissions()
+        data = json.loads(mappings)
 
     # Extract the username value for sammy
     table_name = data[doctype.replace(" ","")]["table_name"]
@@ -393,7 +401,7 @@ def post_mc_transaction(docname):
             if(rv["child_trx_type"] == "INSERT"):
                 print("CHILD Insert detected")
                 table_name = get_tablename(rv["document"])
-                post_table_data(table_name, rv["document_id"], str(rv["values"]))
+                post_table_data(table_name, rv["document_id"], str(rv["values"]), time=str(rv["creation"]), owner=str(rv["owner"]))
             elif (rv["child_trx_type"] == "DELETE"):
                 print("CHILD Delete detected")
                 table_name = get_tablename(rv["document"])
@@ -455,17 +463,26 @@ def json_format_correction(json_String):
 
 @frappe.whitelist()
 def post_mc_transaction_update(document_id, table_name, vals):
-    # Replace single quotes with double quotes and ensure that the property names are quoted
-    #corrected_json_string = re.sub(r"(\w+)\s*:", r'"\1":', vals)
-    #corrected_json_string = corrected_json_string.replace("'", '"')
-    # Ensure the JSON string starts and ends with curly braces
-    #corrected_json_string = f'{{{corrected_json_string.strip("{}")}}}'
-    #vals = corrected_json_string
-    #print("GETTING VALUES :: " + vals)
     vals = json_format_correction(vals)
+    data = json.loads(vals)
+    keys = data.keys()
+    keys_list = list(keys)
 
-    qry = "UPDATE plexorCBS.`" + table_name + "` SET " + vals + "` where `name` = '" + document_id + "')"
+    values = ""
+    first = True
+    for key in keys_list:
+        if(first==True):
+            values = values + " `"+key+"`='" + data[key] + "'"
+            first = False
+        else:
+            values = values + ", `"+key+"`='" + data[key] + "'"
+
+    qry = "UPDATE plexorCBS.`" + table_name + "` SET " + values + " where `name` = '" + document_id + "' limit 1"
     print(qry)
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    cur.execute(qry)
+    mydb.commit()
     return "success"
 
 @frappe.whitelist()
@@ -507,24 +524,47 @@ def post_mc_transaction_children(parent_id):
     return "success"
 
 
-def post_table_data(table_name, document_id, vals):
+def post_table_data(table_name, document_id, vals, time="", owner=""):
     # docl_ist = ['creation', 'modified', 'modified_by', 'owner', 'docstatus', 'idx']
-    # Fix the JSON string format
-    # Replace single quotes with double quotes and ensure that the property names are quoted
-    corrected_json_string = re.sub(r"(\w+)\s*:", r'"\1":', vals)
-    corrected_json_string = corrected_json_string.replace("'", '"')
-    # Ensure the JSON string starts and ends with curly braces
-    corrected_json_string = f'{{{corrected_json_string.strip("{}")}}}'
-    vals = corrected_json_string
-    print("GETTING VALUES :: " + vals)
-    data = json.loads(vals)
-    keys = data.keys()
-    keys_list = list(keys)
-    qry = "INSERT INTO plexorCBS.`" + table_name + "` (select NULL, `creation`, `modified`, `modified_by`, `owner`, `docstatus`, `idx`"
-    for key in keys_list:
-        qry = qry + ", `" + key + "`"
-        # docl_ist.append(key)
-    qry = qry + ", `sig`, `sig_status` from plexorCBS_MC.`" + table_name + "` where `name` = '" + document_id + "')"
+    #print("GETTING VALUES :: " + vals)
+
+    if(document_id==""):
+        print(vals)
+        vals = vals.replace('{"child":','').replace("}}","}")
+        vals = json_format_correction(vals)
+        print(vals)
+        data = json.loads(vals)
+        print(data)
+        keys = data.keys()
+        keys_list = list(keys)
+
+        values = "VALUES( NULL, '"+time+"', '"+time+"', '"+owner+"', '"+owner+"', 0, 0 "
+        qry = "INSERT INTO plexorCBS.`" + table_name + "` (`name`, `creation`, `modified`, `modified_by`, `owner`, `docstatus`, `idx`"
+        for key in keys_list:
+            qry = qry + ", `" + key + "`"
+            print("KEY:: "+key)
+            values = values + ", '" + data[key] + "'"
+        qry = qry + ", `sig`, `sig_status`) "
+        values = values + ", '0', '0') "
+        qry = qry + values
+    else:
+        # Fix the JSON string format
+        # Replace single quotes with double quotes and ensure that the property names are quoted
+        corrected_json_string = re.sub(r"(\w+)\s*:", r'"\1":', vals)
+        corrected_json_string = corrected_json_string.replace("'", '"')
+        # Ensure the JSON string starts and ends with curly braces
+        corrected_json_string = f'{{{corrected_json_string.strip("{}")}}}'
+        vals = corrected_json_string+"}"
+        vals = vals.replace("}}}","}}")
+        print(vals)
+        data = json.loads(vals)
+        #data2 = json.loads(data["child"])
+        keys = data["child"].keys()
+        keys_list = list(keys)
+        qry = "INSERT INTO plexorCBS.`" + table_name + "` (select NULL, `creation`, `modified`, `modified_by`, `owner`, `docstatus`, `idx`"
+        for key in keys_list:
+            qry = qry + ", `" + key + "`"
+        qry = qry + ", `sig`, `sig_status` from plexorCBS_MC.`" + table_name + "` where `name` = '" + document_id + "')"
     # docl_ist.append("sig")
     # docl_ist.append("sig_status")
 
@@ -586,13 +626,14 @@ def deleteDoc(form, children="", children_fields=""):
     elif is_maker_checker_required(doctype, "DELETE"):
         print("DETECTED maker checker")
         create_maker_checker("DELETE", class_, form, class_.pars, doctype=doctype)
-        return #No update to be committed to table if maker checker enabled
+        return "success" #No update to be committed to table if maker checker enabled
 
     #DELETE ChILDREN FIRST
     child_tables = children.split(",")
     child_tables_fields = children_fields.split(",")
     x = 0
     for table_doctype in child_tables:
+        print("DELETE CHILD: "+table_doctype)
         delete_children(table_doctype, child_tables_fields[x], parent)
         x = x + 1
 
@@ -603,6 +644,7 @@ def deleteDoc(form, children="", children_fields=""):
     print("SQL::   " + sql)
     mycursor.execute(sql)
     mydb.commit()
+    return "success"
 
 def delete_children(table_doctype, parent_field, parent):
     mydb = mysql_connection()
@@ -720,48 +762,20 @@ def save_child_row(doctype, parent_id, row, checkers):
         else:
             qry = qry + ", " + "`" + x + "`"
             qry_vals = qry_vals + ", \"" + str(jdoc[x]).replace('"', '\\"') + "\""
-            
+
     cur = mydb.cursor()
     sql = "insert into "+child_table+"(name, "+qry+") values(NULL, " + qry_vals +") "
     print(sql)
     try:
-        cur.execute(sql)
-        child_id = cur.lastrowid
-        #child_id = mydb.insert_id()
-        mydb.commit()
+        if(is_maker_checker(parent_table, parent_id)==False and is_maker_checker_required(doctype_parent, "UPDATE")): # If is not a new doc, no
+            pass
+        else:
+            cur.execute(sql)
+            child_id = cur.lastrowid
+            #child_id = mydb.insert_id()
+            mydb.commit()
         if(maker_check == True):
-            create_maker_checker_child("UPDATE", doctype, jdoc, parent_class.pars, child_class.pars, checkers, child_trx_type="INSERT", parent_id=parent_id)
-    except mysql.connector.Error as err:
-        frappe.msgprint(err.msg)
-        return "failed"
-    return "success"
-
-@frappe.whitelist()
-def OLD_save_posting_rule(doc, postingRule, type, account, checkers):
-    print("Adding rule :" + str(json.dumps(doc)))
-    pars = ["postingRule",
-            "type",
-            "account"]
-    #if(is_maker_checker("plexPostingRules",postingRule)):
-    maker_check = False
-    if(is_maker_checker("plexPostingRules",postingRule) or is_maker_checker_required("PostingRules", "UPDATE")):
-        maker_check = True
-        mydb = mysql_connection_MC()
-    else:
-        mydb = mysql_connection()
-    cur = mydb.cursor()
-    sql = "insert into plexPostingRulesAccounts(name, postingRule, type, account) values(NULL, '" + postingRule +"', '" + type +"', '" + account +"') "
-    print(sql)
-    try:
-        cur.execute(sql)
-        child_id = cur.lastrowid
-        #child_id = mydb.insert_id()
-        mydb.commit()
-        if(maker_check == True):
-            raw = "{\"postingRule\": \"" + postingRule + "\", \"type\": \"" + type + "\", \"account\": \"" + account + "\"}"
-            print(raw)
-            jdoc = json.loads(raw)
-            create_maker_checker_child("UPDATE", "PostingRulesAccounts", jdoc, pars, postingRule, child_id, checkers)
+            create_maker_checker_child("UPDATE", doctype, jdoc, parent_class.pars, child_class.pars, checkers, child_trx_type="INSERT", parent_id=parent_id, child_mc_id=child_id)
     except mysql.connector.Error as err:
         frappe.msgprint(err.msg)
         return "failed"
@@ -769,7 +783,6 @@ def OLD_save_posting_rule(doc, postingRule, type, account, checkers):
 
 @frappe.whitelist()
 def delete_child_row(checkers, form):
-    #print("Deleting child table row :" + child_value + "   Checkers: "+checkers)
     jdoc = json.loads(form)
     doctype = jdoc["child"]["doctype"].replace(" ", "").replace("-", "")
     doctype_parent = jdoc["doctype"].replace(" ", "").replace("-", "")
@@ -786,13 +799,28 @@ def delete_child_row(checkers, form):
     elif(is_maker_checker(parent_table, jdoc["name"])):
         #Allow updates on yet approved document
         print("Allow updates on yet approved document")
-        mydb = mysql_connection_MC()
+        print(jdoc)
+        mydb = mysql_connection()
+        cur = mydb.cursor()
+        sql = "delete from `plexMakerChecker` where trx_type='UPDATE' and child_trx_type='INSERT' and document='"+doctype+"' and parent='"+str(jdoc["child"]["parent"])+"' and document_id='"+str(jdoc["child"]["child_id"])+"' limit 1"
+        print(sql)
+        cur.execute(sql)
+        mydb.commit()
+
+        mydbc = mysql_connection_MC()
+        curc = mydbc.cursor()
+        sql = "delete from "+child_table+" where name='" + str(jdoc["child"]["child_id"]) +"' limit 1"
+        print(sql)
+        curc.execute(sql)
+        mydbc.commit()
+        return "success"
     else:
         #No approval required, so just update
         print("No approval required, so just update")
         mydb = mysql_connection()
     cur = mydb.cursor()
-    sql = "delete from "+child_table+" where name='" + jdoc["child"]["child_id"] +"' limit 1"
+    print(jdoc)
+    sql = "delete from "+child_table+" where name='" + str(jdoc["child"]["child_id"]) +"' limit 1"
     print(sql)
     try:
         cur.execute(sql)

@@ -9,7 +9,7 @@ from datetime import datetime
 
 
 
-def create_maker_checker_child(type, doctype,  self, pars, c_pars, checkers, child_trx_type="INSERT", parent_id=""):
+def create_maker_checker_child(type, doctype,  self, pars, c_pars, checkers, child_trx_type="INSERT", parent_id="", child_mc_id=""):
     jself = self #json.loads(self)
     #checkers = str(jself["checkers"]).replace(",", ": pending,\n")
     #print("CHECKERS FOR INSERT  "+checkers)
@@ -55,10 +55,12 @@ def create_maker_checker_child(type, doctype,  self, pars, c_pars, checkers, chi
     #values = values + ",\n child_value :\"" + str(jself["child_value"]).replace('"', '\\"') + "\""
     print(values)
     if (parent_id == ""):
+        print("JSELF CONTENT")
+        print(jself)
         child_id = jself["child"]["child_id"]
         parent_id = jself["name"]
     else:
-        child_id = ""
+        child_id = child_mc_id
     if(checkers==""):  #Condition for parent that hasnt been approved yet
             checkers = "(select checkers from (select `checkers` from plexMakerChecker where `document_id`='" + parent_id + "' order by creation desc limit 1) as s)"
     else:
