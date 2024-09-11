@@ -9,13 +9,13 @@ app_license = "mit"
 on_session_creation = "plexor.plexlib_web.load_permissions"
 
 # Includes in <head>
-# ------------------
+# --------------------cs
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/plexor/css/plexor.css"
 # app_include_js = "/assets/plexor/js/plexor.js"
-app_include_js = "/assets/plexor/js/desk.js"
-app_include_css = "/assets/plexor/css/desk.css"
+app_include_js = ["/assets/plexor/js/desk.js"]
+app_include_css = ["/assets/plexor/css/desk.css"]
 brand_html = '<div><b>Borealis Systems</b></div>'
 # include js, css files in header of web template
 # web_include_css = "/assets/plexor/css/plexor.css"

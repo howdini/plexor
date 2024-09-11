@@ -1,3 +1,5 @@
+
+
 document.addEventListener("DOMContentLoaded", (event) => {
     //navbar notification icons
     stateChange(-1);
@@ -100,6 +102,11 @@ function stateChange(newState) {
             navbar.prepend(anc);
         }
     }, 1000);
+}
+
+function load_message(id)
+{
+    alert("go "+id);
 }
 
 function get_alerts()
@@ -951,3 +958,5 @@ function update_notification_icons(notices_approvals, notices_securities, notice
 const interval = setInterval(function() {
    get_alerts();
  }, 6000);
+
+

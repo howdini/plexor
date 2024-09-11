@@ -6,7 +6,7 @@ from time import time as _time, sleep as _sleep
 from threading import Event
 import frappe
 import re
-
+from werkzeug.wrappers import Response
 from frappe.modules import load_doctype_module
 #import plexor.plexor.plexor_cbs.doctype.posting_rules
 
@@ -118,6 +118,399 @@ def get_role(user):
         return rv["role"]
     except:
         return "FORBIDDEN"
+
+
+def get_max_pages(type):
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    if (type == "0"):
+        qry = "SELECT count(*) as cnt FROM `notify_messages` "
+    else:
+        qry = "SELECT count(*) as cnt FROM `notify_messages` where msg_type = " + type + " "
+    print(qry)
+    cur.execute(qry)
+    rv = cur.fetchone()
+    return rv["cnt"]/10
+
+@frappe.whitelist()
+def show_inbox(type, page):
+    print("TYPE::: "+type+",   PAGE::: "+page)
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    offset = int(page) * 15
+    max_page = get_max_pages(type)
+    if(type=="0"):
+        qry = "SELECT * FROM `notify_messages` order by creation desc limit 10 offset " + str(offset)
+    else:
+        qry = "SELECT * FROM `notify_messages` where msg_type = "+type+" order by creation desc limit 10 offset "+str(offset)
+    print(qry)
+    cur.execute(qry)
+    rv = cur.fetchall()
+    msgs = ""
+    msg_count = 10
+    isFirst = True
+    fillers = msg_count
+    if cur.rowcount > 0:
+        if cur.rowcount < msg_count:
+            fillers = msg_count - cur.rowcount
+        else:
+            fillers = 0
+        doctype = ""
+        try:
+            for rec in rv:
+                dis = ">" if str(rec["read"])=="0" else " class=\"disabled\">"
+                msgs = msgs + "<tr  onclick = \"init2('message_"+str(rec["name"])+"');\" " + dis + " <td>"+str(rec["creation"]).replace(" ","&nbsp;&nbsp;")[0:27]+" <td align='center'>"+inbox_type(rec["msg_type"])+" <td align='center'>"+inbox_error(rec["error_level"])+" <td>"+str(rec["message"])[0:50]+" ..."
+                if(isFirst):
+                    isFirst = False
+                    msgs = msgs + ("<td rowspan='20' valign='top'>"
+                                    "<div id=\"msg_id\">"
+                                            "<div class=\"box\"> "
+                                                    "<b>Created</b> : "+str(rec["creation"])+" <br>"
+                                                    "<b>Recepients</b> : "+str(rec["dest_user"])+" <br>"
+                                                    "<b>Type</b> : "+inbox_type(rec["msg_type"])+" <br>"
+                                                    "<b>Error Level</b> : "+inbox_error(rec["error_level"])+" <br>"
+                                            "</div>"
+                                            "<div class=\"box2\">"
+                                                    "<b>Message</b><br>"
+                                                    " "+str(rec["message"])+"  "
+                                                    "<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;"
+                                            "</div> "
+                                   "</div> ")
+                else:
+                    message_id = ("<div class=\"box\"> "
+                                                    "<b>Created</b> : "+str(rec["creation"])+" <br>"
+                                                    "<b>Recepients</b> : "+str(rec["dest_user"])+" <br>"
+                                                    "<b>Type</b> : "+inbox_type(rec["msg_type"])+" <br>"
+                                                    "<b>Error Level</b> : "+inbox_error(rec["error_level"])+" <br>"
+                                            "</div>"
+                                            "<div class=\"box2\">"
+                                                    "<b>Message</b><br>"
+                                                    " "+str(rec["message"])+"  "
+                                                    "<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;"
+                                            "</div> ")
+                    msgs = msgs + "<input type='hidden' id=\"message_"+str(rec["name"])+"\" value='"+message_id+"'>"
+        except:
+            frappe.throw("Access Forbidden")
+    else:
+        msgs = msgs + ""
+
+    for x in range(fillers):
+        msgs = msgs + "<tr class=\"disabled\"> <td colspan=\"4\"> &nbsp"
+
+    msgs = msgs + "<tr><td colspan=\"4\" valign=\"middle\"><a href=\"#\" onclick=\"loadit(1, "+type+", "+page+");\"> <b>|< </a> &nbsp;&nbsp;&nbsp;<a href=\"#\" onclick=\"loadit(2, "+type+", "+page+");\"> <b><  </a>&nbsp;&nbsp;&nbsp; <a href=\"#\" onclick=\"loadit(3, "+type+", "+page+");\">  <b>>  </a>&nbsp;&nbsp;&nbsp; <a href=\"#\" onclick=\"loadit(4, "+type+", "+str(round(max_page))+");\">  <b>>|  </a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Page "+page+" of "+str(round(max_page))+"</tbody></table>"
+
+    html = """
+            
+            <script>
+
+                var busyi;
+
+                function init()
+                {
+                  busyi = new busy_indicator(document.getElementById("busybox"),
+                    document.querySelector("#busybox div"));
+            
+                  busyi.show();
+                  setTimeout(finish, 500);
+                }
+                function finish()
+                {
+                  switch_page();
+                  busyi.hide();
+                }
+                
+                var curr_row = ""
+                function init2( row )
+                {
+                    curr_row = row;
+                  busyi = new busy_indicator(document.getElementById("busybox"),
+                    document.querySelector("#busybox div"));
+            
+                  busyi.show();
+                  setTimeout(finish2, 200);
+                }
+                function finish2()
+                {
+                   document.getElementById('msg_id').innerHTML=document.getElementById(curr_row).value;
+                   busyi.hide();
+                }
+                
+                "use strict";
+                function busy_indicator(cntr_el, img_el, show_cb, hide_cb)
+                {
+                    this.el = {};
+                    this.cb = {show: null, hide: null};
+                    this.pos = {x: 0, y: 0};
+                    this.show_class = "show";
+                
+                
+                    this._set_prm.call(this.el, "cntr", cntr_el);
+                    this.el.img = img_el;
+                    if (show_cb != undefined)
+                        this.cb.show = show_cb;
+                    if (hide_cb != undefined)
+                        this.cb.hide = hide_cb;
+                
+                    this.cnt = 0;
+                }
+                
+                busy_indicator.prototype._set_prm = function (n, v)
+                {
+                    if (( v == undefined ) || ( v == null ))
+                        throw("busy_indicator: " + n + " is not supplied");
+                    this[n] = v;
+                }
+                
+                busy_indicator.prototype.show = function ()
+                {
+                    var top, left;
+                    var img_el;
+                
+                
+                    this.cnt++;
+                    if ( this.cnt > 1 )
+                        return;
+                
+                    this.el.cntr.classList.add(this.show_class);
+                
+                    this.align();
+                    
+                    if (this.cb.show != undefined)
+                        this.cb.show();
+                }
+                
+                busy_indicator.prototype.align = function ()
+                {
+                    if (this.el.img == null)
+                        return;
+                    
+                    this.pos = this.calc_pos();
+                
+                    this.el.img.style.top = this.pos.y + "px";
+                    this.el.img.style.left = this.pos.x + "px";
+                }
+                
+                busy_indicator.prototype.calc_pos = function ()
+                {
+                    var x, y;
+                
+                
+                    x = this.el.cntr.clientWidth/2 - this.el.img.offsetWidth/2;
+                    y = this.el.cntr.clientHeight/2 - this.el.img.offsetHeight/2;
+                    
+                    return {x: x, y: y};
+                }
+                
+                busy_indicator.prototype.hide = function ()
+                {
+                    if ( this.cnt > 0 )
+                        this.cnt--;
+                    else
+                        return;
+                
+                    if ( this.cnt )
+                        return;
+                
+                    this.el.cntr.classList.remove(this.show_class);
+                
+                    if (this.cb.hide != undefined)
+                        this.cb.hide();
+                }
+                
+                var mcurr_page = 0;
+                var mcurr_type = 0;
+                var mdirection = 0;
+                
+                function loadit(direction, curr_type, curr_page)
+                {
+                    mcurr_page = curr_page;
+                    mcurr_type = curr_type;
+                    mdirection = direction;
+                    init();
+                }
+                
+                function switch_page()
+                {
+                    curr_page = mcurr_page;
+                    curr_type = mcurr_type;
+                    direction = mdirection;
+                    if(direction==1)
+                        curr_page = 0;
+                    else if(direction==2)
+                        curr_page = curr_page-1;
+                    else if(direction==3)
+                        curr_page = curr_page+1;
+                    else if(direction==4)
+                        curr_page = curr_page-1;
+                    window.location.href = "/api/method/plexor.plexlib_web.show_inbox?type="+curr_type+"&page="+curr_page;
+                }
+            </script>
+            
+            <div id="busybox" class="fog_div">
+                    <div></div>
+            </div>
+
+                <table id="tableId">
+                  <thead>
+                    <tr>
+                      <th align='center'>Date
+                      <th style="text-align: center;">Notification Type
+                      <th style="text-align: center;">Error Level
+                      <th>Message
+                      <th style='width:40%;' align='center'>Details
+                  </thead>
+                  <tbody>"""
+    response = Response(get_inbox_css() + html + msgs, content_type='text/html')
+    response.status_code = 200
+    return response
+    #return get_inbox_css() + html + msgs
+
+def inbox_type(type):
+    if(type==1):
+        return "<span class=\"w3-tag  w3-round-large w3-blue w3-center\" style=\"font-size:12px;padding:6px\"> Approval </span>"
+    elif(type==2):
+        return "<span class=\"w3-tag  w3-round-large w3-red w3-center\" style=\"font-size:12px;padding:6px\"> Security </span>"
+    elif(type==3):
+        return "<span class=\"w3-tag  w3-round-large w3-orange w3-center\" style=\"font-size:12px;padding:6px\"> General </span>"
+
+def inbox_error(type):
+    if(type==1):
+        return "<span class=\"w3-tag  w3-round-large w3-green w3-center\" style=\"font-size:12px;padding:6px\">Success"
+    elif(type==2):
+        return "<span class=\"w3-tag  w3-round-large w3-gray w3-center\" style=\"font-size:12px;padding:6px\">Notification"
+    elif(type==3):
+        return "<span class=\"w3-tag  w3-round-large w3-pink w3-center\" style=\"font-size:12px;padding:6px\">Warning"
+    elif(type==4):
+        return "<span class=\"w3-tag  w3-round-large w3-red w3-center\" style=\"font-size:12px;padding:6px\">Critical"
+    elif(type==5):
+        return "<span class=\"w3-tag  w3-round-large w3-white w3-center\" style=\"font-size:12px;padding:6px\">Information"
+
+def get_inbox_css():
+    return """
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <style> @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600);
+        
+        a {
+            text-decoration: none;
+            font-weight: bold;
+            font-weight: 400;
+        }
+        
+        body {
+          height: 100%;
+        }
+        .box { 
+            margin-top: 0rem; 
+            margin-left: 0rem; 
+            margin-right: 0rem; 
+            width: 98%; 
+            height: 20%; 
+            padding: 1rem; 
+            box-sizing: border-box; 
+            border: 1px solid gray; 
+            text-align: left; 
+            color: white; 
+        } 
+  
+        .box2 { 
+            margin-top: 1rem; 
+            margin-left: 0rem; 
+            margin-right: 0rem; 
+            width: 98%; 
+            display: flex;
+              flex-direction: column;
+              min-height: 100%;
+            border: 1px solid gray; 
+            padding: 1rem; 
+            text-align: left; 
+            color: white; 
+        } 
+        
+            
+            *, *:before, *:after {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+            
+            body {
+              background: #105469;
+              font-family: 'Open Sans', sans-serif;
+            }
+            table {
+              background: #012B39;
+              border-radius: 0.25em;
+              border-collapse: collapse;
+              margin: 1em;
+              width: 100%;
+            }
+            th {
+              border-bottom: 1px solid #364043;
+              color: #E2B842;
+              font-size: 0.85em;
+              font-weight: 600;
+              padding: 0.5em 1em;
+              text-align: left;
+            }
+            td {
+              color: #fff;
+              font-weight: 400;
+              font-size: 0.85em;
+              padding: 0.65em 1em;
+            }
+            .disabled td {
+              color: #4F5F64;
+            }
+            tbody tr {
+              transition: background 0.25s ease;
+            }
+            tbody tr:hover {
+              background: #014055;
+            }
+             
+             
+             
+             #busybox {
+                }
+                
+                #busybox div {
+                        position: fixed;
+                        width: 48px;
+                        height: 48px;
+                        border-radius: 50%;
+                        border: 8px solid white;
+                        border-left-color: transparent;
+                        border-right-color: transparent;
+                
+                        animation: busybox_kf 1s linear 0s infinite normal none running;
+                }
+                
+                @keyframes busybox_kf {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                }
+                
+                @-webkit-keyframes busybox_kf {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                }
+
+                .fog_div {
+                  display: none;
+                  position: fixed;
+                  top: 0px;
+                  left: 0px;
+                  height: 100%;
+                  width: 100%;
+                  z-index: 100;
+                  background-color: rgba(30, 30, 30, 0.5);
+                }
+                #busybox.show {
+                  display: block;
+                }
+        </style>
+            
+            """
 
 @frappe.whitelist()
 def get_user_messages():
