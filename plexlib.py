@@ -1,9 +1,9 @@
 
-
 import mysql.connector
 import re
 import hashlib
 import frappe
+import json
 
 #update
 @frappe.whitelist()
@@ -22,6 +22,37 @@ def mysql_connection_MC():
       password="mvpnaz",
 	  database="plexorCBS_MC"
     )
+
+@frappe.whitelist()
+def create_message(creator, to_group, recepients, message, type, error):
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    for to_user in recepients:
+        sig = generate_sig2(["dest_group", "dest_user", "message", "msg_type", "error_level"], json.loads("{\"creation\": \""+creator+"\",\"modified\": \""+creator+"\",\"modified_by\": \""+creator+"\",\"owner\": \""+creator+"\",\"dest_group\": \""+to_group+"\", \"dest_user\": \""+to_user+"\", \"message\": \""+add_tags(message)+"\", \"msg_type\": \""+str(type)+"\", \"error_level\": \""+str(error)+"\"}") )
+        sql = ("INSERT INTO `notify_messages` ("
+               "`name`, `creation`, `modified`, `modified_by`, `owner`, `docstatus`, `idx`, "
+               "`dest_group`, `dest_user`, `message`, `msg_type`, `error_level`, `read`, "
+               "`sig`, `sig_status` "
+               ") VALUES ("
+               "RAND(), now(), now(), '"+creator+"','"+creator+"','0','0', "
+               "'"+to_group+"','"+to_user+"','"+add_tags(message)+"','"+str(type)+"','"+str(error)+"','0','"+sig+"','0' "
+               ");")
+        print(sql)
+        cur.execute(sql)
+    mydb.commit()
+
+def add_tags(msg):
+    return msg.replace("'","\'").replace('"','\"').replace('\\','\\\\')
+
+def json_format_correction(json_String):
+    # Replace single quotes with double quotes and ensure that the property names are quoted
+    corrected_json_string = re.sub(r"(\w+)\s*:", r'"\1":', json_String)
+    corrected_json_string = corrected_json_string.replace("'", '"')
+    # Ensure the JSON string starts and ends with curly braces
+    corrected_json_string = f'{{{corrected_json_string.strip("{}")}}}'
+    vals = corrected_json_string
+    print("json_format_correction :: " + vals)
+    return vals
 
 def check_permissions(doctypeName, type):
     if(frappe.session.user=="Administrator"):
@@ -137,6 +168,14 @@ def generate_sig(pars, self):
     return hash 
 #SELECT sig,  SHA2(CONVERT(CONCAT(full_name,first_name,last_name,id_number,creation,modified,modified_by,`owner`)USING utf8), 256) FROM tabMember ;
 
+def generate_sig2(pars, self):
+    raw = ""
+    for x in pars:
+            raw = raw + str(self[x])
+    raw = raw + self["creation"] + self["modified"] + self["modified_by"] + self["owner"]
+    hash = hashlib.sha256(raw.encode("utf-8")).hexdigest()
+    #frappe.msgprint(raw+"<br>"+hash)
+    return hash
 
 @frappe.whitelist()
 def validate_document(document, var_list, validator):

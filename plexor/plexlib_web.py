@@ -10,6 +10,8 @@ from werkzeug.wrappers import Response
 from frappe.modules import load_doctype_module
 #import plexor.plexor.plexor_cbs.doctype.posting_rules
 
+
+
 @frappe.whitelist()
 def getDocModified(table, docname):
     mydb = mysql_connection()
@@ -139,6 +141,7 @@ def show_inbox(type, page):
     cur = mydb.cursor(dictionary=True)
     offset = int(page) * 15
     max_page = get_max_pages(type)
+    print("Max pages:: "+str(max_page))
     if(type=="0"):
         qry = "SELECT * FROM `notify_messages` order by creation desc limit 10 offset " + str(offset)
     else:
@@ -159,7 +162,7 @@ def show_inbox(type, page):
         try:
             for rec in rv:
                 dis = ">" if str(rec["read"])=="0" else " class=\"disabled\">"
-                msgs = msgs + "<tr  onclick = \"init2('message_"+str(rec["name"])+"');\" " + dis + " <td>"+str(rec["creation"]).replace(" ","&nbsp;&nbsp;")[0:27]+" <td align='center'>"+inbox_type(rec["msg_type"])+" <td align='center'>"+inbox_error(rec["error_level"])+" <td>"+str(rec["message"])[0:50]+" ..."
+                msgs = msgs + "<tr  onclick = \"init2('message_"+str(rec["name"])+"');\" id=\"row_"+str(rec["name"])+"\" " + dis + " <td>"+str(rec["creation"]).replace(" ","&nbsp;&nbsp;")[0:27]+" <td align='center'>"+inbox_type(rec["msg_type"])+" <td align='center'>"+inbox_error(rec["error_level"])+" <td>"+str(rec["message"])[0:50]+" ..."
                 if(isFirst):
                     isFirst = False
                     msgs = msgs + ("<td rowspan='20' valign='top'>"
@@ -176,8 +179,8 @@ def show_inbox(type, page):
                                                     "<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;"
                                             "</div> "
                                    "</div> ")
-                else:
-                    message_id = ("<div class=\"box\"> "
+
+                message_id = ("<div class=\"box\"> "
                                                     "<b>Created</b> : "+str(rec["creation"])+" <br>"
                                                     "<b>Recepients</b> : "+str(rec["dest_user"])+" <br>"
                                                     "<b>Type</b> : "+inbox_type(rec["msg_type"])+" <br>"
@@ -188,7 +191,7 @@ def show_inbox(type, page):
                                                     " "+str(rec["message"])+"  "
                                                     "<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;"
                                             "</div> ")
-                    msgs = msgs + "<input type='hidden' id=\"message_"+str(rec["name"])+"\" value='"+message_id+"'>"
+                msgs = msgs + "<input type='hidden' id=\"message_"+str(rec["name"])+"\" value='"+message_id+"'>"
         except:
             frappe.throw("Access Forbidden")
     else:
@@ -197,7 +200,7 @@ def show_inbox(type, page):
     for x in range(fillers):
         msgs = msgs + "<tr class=\"disabled\"> <td colspan=\"4\"> &nbsp"
 
-    msgs = msgs + "<tr><td colspan=\"4\" valign=\"middle\"><a href=\"#\" onclick=\"loadit(1, "+type+", "+page+");\"> <b>|< </a> &nbsp;&nbsp;&nbsp;<a href=\"#\" onclick=\"loadit(2, "+type+", "+page+");\"> <b><  </a>&nbsp;&nbsp;&nbsp; <a href=\"#\" onclick=\"loadit(3, "+type+", "+page+");\">  <b>>  </a>&nbsp;&nbsp;&nbsp; <a href=\"#\" onclick=\"loadit(4, "+type+", "+str(round(max_page))+");\">  <b>>|  </a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Page "+page+" of "+str(round(max_page))+"</tbody></table>"
+    msgs = msgs + "<tr><td colspan=\"4\" valign=\"middle\"><a style=\"text-decoration:none\" href=\"#\" onclick=\"loadit(1, "+type+", "+page+");\"> <b>|< </a> &nbsp;&nbsp;&nbsp;<a style=\"text-decoration:none\" href=\"#\" onclick=\"loadit(2, "+type+", "+page+");\"> <b><  </a>&nbsp;&nbsp;&nbsp; <a style=\"text-decoration:none\" href=\"#\" onclick=\"loadit(3, "+type+", "+page+");\">  <b>>  </a>&nbsp;&nbsp;&nbsp; <a style=\"text-decoration:none\" href=\"#\" onclick=\"loadit(4, "+type+", "+str(round(max_page))+");\">  <b>>|  </a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Page "+page+" of "+str(round(max_page))+"</tbody></table>"
 
     html = """
             
@@ -208,7 +211,7 @@ def show_inbox(type, page):
                 function init()
                 {
                   busyi = new busy_indicator(document.getElementById("busybox"),
-                    document.querySelector("#busybox div"));
+                  document.querySelector("#busybox div"));
             
                   busyi.show();
                   setTimeout(finish, 500);
@@ -222,17 +225,31 @@ def show_inbox(type, page):
                 var curr_row = ""
                 function init2( row )
                 {
-                    curr_row = row;
+                  curr_row = row;
                   busyi = new busy_indicator(document.getElementById("busybox"),
-                    document.querySelector("#busybox div"));
+                  document.querySelector("#busybox div"));
             
                   busyi.show();
                   setTimeout(finish2, 200);
                 }
                 function finish2()
                 {
-                   document.getElementById('msg_id').innerHTML=document.getElementById(curr_row).value;
                    busyi.hide();
+                   document.getElementById('msg_id').innerHTML=document.getElementById(curr_row).value;
+                   set_to_read(curr_row);
+                }
+                
+                function set_to_read(msg_id)
+                {
+                      var xhttp = new XMLHttpRequest();
+                      xhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                        console.log(msg_id);
+                            document.getElementById(msg_id.replace("message_", "row_")).classList.add("disabled");
+                        }
+                      };
+                      xhttp.open("GET", "/api/method/plexor.plexlib_web.set_to_read?msg_id="+msg_id, true);
+                      xhttp.send();
                 }
                 
                 "use strict";
@@ -384,17 +401,14 @@ def inbox_error(type):
         return "<span class=\"w3-tag  w3-round-large w3-red w3-center\" style=\"font-size:12px;padding:6px\">Critical"
     elif(type==5):
         return "<span class=\"w3-tag  w3-round-large w3-white w3-center\" style=\"font-size:12px;padding:6px\">Information"
+    elif(type==6):
+        return "<span class=\"w3-tag  w3-round-large w3-purple w3-center\" style=\"font-size:12px;padding:6px\">Important"
 
 def get_inbox_css():
     return """
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
         <style> @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600);
         
-        a {
-            text-decoration: none;
-            font-weight: bold;
-            font-weight: 400;
-        }
         
         body {
           height: 100%;
@@ -511,6 +525,15 @@ def get_inbox_css():
         </style>
             
             """
+
+@frappe.whitelist()
+def set_to_read(msg_id):
+    msg_id = msg_id.replace("message_", "")
+    mydb2 = mysql_connection()
+    cur2 = mydb2.cursor(dictionary=True)
+    sql = ("UPDATE notify_messages set `read` = 1 WHERE `name`='" + msg_id + "' limit 1")
+    cur2.execute(sql)
+    mydb2.commit()
 
 @frappe.whitelist()
 def get_user_messages():
@@ -1128,6 +1151,7 @@ def get_role_permission(role):
 def save_child_row(doctype, parent_id, row, checkers):
     print(row)
     #frappe.throw(row)
+    child_id = ""
     jdoc = json.loads(row)
     doctype_parent = get_parent(doctype)
     parent_table = get_tablename(doctype_parent)

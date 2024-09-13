@@ -1,7 +1,7 @@
 import frappe
 import json
 import hashlib
-from plexlib import mysql_connection, mysql_connection_MC, validate_document, generate_sig, create_trigger, check_permissions
+from plexlib import mysql_connection, mysql_connection_MC, validate_document, generate_sig, create_trigger, check_permissions, create_message, json_format_correction
 from frappe.model.document import Document
 import mysql.connector
 from typing import overload
@@ -17,6 +17,7 @@ def create_maker_checker_child(type, doctype,  self, pars, c_pars, checkers, chi
     qry = ""
     values = ""
 
+    recepients = checkers.split(",")
     if(child_trx_type=="INSERT"):
         first = True
         for x in c_pars:
@@ -63,18 +64,25 @@ def create_maker_checker_child(type, doctype,  self, pars, c_pars, checkers, chi
         child_id = child_mc_id
     if(checkers==""):  #Condition for parent that hasnt been approved yet
             checkers = "(select checkers from (select `checkers` from plexMakerChecker where `document_id`='" + parent_id + "' order by creation desc limit 1) as s)"
+            temp = json_format_correction(checkers)
+            data = json.loads(json_string)
+            recepients = data.keys()
     else:
         checkers = "'{" + checkers + "}'"
     mycursor = mydb.cursor()
+    mc_id = generate_key()
     sql = ("INSERT INTO `plexMakerChecker` (name, creation, modified, modified_by, owner, docstatus, idx,"
            + "creator, stamp, document, document_id, `trx_type`, `values`, checkers, parent, `check_status`, sig, child_trx_type)"
            + "VALUES( %s, now(), now(), '"+frappe.get_user().doc.name+"', '"+frappe.get_user().doc.name+"',  0, 1,"
-           + "'"+frappe.get_user().doc.name+"', now(),%s,%s,%s,%s,"+checkers+",%s, 0,'', '"+child_trx_type+"' )")
+           + "'"+frappe.get_user().doc.name+"', now(), %s, %s, %s, %s,"+checkers+", %s, 0, '', '"+child_trx_type+"' )")
     print(sql)
-    val = (generate_key(), doctype, child_id, type, values, parent_id)
+    val = (mc_id, doctype, child_id, type, values, parent_id)
     try:
         mycursor.execute(sql, val)
         mydb.commit()
+        create_message(frappe.get_user().doc.name, "", recepients,
+                       "A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/" + mc_id + ">View change  </a>",
+                       1, 6)
     except mysql.connector.Error as e:
         if ("Duplicate" in str(e)):
             frappe.throw("An update request on this document is still pending. Cannot proceed.")
@@ -98,6 +106,7 @@ def create_maker_checker(type, selfclass, self, pars, doctype=""):
             checkers_raw = data["checkers"]
         except KeyError:
             frappe.throw("No checkers were selected.")
+        recepients = checkers.split(",")
         checkers = str(checkers_raw).replace(",", ": pending,\n")
     mydb = mysql_connection()
     #qry = ""
@@ -129,13 +138,17 @@ def create_maker_checker(type, selfclass, self, pars, doctype=""):
            + "VALUES( %s, now(), now(), %s, %s, 0, 0, %s, %s, %s,%s, %s,%s,%s"
            + ", 0, ''  )")
     print(sql)
+    mc_id = generate_key()
     if (had_doctype == False):
-        val = (generate_key(), self.modified_by, self.owner, self.owner, self.creation, doctype, self.name, type, values, checkers)
+        val = (mc_id, self.modified_by, self.owner, self.owner, self.creation, doctype, self.name, type, values, checkers)
     else:
-        val = (generate_key(), data["modified_by"], data["owner"], data["owner"], data["creation"], doctype, data["name"], type, values, checkers)
+        val = (mc_id, data["modified_by"], data["owner"], data["owner"], data["creation"], doctype, data["name"], type, values, checkers)
     try:
         mycursor.execute(sql, val)
         mydb.commit()
+        create_message(self.owner, "", recepients,
+                       "A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/"+mc_id+">View change </a>",
+                       1, 6)
     except mysql.connector.Error as e:
         if( "Duplicate" in str(e)):
             if (is_maker_checker(self.table, self.name)==True):
@@ -145,15 +158,17 @@ def create_maker_checker(type, selfclass, self, pars, doctype=""):
             #frappe.throw("An update request on this document is still pending. Cannot proceed.")
             sql = ("INSERT INTO `plexMakerChecker` (name, creation, modified, modified_by, owner, docstatus, idx,"
                    + "creator, stamp, document, document_id, `trx_type`, `values`, checkers, `check_status`, sig)"
-                   + "VALUES( now(), now(), %s, %s, %s, 0, 0, %s, %s, %s,%s, %s,%s,%s"
-                   + ", 0, ''  )")
+                   + "VALUES( now(), now(), %s, %s, %s, 0, 0, %s, %s, %s, %s, %s, %s, %s, 0, ''  )")
             print(sql)
             if (len(doctype) < 1):
-                val = (generate_key(),  self.modified_by, self.owner, self.owner, self.creation, doctype, self.name, type, values, checkers)
+                val = (mc_id,  self.modified_by, self.owner, self.owner, self.creation, doctype, self.name, type, values, checkers)
             else:
-                val = (generate_key(), data["modified_by"], data["owner"], data["owner"], data["creation"], doctype, data["name"], data, values, checkers)
+                val = (mc_id, data["modified_by"], data["owner"], data["owner"], data["creation"], doctype, data["name"], data, values, checkers)
             mycursor.execute(sql, val)
             mydb.commit()
+            create_message(self.owner, "", recepients,
+                           "A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/" + mc_id + ">View change </a>",
+                           1, 6)
         elif( "'checkers' cannot be null" in str(e)):
             frappe.throw("Error. No checkers were selected.")
         else:
@@ -193,7 +208,7 @@ def crud_db_insert(self, selfclass, *args, **kwargs):
            + "VALUES( %s, %s, %s, %s, %s, 0, %s, "
            + qry_vals + ", '" + generate_sig(self.pars, self) + "'  )")
     val = (self.name, self.creation, self.modified, self.modified_by, self.owner, self.idx)
-    mycursor.execute(sql, val)#
+    mycursor.execute(sql, val)
 
     mydb.commit()
 

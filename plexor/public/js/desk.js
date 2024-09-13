@@ -104,9 +104,17 @@ function stateChange(newState) {
     }, 1000);
 }
 
-function load_message(id)
+function load_message(type)
 {
-    alert("go "+id);
+     dialog = new frappe.ui.Dialog({
+            title: __('Plexor Notification Messages'),
+              fields: [
+                  {"fieldtype": "HTML" , "fieldname": "Message" , "label": "Message", "options": "<iframe id=\"dialog_id\" name=\"dialog_id\" width=\"100%\" height=\"650px\" src=\"/api/method/plexor.plexlib_web.show_inbox?type="+type+"&page=0\"></iframe>"},
+                ],
+          });
+    dialog.show()
+    dialog.$wrapper.find('.modal-dialog').css("max-width", "90%");
+    dialog.$wrapper.find('.modal-dialog').css("width", "90%");
 }
 
 function get_alerts()
@@ -936,17 +944,17 @@ function update_notification_icons(notices_approvals, notices_securities, notice
     var ret = "Ple<b>xor Ban</b>king &nbsp;&nbsp;&nbsp;&nbsp;"+
             "<link href=\"https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css\" rel=\"stylesheet\" />"+
 
-            "<a class=\"fa fa-thumbs-up\" href=\"/app/plexnotification?msg_type=1\">"+(notices_approvals>0?
+            "<a class=\"fa fa-thumbs-up\" href=\"#\" onclick=\"load_message(1);\">"+(notices_approvals>0?
             "  <span class=\"fa fa-comment\" style=\"color: #428df5;\"></span>"+
             "  <span class=\"num\" style=\""+num1_space+"\"><b>"+notices_approvals+"</b></span>":"")+
 
             "</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+
-            "<a class=\"fa fa-shield\" href=\"/app/plexnotification?msg_type=2\">"+(notices_securities>0?
+            "<a class=\"fa fa-shield\" href=\"#\" onclick=\"load_message(2);\">"+(notices_securities>0?
             "  <span class=\"fa fa-comment\" style=\"color: red;\"></span>"+
             "  <span class=\"num\" style=\""+num2_space+"\"><b>"+notices_securities+"</b></span>":"")+
 
             "</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+
-            "<a class=\"fa fa-bell-o\" href=\"/app/plexnotification?msg_type=3\">"+(notices_systems>0?
+            "<a class=\"fa fa-bell-o\" href=\"#\" onclick=\"load_message(3);\">"+(notices_systems>0?
             "  <span class=\"fa fa-comment\" style=\"color: #6cdb56\"></span>"+
             "  <span class=\"num\" style=\""+num3_space+"\"><b>"+notices_systems+"</b></span>":"")+
 

@@ -12,22 +12,10 @@ frappe.ui.form.on("Posting Rules", {
                 frm.add_custom_button('Delete <div style=\"font-size: 50%;\"><b>plexor</b></div>', () => {
                     prepare_delete(frm, children="Posting Rules Accounts", children_fields="postingRule");
                 }).removeClass('btn-default').addClass('btn-primary').css({'color':'white','font-weight': 'normal'});
-                frm.add_custom_button('Messages <div style=\"font-size: 50%;\"><b>plexor</b></div>', () => {
-                        dialog = new frappe.ui.Dialog({
-                                        title: __('Plexor Notifications'),
-                                          fields: [
-                                              {"fieldtype": "HTML" , "fieldname": "Message" , "label": "Message", "options": "<iframe id=\"dialog_id\" name=\"dialog_id\" width=\"100%\" height=\"650px\" src=\"/api/method/plexor.plexlib_web.show_inbox?type=0&page=0\"></iframe>"},
-                                            ],
-                                      });
-                                dialog.show()
-                                dialog.$wrapper.find('.modal-dialog').css("max-width", "90%");
-                                dialog.$wrapper.find('.modal-dialog').css("width", "90%");
-
-                }).removeClass('btn-default').addClass('btn-primary').css({'color':'white','font-weight': 'normal'});
          },
          before_discard: function(frm) {
             frappe.throw("OVERRIDING DELETION FUNCTION");
-        },
+         },
         onload: function(frm) {
             add_grids(frm);
         },
