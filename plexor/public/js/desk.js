@@ -286,7 +286,7 @@ function prepare_delete(frm, children="", children_fields="")
 {
     frappe.call({
         method: "plexor.plexlib_web.check_parent_makerchecker_status",
-        args: {form: frm.doc, type: "UPDATE"},
+        args: {form: frm.doc, type: "DELETE"},
         callback: function(r) {
             responseText = r.message
             console.log("IS MAKE CHECKER:::"+responseText);
@@ -295,7 +295,7 @@ function prepare_delete(frm, children="", children_fields="")
                 console.log("GETTING CHECKERS");
                 frappe.call({
                     method: "plexor.plexlib_web.get_checkers",
-                    args: {},
+                    args: {form: frm.doc, type: "DELETE"},
                     callback: function(r) {
                         responseText = r.message
                         console.log(responseText);
@@ -346,7 +346,7 @@ function is_maker_checker_enabled(frm, doctype,type)
                             console.log("GETTING CHECKERS");
                             frappe.call({
                                 method: "plexor.plexlib_web.get_checkers",
-                                args: {},
+                                args: {doctype: doctype, type: type},
                                 callback: function(r) {
                                     responseText = r.message
                                     console.log(responseText);
@@ -425,13 +425,14 @@ function selectCheckers(frm, data)
 }
 
 
-function selectCheckersChild(frm, datas, add_title, add_filter_function, add_args, add_function, grid_name, add_grids)
+function selectCheckersChild(frm, datas, add_title, add_filter_function, add_args, add_function, grid_name, add_grids, checkers_count=1)
 {
+    //  frappe.msgprint("Checker count: " + checkers_count)
     let d = new frappe.ui.Dialog({
         title: 'Select Insert Child Checkers',
         fields: [
             {
-                label: 'Maker-checker is enabled for this action. Please Select verifiers from list below.',
+                label: 'Maker-checker is enabled for this action. Please Select <b>'+checkers_count+'</B> verifiers from list below.',
                 fieldname: 'checkers',
                 fieldtype: 'Table',
                 cannot_add_rows: true,
@@ -449,6 +450,7 @@ function selectCheckersChild(frm, datas, add_title, add_filter_function, add_arg
         primary_action_label: 'Submit',
         primary_action(values) {
             checkers = "";
+            count = 0;
             for(let key in values)
             {
                 //console.log(values[key]);
@@ -459,6 +461,7 @@ function selectCheckersChild(frm, datas, add_title, add_filter_function, add_arg
                     {
                         console.log(obj[x].checker);
                         checkers = checkers + obj[x].checker + ": pending,";
+                        count = count + 1;
                         //frm.set_value('checkers', checkers);
                         //frm.dirty();
                         //frm.save();
@@ -466,8 +469,15 @@ function selectCheckersChild(frm, datas, add_title, add_filter_function, add_arg
                 }
             }
             console.log("POST CHECKERS:"+checkers)
-            d.hide();
-            grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name, checkers, add_grids);
+            if(count == checkers_count)
+            {
+                d.hide();
+                grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name, checkers, add_grids);
+            }
+            else if(count != checkers_count)
+            {
+                frappe.throw("Please select <b>"+checkers_count+"</b> verifiers to proceed");
+            }
         }
     });
 
@@ -670,6 +680,7 @@ function setup_grid(frm, grid_name, load_args, add_title, add_filter_function, a
 
                 grid.forEach(function(row) {
                     if (row && row.wrapper.find('.grid-row-check').is(':checked')) {
+                        row.wrapper.find('.grid-row-check').click();
                         var docname = row.doc.child_id;
                         console.log(">>>>"+docname);
                         console.log(row);
@@ -707,7 +718,7 @@ function setup_grid(frm, grid_name, load_args, add_title, add_filter_function, a
                                     console.log("GETTING CHECKERS");
                                     frappe.call({
                                         method: "plexor.plexlib_web.get_checkers",
-                                        args: {},
+                                        args: {form: frm.doc, type: "UPDATE"},
                                         callback: function(r) {
                                             console.log("Here It Is....");
                                             args['form'] = frm.doc;
@@ -773,19 +784,26 @@ function setup_grid(frm, grid_name, load_args, add_title, add_filter_function, a
                                     console.log("GETTING CHECKERS");
                                     frappe.call({
                                         method: "plexor.plexlib_web.get_checkers",
-                                        args: {},
+                                        args: {form: frm.doc, type: "UPDATE"},
                                         callback: function(r) {
                                             responseText = r.message
                                             console.log(responseText);
                                             data = "[";
+                                            isFirst = true;
                                             for(let x in responseText)
                                                 {
+                                                    if(isFirst)
+                                                    {
+                                                        isFirst = false
+                                                        checkers_count = responseText[x]
+                                                        continue;
+                                                    }
                                                     data = data + "{\"checker\":\""+responseText[x]+"\"},";
                                                 }
                                                 data = data.substring(0, data.length - 1);
                                             data = data + "]";
                                             console.log(data);
-                                            selectCheckersChild(frm, JSON.parse(data), add_title, add_filter_function, add_args, add_function, grid_name, add_grids);
+                                            selectCheckersChild(frm, JSON.parse(data), add_title, add_filter_function, add_args, add_function, grid_name, add_grids, checkers_count);
                                         }
                                     });
                                 }

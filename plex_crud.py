@@ -1,11 +1,12 @@
 import frappe
 import json
 import hashlib
-from plexlib import mysql_connection, mysql_connection_MC, validate_document, generate_sig, create_trigger, check_permissions, create_message, json_format_correction
+from plexlib import mysql_connection, mysql_connection_MC, validate_document, generate_sig, generate_sig2, create_trigger, check_permissions, create_message, json_format_correction, get_current_datetime
 from frappe.model.document import Document
 import mysql.connector
 from typing import overload
 from datetime import datetime
+from frappe.modules import load_doctype_module
 
 
 
@@ -23,37 +24,33 @@ def create_maker_checker_child(type, doctype,  self, pars, c_pars, checkers, chi
         for x in c_pars:
             if (first):
                 qry = "`" + x + "`"
-                values = x + " :\"" + str(jself[x]) + "\""
+                values = "\\\"" + x + "\\\" :\\\"" + str(jself[x]) + "\\\""
                 first = False
             else:
                 qry = qry + ", " + "`" + x + "`"
-                values = values + ",\n " + x + " :\"" + str(jself[x]).replace('"', '\\"') + "\""
-        values = "{\"child\":{" + values + "}}"
+                values = values + ", \\\"" + x + "\\\" :\\\"" + str(jself[x]).replace('"', '\\"') + "\\\""
+        values = "{\\\"child\\\":{" + values + "}}"
     else:
         first = True
         for x in pars:
             if (first):
                 qry = "`" + x + "`"
-                values = x + " :\"" + str(jself[x]) + "\""
+                values = "\\\"" + x + "\\\" :\\\"" + str(jself[x]) + "\\\""
                 first = False
             else:
                 qry = qry + ", " + "`" + x + "`"
-                values = values + ",\n " + x + " :\"" + str(jself[x]).replace('"', '\\"') + "\""
-        values = "{\"parent\":{" + values + "}"
+                values = values + ", \\\"" + x + "\\\" :\\\"" + str(jself[x]).replace('"', '\\"') + "\\\""
+        values = "{\\\"parent\\\":{" + values + "}"
         values2 = ""
         first = True
         for x in c_pars:
             if (first):
-                values2 = values2 + x + " :\"" + str(jself["child"][x]) + "\""
+                values2 = values2 + "\\\"" + x + "\\\" :\\\"" + str(jself["child"][x]) + "\\\""
                 first = False
             else:
-                values2 = values2 + ",\n " + x + " :\"" + str(jself["child"][x]).replace('"', '\\"') + "\""
-        values = values + ", \"child\":{" + values2 + "}}"
+                values2 = values2 + ", \\\"" + x + "\\\" :\\\"" + str(jself["child"][x]).replace('"', '\\"') + "\\\""
+        values = values + ", \\\"child\\\":{" + values2 + "}}"
 
-
-
-    #values = values + ",\n parent_value :\"" + str(jself["parent_value"]).replace('"', '\\"') + "\""
-    #values = values + ",\n child_value :\"" + str(jself["child_value"]).replace('"', '\\"') + "\""
     print(values)
     if (parent_id == ""):
         print("JSELF CONTENT")
@@ -64,21 +61,32 @@ def create_maker_checker_child(type, doctype,  self, pars, c_pars, checkers, chi
         child_id = child_mc_id
     if(checkers==""):  #Condition for parent that hasnt been approved yet
             checkers = "(select checkers from (select `checkers` from plexMakerChecker where `document_id`='" + parent_id + "' order by creation desc limit 1) as s)"
-            temp = json_format_correction(checkers)
+            json_string = get_checkers(parent_id)
+            json_string = json_string.replace("{","{\"").replace(":","\":").replace(": ",": \"").replace(",","\",").replace(", }","}")
+            print("CORRECTED::: "+json_string)
             data = json.loads(json_string)
             recepients = data.keys()
     else:
-        checkers = "'{" + checkers + "}'"
+        checkers = "{" + checkers + "}"
     mycursor = mydb.cursor()
     mc_id = generate_key()
+    nowtime = get_current_datetime()
+    mc_doctype = create_class("MakerChecker")
+    json_string = ("{\"creation\": \"" + str(nowtime) + "\",\"modified\": \""
+                  "" + str(nowtime) + "\",\"modified_by\": \"" + frappe.get_user().doc.name + "\",\"owner\": \"" + frappe.get_user().doc.name + ""
+                  "\",\"creator\": \"" + frappe.get_user().doc.name + "\", \"stamp\": \"" + str(nowtime) + "\", \"document\": \"" + doctype + "\", \"document_id\": \"" + str(child_id) + "\", \"trx_type\": \"" + type + "\", \"child_trx_type\": \"" + child_trx_type + ""
+                  "\",\"values\": \"" + values + "\", \"checkers\": \"" + checkers + "\", \"parent\": \"" + str(parent_id) + "\", \"check_status\": \"0\", \"checker_comments\": \"\", \"posted_result\": \"0\"}")
+    print(json_string)
+    print("PARS:::")
+    print(mc_doctype.pars)
+    sig = generate_sig2(mc_doctype.pars, json.loads(json_string))
     sql = ("INSERT INTO `plexMakerChecker` (name, creation, modified, modified_by, owner, docstatus, idx,"
            + "creator, stamp, document, document_id, `trx_type`, `values`, checkers, parent, `check_status`, sig, child_trx_type)"
-           + "VALUES( %s, now(), now(), '"+frappe.get_user().doc.name+"', '"+frappe.get_user().doc.name+"',  0, 1,"
-           + "'"+frappe.get_user().doc.name+"', now(), %s, %s, %s, %s,"+checkers+", %s, 0, '', '"+child_trx_type+"' )")
+           + "VALUES( '"+str(mc_id)+"', '"+str(nowtime)+"', '"+str(nowtime)+"', '"+frappe.get_user().doc.name+"', '"+frappe.get_user().doc.name+"',  0, 1,"
+           + "'"+frappe.get_user().doc.name+"', '"+str(nowtime)+"', '"+doctype+"', '"+str(child_id)+"', '"+type+"', '"+values+"', '"+checkers+"', '"+str(parent_id)+"', 0, '"+sig+"', '"+child_trx_type+"' )")
     print(sql)
-    val = (mc_id, doctype, child_id, type, values, parent_id)
     try:
-        mycursor.execute(sql, val)
+        mycursor.execute(sql)
         mydb.commit()
         create_message(frappe.get_user().doc.name, "", recepients,
                        "A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/" + mc_id + ">View change  </a>",
@@ -91,12 +99,22 @@ def create_maker_checker_child(type, doctype,  self, pars, c_pars, checkers, chi
         else:
             frappe.throw(e)
 
+def get_checkers(parent_id):
+    sql = "select `checkers` from plexMakerChecker where `document_id`='" + parent_id + "' order by creation desc limit 1"
+    print(sql)
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    cur.execute(sql)
+    rv = cur.fetchone()
+    return rv["checkers"]
 
 def create_maker_checker(type, selfclass, self, pars, doctype=""):
     had_doctype = False
+    mc_doctype = create_class("MakerChecker")
     if(len(doctype) < 1):
         doctype = getDoctype(selfclass)
-        checkers = str(self.get("checkers")).replace(",", ": pending,\n")
+        checkers = str(self.get("checkers")).replace(",", ": pending, ")
+        recepients = checkers.split(",")
     else:
         had_doctype = True
         doctype = doctype.replace(" ","").replace("-","").replace("_","")
@@ -106,49 +124,93 @@ def create_maker_checker(type, selfclass, self, pars, doctype=""):
             checkers_raw = data["checkers"]
         except KeyError:
             frappe.throw("No checkers were selected.")
-        recepients = checkers.split(",")
-        checkers = str(checkers_raw).replace(",", ": pending,\n")
+        recepients = checkers_raw.split(",")
+        print(recepients)
+        checkers = str(checkers_raw).replace(",", ": pending, ")
     mydb = mysql_connection()
     #qry = ""
     values = ""
     if(type=="DELETE"):
-        values = "{\"children_tables\" : \""+data["children"] +"\", \"children_fields\" : \"" + data["children_fields"] + "\"}"
+        values = "{\\\"children_tables\\\" : \\\""+data["children"] +"\\\", \\\"children_fields\\\" : \\\"" + data["children_fields"] + "\\\"}"
     else:
         first = True
         for x in pars:
             if (first):
                 #qry = "`" + x + "`"
                 if (had_doctype == False):
-                    values = x + " :\"" + str(self.get(x)) + "\""
+                    values = "\\\"" + x + "\\\" :\\\"" + str(self.get(x)) + "\\\""
                 else:
-                    values = x + " :\"" + str(data[x]) + "\""
+                    values = "\\\"" + x + "\\\" :\\\"" + str(data[x]) + "\\\""
                 first = False
             else:
                 #qry = qry + ", " + "`" + x + "`"
                 if (had_doctype == False):
-                    values = values + ",\n " + x + " :\"" + str(self.get(x)).replace('"', '\\"') + "\""
+                    values = values + ", \\\"" + x + "\\\" :\\\"" + str(self.get(x)).replace('"', '\\"') + "\\\""
                 else:
-                    values = values + ",\n " + x + " :\"" + str(data[x]).replace('"', '\\"') + "\""
+                    values = values + ", \\\"" + x + "\\\" :\\\"" + str(data[x]).replace('"', '\\"') + "\\\""
         values = "{" + values + "}"
 
     checkers = "{" + checkers + "}"
     mycursor = mydb.cursor()
-    sql = ("INSERT INTO `plexMakerChecker` (name, creation, modified, modified_by, owner, docstatus, idx,"
-           + "creator, stamp, document, document_id, `trx_type`, `values`, checkers, `check_status`, sig)"
-           + "VALUES( %s, now(), now(), %s, %s, 0, 0, %s, %s, %s,%s, %s,%s,%s"
-           + ", 0, ''  )")
-    print(sql)
+    sql = "" # ("INSERT INTO `plexMakerChecker` (name, creation, modified, modified_by, owner, docstatus, idx,"
+         #  + "creator, stamp, document, document_id, `trx_type`, `values`, checkers, `check_status`, sig)"
+         #  + "VALUES( %s, '"+self.creation+"', "+self.creation+"', %s, %s, 0, 0, %s, %s, %s,%s, %s,%s,%s, 0, %s  )")
+    #print(sql)
     mc_id = generate_key()
     if (had_doctype == False):
-        val = (mc_id, self.modified_by, self.owner, self.owner, self.creation, doctype, self.name, type, values, checkers)
+        json_string = ("{\"creation\": \"" + str(self.creation) + "\",\"modified\": \""
+        ""+str(self.creation) + "\",\"modified_by\": \"" + self.owner + "\",\"owner\": \"" + self.owner + ""
+        "\",\"creator\": \"" + self.owner + "\", \"stamp\": \"" + str(self.creation) + "\", \"document\": \"" + doctype + "\", \"document_id\": \"\", \"trx_type\": \"" + type + "\", \"child_trx_type\": \""
+        "\",\"values\": \"" + values + "\", \"checkers\": \"" + checkers + "\", \"parent\": \"\", \"check_status\": \"0\", \"checker_comments\": \"\", \"posted_result\": \"0\"}")
+
+        print(json_string)
+        print("PARS:::")
+        print(mc_doctype.pars)
+        sig = generate_sig2(mc_doctype.pars, json.loads(json_string))
+        #val = (mc_id, self.modified_by, self.owner, self.owner, self.creation, doctype, self.name, type, values, checkers, sig)
+
+        sql = ("INSERT INTO `plexMakerChecker` (name, creation, modified, modified_by, owner, docstatus, idx,"
+               + "creator, stamp, document, document_id, `trx_type`, `values`, checkers, checker_comments, parent, child_trx_type, `check_status`, sig)"
+               + "VALUES( '" + mc_id + "', '" + self.creation + "', '" + self.modified + "', '" + self.modified_by + "', '" + self.owner + "', 0, 0, '"
+               + self.owner + "', '" + self.creation + "','" + doctype + "', '" + self.name + "', '" + type + "', '" + values + "', '" + checkers
+               + "', '', '', '', 0, '" + sig + "'  )")
+        print(sql)
     else:
-        val = (mc_id, data["modified_by"], data["owner"], data["owner"], data["creation"], doctype, data["name"], type, values, checkers)
+        nowtime = get_current_datetime()
+        data["creation"] = nowtime
+        data["modified"] = nowtime
+        data["modified_by"] = data["owner"]
+        data["owner"] = data["owner"]
+
+        data["creator"] = data["owner"]
+        data["stamp"] = nowtime
+        data["document"] = doctype
+        data["document_id"] = data["name"]
+        data["trx_type"] = type
+
+        data["checkers"] = checkers
+        data["values"] = values
+        data["check_status"] = "0"
+        data["type"] = type
+        data["parent"] = ""
+        data["child_trx_type"] = ""
+        data["checker_comments"] = ""
+        data["posted_result"] = ""
+        sig = generate_sig2(mc_doctype.pars, data)
+        sql = ("INSERT INTO `plexMakerChecker` (name, creation, modified, modified_by, owner, docstatus, idx,"
+               + "creator, stamp, document, document_id, `trx_type`, `values`, checkers, checker_comments, parent, child_trx_type, `check_status`, `posted_result`, sig)"
+               + "VALUES( '" + mc_id + "', '" + data["creation"] + "', '" + data["modified"] + "', '" + data["modified_by"] + "', '" + data["owner"] + "', 0, 0, '" + data["owner"] + "', '"
+               + data["creation"] + "','" + doctype + "', '" + data["name"] + "', '" + type + "', '" + values + "', '" + checkers + "', '', '', '', 0, '', '" + sig + "'  )")
+        #val = (mc_id, data["modified_by"], data["owner"], data["owner"], data["creation"], doctype, data["name"], type, values, checkers, sig)
+
     try:
-        mycursor.execute(sql, val)
+        mycursor.execute(sql)
         mydb.commit()
-        create_message(self.owner, "", recepients,
-                       "A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/"+mc_id+">View change </a>",
-                       1, 6)
+        if (had_doctype == False):
+                owner = self.owner
+        else:
+                owner = data["owner"]
+        create_message(owner, "", recepients, "A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/"+mc_id+">View change </a>", 1, 6)
     except mysql.connector.Error as e:
         if( "Duplicate" in str(e)):
             if (is_maker_checker(self.table, self.name)==True):
@@ -156,15 +218,57 @@ def create_maker_checker(type, selfclass, self, pars, doctype=""):
             mycursor.execute("delete from plexMakerChecker where document_id='"+self.name+"'")
             mydb.commit()
             #frappe.throw("An update request on this document is still pending. Cannot proceed.")
-            sql = ("INSERT INTO `plexMakerChecker` (name, creation, modified, modified_by, owner, docstatus, idx,"
-                   + "creator, stamp, document, document_id, `trx_type`, `values`, checkers, `check_status`, sig)"
-                   + "VALUES( now(), now(), %s, %s, %s, 0, 0, %s, %s, %s, %s, %s, %s, %s, 0, ''  )")
+
             print(sql)
-            if (len(doctype) < 1):
-                val = (mc_id,  self.modified_by, self.owner, self.owner, self.creation, doctype, self.name, type, values, checkers)
+            if (had_doctype == False):
+                json_string = ("{\"creation\": \"" + str(self.creation) + "\",\"modified\": \"""" + str(
+                    self.creation) + "\",\"modified_by\": \"" + self.owner + "\",\"owner\": \"" + self.owner + ""
+                    "\",\"creator\": \"" + self.owner + "\", \"stamp\": \"" + str(
+                    self.creation) + "\", \"document\": \"" + doctype + "\", \"document_id\": \"\", \"trx_type\": \"" + type + "\", \"child_trx_type\": \""
+                    "\",\"values\": \"" + values + "\", \"checkers\": \"" + checkers + "\", \"parent\": \"\", \"check_status\": \"0\", \"checker_comments\": \"\", \"posted_result\": \"0\"}")
+
+                print(json_string)
+                print("PARS:::")
+                print(mc_doctype.pars)
+                sig = generate_sig2(mc_doctype.pars, json.loads(json_string))
+                # val = (mc_id, self.modified_by, self.owner, self.owner, self.creation, doctype, self.name, type, values, checkers, sig)
+
+                sql = ("INSERT INTO `plexMakerChecker` (name, creation, modified, modified_by, owner, docstatus, idx,"
+                       + "creator, stamp, document, document_id, `trx_type`, `values`, checkers, checker_comments, parent, child_trx_type, `check_status`, sig)"
+                       + "VALUES( '" + mc_id + "', '" + self.creation + "', '" + self.modified + "', '" + self.modified_by + "', '" + self.owner + "', 0, 0, '"
+                       + self.owner + "', '" + self.creation + "','" + doctype + "', '" + self.name + "', '" + type + "', '" + values + "', '" + checkers
+                       + "', '', '', '', 0, '" + sig + "'  )")
+                print(sql)
             else:
-                val = (mc_id, data["modified_by"], data["owner"], data["owner"], data["creation"], doctype, data["name"], data, values, checkers)
-            mycursor.execute(sql, val)
+                nowtime = get_current_datetime()
+                data["creation"] = nowtime
+                data["modified"] = nowtime
+                data["modified_by"] = data["owner"]
+                data["owner"] = data["owner"]
+
+                data["creator"] = data["owner"]
+                data["stamp"] = nowtime
+                data["document"] = doctype
+                data["document_id"] = data["name"]
+                data["trx_type"] = type
+
+                data["checkers"] = checkers
+                data["values"] = values
+                data["check_status"] = "0"
+                data["type"] = type
+                data["parent"] = ""
+                data["child_trx_type"] = ""
+                data["checker_comments"] = ""
+                data["posted_result"] = ""
+                sig = generate_sig2(mc_doctype.pars, data)
+                sql = ("INSERT INTO `plexMakerChecker` (name, creation, modified, modified_by, owner, docstatus, idx,"
+                       + "creator, stamp, document, document_id, `trx_type`, `values`, checkers, checker_comments, parent, child_trx_type, `check_status`, `posted_result`, sig)"
+                       + "VALUES( '" + mc_id + "', '" + data["creation"] + "', '" + data["modified"] + "', '" + data[
+                           "modified_by"] + "', '" + data["owner"] + "', 0, 0, '" + data["owner"] + "', '"
+                       + data["creation"] + "','" + doctype + "', '" + data[
+                           "name"] + "', '" + type + "', '" + values + "', '" + checkers + "', '', '', '', 0, '', '" + sig + "'  )")
+                print(sql)
+            mycursor.execute(sql)
             mydb.commit()
             create_message(self.owner, "", recepients,
                            "A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/" + mc_id + ">View change </a>",
@@ -179,6 +283,27 @@ def generate_key():
     #date_time = datetime.fromtimestamp(current_day)
     d = current_day.strftime("%d%m%d%Y%H%M%S%f")
     return d
+
+def crud_get_record(table, rec_id, is_mc=False):
+    if is_mc==True:
+        print("DETECTED maker checker")
+        mydb = mysql_connection_MC()
+    else:
+        mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    sql = ("SELECT * FROM `" + table + "` where `name`='" + rec_id + "' limit 1")
+    print("SQL::   "+sql)
+    cur.execute(sql)
+    #row_headers = [x[0] for x in cur.description]
+    rv = cur.fetchone()
+    json_data = json.dumps(rv, indent=4, sort_keys=True, default=str)
+    return json.loads(json_data)
+    #print("FOUND RECORDS:  " + str(cur.rowcount))
+    #json_data = []
+    #for result in rv:
+    #    json_data.append(dict(zip(row_headers, result)))
+    #return json.dumps(json_data)
+
 
 def crud_db_insert(self, selfclass, *args, **kwargs):
     check_permissions(selfclass.doctypeName, "Add")
@@ -201,14 +326,13 @@ def crud_db_insert(self, selfclass, *args, **kwargs):
             qry = qry + ", " + "`" + x + "`"
             qry_vals = qry_vals + ", \"" + str(self.get(x)).replace('"', '\\"') + "\""
 
-
     mycursor = mydb.cursor()
-    sql = ("INSERT INTO `" + self.table + "` (name, creation, modified, modified_by, owner, docstatus, idx,"
+    sql = ("INSERT INTO `" + str(self.table )+ "` (name, creation, modified, modified_by, owner, docstatus, idx,"
            + qry + ",sig)"
-           + "VALUES( %s, %s, %s, %s, %s, 0, %s, "
+           + "VALUES( '" + str(self.name) + "', '" + str(self.creation) + "', '" + str(self.modified) + "', '" + str(self.modified_by) + "', '" + str(self.owner) + "', 0, '"+str(self.idx)+"', "
            + qry_vals + ", '" + generate_sig(self.pars, self) + "'  )")
-    val = (self.name, self.creation, self.modified, self.modified_by, self.owner, self.idx)
-    mycursor.execute(sql, val)
+    print(sql)
+    mycursor.execute(sql)
 
     mydb.commit()
 
@@ -327,6 +451,25 @@ def getDoctype(self):
     doctype = self.__name__
     print("DOCTYPE [[ "+doctype+" ]]")
     return doctype
+
+def get_doctype2(doctype_name):
+    mappings = frappe.cache.get_value("TableMapping")
+    print(mappings)
+    # Parse the JSON string into a Python dictionary
+    data = json.loads(mappings)
+
+    # Extract the username value for sammy
+    doctype = data[doctype_name.replace(" ", "")]["doctype"]
+    print("FOUND doctype::: " + doctype)
+    return doctype
+
+def create_class(doctype_name):
+    doctype = get_doctype2(doctype_name)
+    module_name = "Plexor CBS"
+    module = load_doctype_module(doctype, module_name)
+    classname = doctype.replace(" ", "").replace("-", "")
+    class_ = getattr(module, classname, None)
+    return class_
 
 def is_maker_checker_required(self, function):
     doctype = getDoctype(self)

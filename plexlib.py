@@ -4,6 +4,7 @@ import re
 import hashlib
 import frappe
 import json
+from datetime import datetime
 
 #update
 @frappe.whitelist()
@@ -22,21 +23,30 @@ def mysql_connection_MC():
       password="mvpnaz",
 	  database="plexorCBS_MC"
     )
+def get_current_datetime():
+    now = datetime.now()
+    formatted_date = now.strftime('%Y-%m-%d %H:%M:%S')
+    return formatted_date
+
 
 @frappe.whitelist()
-def create_message(creator, to_group, recepients, message, type, error):
+def create_message(creator, to_group, recepients, message, msgtype, errortype):
     mydb = mysql_connection()
     cur = mydb.cursor(dictionary=True)
+    #creator = frappe.get_user().doc.name
+    nowtime = get_current_datetime()
     for to_user in recepients:
-        sig = generate_sig2(["dest_group", "dest_user", "message", "msg_type", "error_level"], json.loads("{\"creation\": \""+creator+"\",\"modified\": \""+creator+"\",\"modified_by\": \""+creator+"\",\"owner\": \""+creator+"\",\"dest_group\": \""+to_group+"\", \"dest_user\": \""+to_user+"\", \"message\": \""+add_tags(message)+"\", \"msg_type\": \""+str(type)+"\", \"error_level\": \""+str(error)+"\"}") )
-        sql = ("INSERT INTO `notify_messages` ("
-               "`name`, `creation`, `modified`, `modified_by`, `owner`, `docstatus`, `idx`, "
-               "`dest_group`, `dest_user`, `message`, `msg_type`, `error_level`, `read`, "
-               "`sig`, `sig_status` "
-               ") VALUES ("
-               "RAND(), now(), now(), '"+creator+"','"+creator+"','0','0', "
-               "'"+to_group+"','"+to_user+"','"+add_tags(message)+"','"+str(type)+"','"+str(error)+"','0','"+sig+"','0' "
-               ");")
+        if(len(to_user)<5):
+            continue
+        sig = generate_sig2(["dest_group", "dest_user", "message", "msg_type", "error_level"], json.loads("{\"creation\": \""+str(nowtime)+"\",\"modified\": \""+str(nowtime)+"\",\"modified_by\": \""+creator+"\",\"owner\": \""+creator+"\",\"dest_group\": \""+to_group+"\", \"dest_user\": \""+to_user+"\", \"message\": \""+message+"\", \"msg_type\": \""+str(msgtype)+"\", \"error_level\": \""+str(errortype)+"\"}") )
+        sql = "INSERT INTO `notify_messages` ("
+        sql = sql + "`name`, `creation`, `modified`, `modified_by`, `owner`, `docstatus`, `idx`, "
+        sql = sql + "`dest_group`, `dest_user`, `message`, `msg_type`, `error_level`, `read`, "
+        sql = sql + "`sig`, `sig_status` "
+        sql = sql + ") VALUES ("
+        sql = sql + "NULL, '"+str(nowtime)+"', '"+str(nowtime)+"', '"+str(creator)+"','"+str(creator)+"','0','0', "
+        sql = sql + "'"+to_group+"','"+to_user+"','"+message+"','"+str(msgtype)+"','"+str(errortype)+"','0','"+sig+"','0' "
+        sql = sql + ");"
         print(sql)
         cur.execute(sql)
     mydb.commit()
@@ -57,7 +67,12 @@ def json_format_correction(json_String):
 def check_permissions(doctypeName, type):
     if(frappe.session.user=="Administrator"):
         return
-    permissions = frappe.cache.get_value("setperms|"+frappe.session.user)
+
+    try:
+        permissions = frappe.cache.get_value("setperms|"+frappe.session.user)
+    except:
+        frappe.throw("Your session has expired. Please log out and login again.")
+        return
     print(f"Searching permissions for {doctypeName}:{type}")
     print(permissions)
     perm = doctypeName+" - "+type
@@ -67,7 +82,7 @@ def check_permissions(doctypeName, type):
             pass
         else:
             frappe.throw("Access not granted for this action.")
-    except:
+    except TypeError:
         frappe.throw("Your session has expired. Please log out and login again.")
 
 def create_trigger(table, pars):
@@ -171,6 +186,7 @@ def generate_sig(pars, self):
 def generate_sig2(pars, self):
     raw = ""
     for x in pars:
+            print("SINGTURE FOR KEY: "+str(x)+" =   VALUE: "+ str(self[x]))
             raw = raw + str(self[x])
     raw = raw + self["creation"] + self["modified"] + self["modified_by"] + self["owner"]
     hash = hashlib.sha256(raw.encode("utf-8")).hexdigest()

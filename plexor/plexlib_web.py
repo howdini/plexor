@@ -1,6 +1,6 @@
 import mysql.connector
-from plexlib import mysql_connection, mysql_connection_MC, generate_sig
-from plex_crud import create_maker_checker, create_maker_checker_child
+from plexlib import mysql_connection, mysql_connection_MC, generate_sig, generate_sig2, get_current_datetime
+from plex_crud import create_maker_checker, create_maker_checker_child, crud_get_record
 import json
 from time import time as _time, sleep as _sleep
 from threading import Event
@@ -125,10 +125,12 @@ def get_role(user):
 def get_max_pages(type):
     mydb = mysql_connection()
     cur = mydb.cursor(dictionary=True)
+    my_dest_group = json.dumps(frappe.get_roles(frappe.session.user)).replace('[', '').replace(']', '')
+    user = frappe.get_user().doc.email
     if (type == "0"):
-        qry = "SELECT count(*) as cnt FROM `notify_messages` "
+        qry = "SELECT count(*) as cnt FROM `notify_messages` where (`dest_user`='" + user + "' OR dest_group IN (" + my_dest_group + "))"
     else:
-        qry = "SELECT count(*) as cnt FROM `notify_messages` where msg_type = " + type + " "
+        qry = "SELECT count(*) as cnt FROM `notify_messages` where msg_type = " + type + " and (`dest_user`='" + user + "' OR dest_group IN (" + my_dest_group + "))"
     print(qry)
     cur.execute(qry)
     rv = cur.fetchone()
@@ -142,10 +144,12 @@ def show_inbox(type, page):
     offset = int(page) * 15
     max_page = get_max_pages(type)
     print("Max pages:: "+str(max_page))
+    my_dest_group = json.dumps(frappe.get_roles(frappe.session.user)).replace('[', '').replace(']', '')
+    user = frappe.get_user().doc.email
     if(type=="0"):
-        qry = "SELECT * FROM `notify_messages` order by creation desc limit 10 offset " + str(offset)
+        qry = "SELECT * FROM `notify_messages` where (`dest_user`='" + user + "' OR dest_group IN (" + my_dest_group + ")) order by creation desc limit 10 offset " + str(offset)
     else:
-        qry = "SELECT * FROM `notify_messages` where msg_type = "+type+" order by creation desc limit 10 offset "+str(offset)
+        qry = "SELECT * FROM `notify_messages` where msg_type = "+type+" and (`dest_user`='" + user + "' OR dest_group IN (" + my_dest_group + ")) order by creation desc limit 10 offset "+str(offset)
     print(qry)
     cur.execute(qry)
     rv = cur.fetchall()
@@ -657,13 +661,20 @@ def get_users(doctype, txt, searchfield, start, page_len, filters):
     return rv
 
 @frappe.whitelist()
-def get_checkers():
+def get_checkers(form,  type):
+    data = json.loads(form)
+    doctype = data["doctype"]
+    parent = data["name"]
+    # print(doctype)
+    checker_count = required_checkers_count(doctype, type)
+
     print("GETTING USERS :"+json.dumps(frappe.local.form_dict))
     mydb = mysql_connection()
     cur = mydb.cursor()
     sql = "SELECT `name` FROM `plexUser` where `name` != '"+frappe.session.user+"' ORDER BY `name`"
     cur.execute(sql)
     rv = cur.fetchall()
+    rv.insert(0, checker_count)
     return rv
 
 @frappe.whitelist()
@@ -741,6 +752,21 @@ def is_maker_checker_required(doctype, type):
         return False
 
 @frappe.whitelist()
+def required_checkers_count(doctype, type):
+    doctype = doctype.replace(" ","")
+    sql = "SELECT * FROM `plexSetting` WHERE `type`='MCHECKER' AND `codename`=UPPER(CONCAT('"+doctype+"','_"+type+"')) and `value`='yes' and `status`=1"
+    print(sql)
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    cur.execute(sql)
+    rv = cur.fetchone()
+    print("FOUND RECORDS:  "+ str(cur.rowcount))
+    if(cur.rowcount>0):
+        return rv["value2"]
+    else:
+        frappe.throw("Error getting required checkers count")
+
+@frappe.whitelist()
 def check_parent_makerchecker_status(form,  type):
     #print("LOGGED")
     data = json.loads(form)
@@ -810,9 +836,9 @@ def post_mc_transaction(docname):
         #post_table_data(table_name, document_id, str(rv["values"]))
         post_mc_transaction_children(document_id)
     elif (rv["trx_type"]=="UPDATE"):
-        if(rv["parent"] is None):
+        if(rv["parent"] is None or rv["parent"]==""):
             print("PARENT update detected")
-            post_mc_transaction_update(document_id, table_name, str(rv["values"]))
+            post_mc_transaction_update(document_id, table_name, str(rv["values"]), str(rv["modified"]), str(rv["modified_by"]))
         else:
             if(rv["child_trx_type"] == "INSERT"):
                 print("CHILD Insert detected")
@@ -878,22 +904,33 @@ def json_format_correction(json_String):
     return vals
 
 @frappe.whitelist()
-def post_mc_transaction_update(document_id, table_name, vals):
+def post_mc_transaction_update(document_id, table_name, vals, modified, modified_by):
     vals = json_format_correction(vals)
     data = json.loads(vals)
     keys = data.keys()
     keys_list = list(keys)
 
+    old_record_vals = crud_get_record(table_name, document_id, is_mc=False)
+    print(old_record_vals)
     values = ""
     first = True
     for key in keys_list:
         if(first==True):
             values = values + " `"+key+"`='" + data[key] + "'"
+            old_record_vals[key]=data[key]
             first = False
         else:
             values = values + ", `"+key+"`='" + data[key] + "'"
+            old_record_vals[key]=data[key]
 
-    qry = "UPDATE plexorCBS.`" + table_name + "` SET " + values + " where `name` = '" + document_id + "' limit 1"
+    old_record_vals["modified"] = modified
+    old_record_vals["modified_by"] = modified_by
+    print(old_record_vals)
+    doctype = get_table_doctype(table_name, fetch_dotype=True)
+    doc_class = create_class(doctype)
+
+    sig = generate_sig2(doc_class.pars, old_record_vals)
+    qry = "UPDATE plexorCBS.`" + table_name + "` SET " + values + ", sig = '"+sig+"' where `name` = '" + document_id + "' limit 1"
     print(qry)
     mydb = mysql_connection()
     cur = mydb.cursor(dictionary=True)
@@ -954,14 +991,18 @@ def post_table_data(table_name, document_id, vals, time="", owner=""):
         keys = data.keys()
         keys_list = list(keys)
 
+        json_load = json.loads("{\"creation\": \"" + str(time) + "\",\"modified\": \"" + str(time) + "\",\"modified_by\": \"" + owner + "\",\"owner\": \"" + owner + "\"}")
+
         values = "VALUES( NULL, '"+time+"', '"+time+"', '"+owner+"', '"+owner+"', 0, 0 "
         qry = "INSERT INTO plexorCBS.`" + table_name + "` (`name`, `creation`, `modified`, `modified_by`, `owner`, `docstatus`, `idx`"
         for key in keys_list:
             qry = qry + ", `" + key + "`"
             print("KEY:: "+key)
             values = values + ", '" + data[key] + "'"
+            json_load[key] = data[key]
         qry = qry + ", `sig`, `sig_status`) "
-        values = values + ", '0', '0') "
+        sig = generate_sig2(keys_list, json_load)
+        values = values + ", '"+sig+"', '0') "
         qry = qry + values
     else:
         # Fix the JSON string format
@@ -1021,6 +1062,26 @@ def get_doctypes_table(doctype, use_classname=False):
             return rv["table_name"]
         except:
             frappe.throw("Error getting table_name from classname")
+    else:
+        return "---"
+
+
+def get_table_doctype(table_name, fetch_dotype=True):
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    if(fetch_dotype==True):#doctype
+        sql = ("SELECT doctype as res FROM plexTableMapping where `table_name`='" + table_name + "' limit 1")
+    else:#doctype_name
+        sql = ("SELECT doctype_name as res FROM plexTableMapping where `table_name`='" + table_name + "' limit 1")
+    print(sql)
+    cur.execute(sql)
+    rv = cur.fetchone()
+    if cur.rowcount > 0:
+        try:
+            print("Found doctype: "+str(rv["res"]))
+            return rv["res"]
+        except:
+            frappe.throw("Error getting docytpe from table_name")
     else:
         return "---"
 
@@ -1181,7 +1242,14 @@ def save_child_row(doctype, parent_id, row, checkers):
             qry_vals = qry_vals + ", \"" + str(jdoc[x]).replace('"', '\\"') + "\""
 
     cur = mydb.cursor()
-    sql = "insert into "+child_table+"(name, "+qry+") values(NULL, " + qry_vals +") "
+    creator = frappe.get_user().doc.name
+    nowtime = get_current_datetime()
+    jdoc["creation"]=nowtime
+    jdoc["modified"]=nowtime
+    jdoc["modified_by"]=creator
+    jdoc["owner"]=creator
+    sig = generate_sig2(pars, jdoc)
+    sql = "insert into "+child_table+"(name, creation, modified, modified_by, owner, docstatus, idx, sig, sig_status, "+qry+") values(NULL, '"+nowtime+"', '"+nowtime+"', '"+frappe.get_user().doc.name+"', '"+frappe.get_user().doc.name+"',  0, 1, '"+sig+"', 0, " + qry_vals +") "
     print(sql)
     try:
         if(is_maker_checker(parent_table, parent_id)==False and is_maker_checker_required(doctype_parent, "UPDATE")): # If is not a new doc, no
@@ -1212,7 +1280,7 @@ def delete_child_row(checkers, form):
     if (is_maker_checker(parent_table, jdoc["name"]) == False and is_maker_checker_required(doctype_parent, "DELETE")):
         print(jdoc)
         create_maker_checker_child("UPDATE", doctype, jdoc, parent_class.pars, child_class.pars, checkers, child_trx_type="DELETE")
-        return  #Cannot proceed until approved
+        return  "success" #Cannot proceed until approved
     elif(is_maker_checker(parent_table, jdoc["name"])):
         #Allow updates on yet approved document
         print("Allow updates on yet approved document")
