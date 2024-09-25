@@ -667,11 +667,17 @@ def get_checkers(form,  type):
     parent = data["name"]
     # print(doctype)
     checker_count = required_checkers_count(doctype, type)
+    if(checker_count == "-1"):
+        f_checkers = get_required_checkers(doctype, type)
+        sql = "SELECT `name` FROM `plexUser` where `name` != '" + frappe.session.user + "' and `name` in (\""+f_checkers.replace(",", "\",\"")+"\") ORDER BY `name`"
+    else:
+        sql = "SELECT `name` FROM `plexUser` where `name` != '"+frappe.session.user+"' ORDER BY `name`"
+
 
     print("GETTING USERS :"+json.dumps(frappe.local.form_dict))
+    print(sql)
     mydb = mysql_connection()
     cur = mydb.cursor()
-    sql = "SELECT `name` FROM `plexUser` where `name` != '"+frappe.session.user+"' ORDER BY `name`"
     cur.execute(sql)
     rv = cur.fetchall()
     rv.insert(0, checker_count)
@@ -750,6 +756,21 @@ def is_maker_checker_required(doctype, type):
         return True
     else:
         return False
+
+@frappe.whitelist()
+def get_required_checkers(doctype, type):
+    doctype = doctype.replace(" ","")
+    sql = "SELECT * FROM `plexSetting` WHERE `type`='MCHECKER' AND `codename`=UPPER(CONCAT('"+doctype+"','_"+type+"')) and `value`='yes' and `status`=1"
+    print(sql)
+    mydb = mysql_connection()
+    cur = mydb.cursor(dictionary=True)
+    cur.execute(sql)
+    rv = cur.fetchone()
+    print("FOUND RECORDS:  "+ str(cur.rowcount))
+    if(cur.rowcount>0):
+        return rv["value3"]
+    else:
+        frappe.throw("Error getting required checkers count")
 
 @frappe.whitelist()
 def required_checkers_count(doctype, type):

@@ -62,7 +62,8 @@ def create_maker_checker_child(type, doctype,  self, pars, c_pars, checkers, chi
     if(checkers==""):  #Condition for parent that hasnt been approved yet
             checkers = "(select checkers from (select `checkers` from plexMakerChecker where `document_id`='" + parent_id + "' order by creation desc limit 1) as s)"
             json_string = get_checkers(parent_id)
-            json_string = json_string.replace("{","{\"").replace(":","\":").replace(": ",": \"").replace(",","\",").replace(", }","}")
+            checkers = json_string
+            json_string = json_string.replace("{","{\"").replace(":","\":").replace(": ",": \"").replace(",","\",").replace("pending, }","pending\"}").replace(", }","}").replace(", ",", \"")
             print("CORRECTED::: "+json_string)
             data = json.loads(json_string)
             recepients = data.keys()
@@ -456,7 +457,11 @@ def get_doctype2(doctype_name):
     mappings = frappe.cache.get_value("TableMapping")
     print(mappings)
     # Parse the JSON string into a Python dictionary
-    data = json.loads(mappings)
+    try:
+        data = json.loads(mappings)
+    except TypeError:
+        frappe.throw("Your session data has expired. Please logout and login again.")
+
 
     # Extract the username value for sammy
     doctype = data[doctype_name.replace(" ", "")]["doctype"]

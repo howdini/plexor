@@ -300,14 +300,21 @@ function prepare_delete(frm, children="", children_fields="")
                         responseText = r.message
                         console.log(responseText);
                         data = "[";
+                        isFirst = true;
                         for(let x in responseText)
                             {
+                                if(isFirst)
+                                {
+                                    isFirst = false
+                                    checkers_count = responseText[x]
+                                    continue;
+                                }
                                 data = data + "{\"checker\":\""+responseText[x]+"\"},";
                             }
                             data = data.substring(0, data.length - 1);
                         data = data + "]";
                         console.log(data);
-                        selectCheckersParentDelete(frm, JSON.parse(data), "Confirm Delete", "-", args, children, children_fields);
+                        selectCheckersParentDelete(frm, JSON.parse(data), "Confirm Delete", "-", args, children, children_fields, checkers_count);
                     }
                 });
             }
@@ -346,19 +353,26 @@ function is_maker_checker_enabled(frm, doctype,type)
                             console.log("GETTING CHECKERS");
                             frappe.call({
                                 method: "plexor.plexlib_web.get_checkers",
-                                args: {doctype: doctype, type: type},
+                                args: {form: frm.doc, type: type},
                                 callback: function(r) {
                                     responseText = r.message
                                     console.log(responseText);
                                     data = "[";
+                                    isFirst = true;
                                     for(let x in responseText)
                                         {
+                                            if(isFirst)
+                                            {
+                                                isFirst = false
+                                                checkers_count = responseText[x]
+                                                continue;
+                                            }
                                             data = data + "{\"checker\":\""+responseText[x]+"\"},";
                                         }
                                         data = data.substring(0, data.length - 1);
                                     data = data + "]";
                                     console.log(data);
-                                    selectCheckers(frm, JSON.parse(data));
+                                    selectCheckers(frm, JSON.parse(data), checkers_count);
                                 }
                             });
                         }
@@ -371,13 +385,39 @@ function is_maker_checker_enabled(frm, doctype,type)
                 });
 }
 
-function selectCheckers(frm, data)
+function selectCheckers(frm, data, checkers_count=1)
 {
+    if(checkers_count == -1)
+    {
+        // Extracting the checker values and creating a string
+        checkerString = data.map(obj => obj.checker).join(",")
+        label = 'The following users have been manually selected to approve this action.<br>';
+        label = label + "<b>" + checkerString.replaceAll(",", "</br>") + "</b><br>";
+        label = label + "Do you want to proceed?";
+        frappe.confirm(
+            label,
+            function(){
+                checkers = checkerString+",";
+                frm.set_value('checkers', checkers);
+                frm.dirty();
+                if(frm.is_new())
+                    frm.save();
+                else
+                    frm.dirty();
+                    frm.save();//("Update");
+                console.log("POST CHECKERS:"+checkers)
+            },
+            function(){
+            }
+        );
+        return;
+    }
+
     let d = new frappe.ui.Dialog({
         title: 'Select Insert Checkers',
         fields: [
             {
-                label: 'Maker-checker is enabled for this action. Please Select verifiers from list below.',
+                label: 'Maker-checker is enabled for this action. Please Select <b>'+checkers_count+'</B> verifiers from list below.',
                 fieldname: 'checkers',
                 fieldtype: 'Table',
                 cannot_add_rows: true,
@@ -395,6 +435,7 @@ function selectCheckers(frm, data)
         primary_action_label: 'Submit',
         primary_action(values) {
             checkers = "";
+            count = 0;
             for(let key in values)
             {
                 //console.log(values[key]);
@@ -405,8 +446,14 @@ function selectCheckers(frm, data)
                     {
                         console.log(obj[x].checker);
                         checkers = checkers + obj[x].checker + ",";
+                        count = count + 1;
                     }
                 }
+            }
+            if(count != checkers_count)
+            {
+                frappe.throw("Please select <b>"+checkers_count+"</b> verifiers to proceed");
+                return;
             }
             frm.set_value('checkers', checkers);
             frm.dirty();
@@ -427,12 +474,31 @@ function selectCheckers(frm, data)
 
 function selectCheckersChild(frm, datas, add_title, add_filter_function, add_args, add_function, grid_name, add_grids, checkers_count=1)
 {
-    //  frappe.msgprint("Checker count: " + checkers_count)
+    if(checkers_count == -1)
+    {
+        // Extracting the checker values and creating a string
+        checkerString = datas.map(obj => obj.checker).join(",")
+        label = 'The following users have been manually selected to approve this action.<br>';
+        label = label + "<b>" + checkerString.replaceAll(",", "</br>") + "</b><br>";
+        label = label + "Do you want to proceed?";
+        frappe.confirm(
+            label,
+            function(){
+                checkers = datas.map(obj => obj.checker).join(": pending,")
+                checkers = checkers + ": pending,"
+                grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name, checkers, add_grids);
+            },
+            function(){
+            }
+        );
+        return;
+    }
+    label = 'Maker-checker is enabled for this action. Please Select <b>'+checkers_count+'</B> verifiers from list below.'
     let d = new frappe.ui.Dialog({
         title: 'Select Insert Child Checkers',
         fields: [
             {
-                label: 'Maker-checker is enabled for this action. Please Select <b>'+checkers_count+'</B> verifiers from list below.',
+                label: label,
                 fieldname: 'checkers',
                 fieldtype: 'Table',
                 cannot_add_rows: true,
@@ -462,9 +528,6 @@ function selectCheckersChild(frm, datas, add_title, add_filter_function, add_arg
                         console.log(obj[x].checker);
                         checkers = checkers + obj[x].checker + ": pending,";
                         count = count + 1;
-                        //frm.set_value('checkers', checkers);
-                        //frm.dirty();
-                        //frm.save();
                     }
                 }
             }
@@ -485,14 +548,49 @@ function selectCheckersChild(frm, datas, add_title, add_filter_function, add_arg
 }
 
 
-function selectCheckersParentDelete(frm, data, del_title, title, args, children="", children_fields="")
+function selectCheckersParentDelete(frm, data, del_title, title, args, children="", children_fields="", checkers_count=1)
 {
+    if(checkers_count == -1)
+    {
+        // Extracting the checker values and creating a string
+        checkerString = data.map(obj => obj.checker).join(",");
+        label = 'The following users have been manually selected to approve this action.<br>';
+        label = label + "<b>" + checkerString.replaceAll(",", "</br>") + "</b><br>";
+        label = label + "Do you want to proceed?";
+        frappe.confirm(
+            label,
+            function(){
+                console.log("POST CHECKERS:"+checkerString)
+                args["checkers"] = checkerString+",";
+                frm.doc["checkers"] = checkerString+",";
+                frm.doc["children"] = children;
+                frm.doc["children_fields"] = children_fields;
+                d.hide();
+                frappe.call({
+                        method: "plexor.plexlib_web.deleteDoc",
+                        args: {form: frm.doc, children: children, children_fields: children_fields},
+                        callback: function(r) {
+                            responseText = r.message
+                            if(args["checkers"].length >= 2 )
+                                frappe.msgprint("Deletion request has been successfully queued.");
+                            else
+                            {
+                                frm.refresh_field(grid_name);
+                            }
+                        }
+                        });
+            },
+            function(){
+            }
+        );
+        return;
+    }
     //No update an d so
     let d = new frappe.ui.Dialog({
         title: 'Select Delete Parent Checkers',
         fields: [
             {
-                label: 'Maker-checker is enabled for this action. Please Select verifiers from list below.',
+                label: 'Maker-checker is enabled for this action. Please Select <b>'+checkers_count+'</B> verifiers from list below.',
                 fieldname: 'checkers',
                 fieldtype: 'Table',
                 cannot_add_rows: true,
@@ -510,6 +608,7 @@ function selectCheckersParentDelete(frm, data, del_title, title, args, children=
         primary_action_label: 'Submit',
         primary_action(values) {
             checkers = "";
+            count = 0;
             for(let key in values)
             {
                 //console.log(values[key]);
@@ -520,8 +619,14 @@ function selectCheckersParentDelete(frm, data, del_title, title, args, children=
                     {
                         console.log(obj[x].checker);
                         checkers = checkers + obj[x].checker + ",";
+                        count = count + 1;
                     }
                 }
+            }
+            if(count != checkers_count)
+            {
+                frappe.throw("Please select <b>"+checkers_count+"</b> verifiers to proceed");
+                return;
             }
             console.log("POST CHECKERS:"+checkers)
             args["checkers"] = checkers;
@@ -534,7 +639,6 @@ function selectCheckersParentDelete(frm, data, del_title, title, args, children=
                     args: {form: frm.doc, children: children, children_fields: children_fields},
                     callback: function(r) {
                         responseText = r.message
-
                         if(args["checkers"].length >= 2 )
                             frappe.msgprint("Deletion request has been successfully queued.");
                         else
@@ -557,14 +661,50 @@ function selectCheckersParentDelete(frm, data, del_title, title, args, children=
     d.show();
 }
 
-function selectCheckersChildDelete(frm, data, del_title, title, args,  grid_name)
+function selectCheckersChildDelete(frm, data, del_title, title, args,  grid_name, checkers_count=1)
 {
+    if(checkers_count == -1)
+    {
+        // Extracting the checker values and creating a string
+        checkerString = data.map(obj => obj.checker).join(",");
+        label = 'The following users have been manually selected to approve this action.<br>';
+        label = label + "<b>" + checkerString.replaceAll(",", "</br>") + "</b><br>";
+        label = label + "Do you want to proceed?";
+        frappe.confirm(
+            label,
+            function(){
+                checkers = data.map(obj => obj.checker).join(": pending,");
+                checkers = checkers + ": pending,";
+                console.log("POST CHECKERS:"+checkers);
+                args["checkers"] = checkers;
+                console.log(frm.doc);
+                args["doc"] = frm.doc;
+                frappe.call({
+                        method: "plexor.plexlib_web.delete_child_row",
+                        args: args,
+                        callback: function(r) {
+                            responseText = r.message
+                            if(args["checkers"].length >= 2 )
+                                frappe.msgprint("Deletion request has been successfully queued.");
+                            else
+                            {
+                                frm.refresh_field(grid_name);
+                            }
+                        }
+                    });
+            },
+            function(){
+            }
+        );
+        return;
+    }
+
     //No update an d so
     let d = new frappe.ui.Dialog({
         title: 'Select Child Delete Checkers',
         fields: [
             {
-                label: 'Maker-checker is enabled for this action. Please Select verifiers from list below.',
+                label: 'Maker-checker is enabled for this action. Please Select <b>'+checkers_count+'</B> verifiers from list below.',
                 fieldname: 'checkers',
                 fieldtype: 'Table',
                 cannot_add_rows: true,
@@ -582,6 +722,7 @@ function selectCheckersChildDelete(frm, data, del_title, title, args,  grid_name
         primary_action_label: 'Submit',
         primary_action(values) {
             checkers = "";
+            count = 0;
             for(let key in values)
             {
                 //console.log(values[key]);
@@ -592,11 +733,14 @@ function selectCheckersChildDelete(frm, data, del_title, title, args,  grid_name
                     {
                         console.log(obj[x].checker);
                         checkers = checkers + obj[x].checker + ": pending,";
-                        //frm.set_value('checkers', checkers);
-                        //frm.dirty();
-                        //frm.save();
+                        count = count + 1;
                     }
                 }
+            }
+            if(count != checkers_count)
+            {
+                frappe.throw("Please select <b>"+checkers_count+"</b> verifiers to proceed");
+                return;
             }
             console.log("POST CHECKERS:"+checkers)
             args["checkers"] = checkers;
@@ -609,7 +753,6 @@ function selectCheckersChildDelete(frm, data, del_title, title, args,  grid_name
                     args: args,
                     callback: function(r) {
                         responseText = r.message
-
                         if(args["checkers"].length >= 2 )
                             frappe.msgprint("Deletion request has been successfully queued.");
                         else
@@ -725,8 +868,15 @@ function setup_grid(frm, grid_name, load_args, add_title, add_filter_function, a
                                             responseText = r.message
                                             console.log(responseText);
                                             data = "[";
+                                            isFirst = true;
                                             for(let x in responseText)
                                                 {
+                                                    if(isFirst)
+                                                    {
+                                                        isFirst = false
+                                                        checkers_count = responseText[x]
+                                                        continue;
+                                                    }
                                                     data = data + "{\"checker\":\""+responseText[x]+"\"},";
                                                 }
                                                 data = data.substring(0, data.length - 1);
@@ -734,7 +884,7 @@ function setup_grid(frm, grid_name, load_args, add_title, add_filter_function, a
                                             console.log(data);
                                             //frm["doc"]["c_doctype"] = add_doctype;
                                             args["child_id"] = docname;
-                                            selectCheckersChildDelete(frm, JSON.parse(data), "Confirm Delete", "-", args, grid_name);
+                                            selectCheckersChildDelete(frm, JSON.parse(data), "Confirm Delete", "-", args, grid_name, checkers_count);
                                         }
                                     });
                                 }

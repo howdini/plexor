@@ -83,7 +83,7 @@ def check_permissions(doctypeName, type):
         else:
             frappe.throw("Access not granted for this action.")
     except TypeError:
-        frappe.throw("Your session has expired. Please log out and login again.")
+        frappe.throw("Your session data has expired. Please logout and login again.")
 
 def create_trigger(table, pars):
     frappe.utils.logger.set_log_level("DEBUG")
