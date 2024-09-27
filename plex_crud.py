@@ -411,7 +411,7 @@ def crud_get_list(args, self, query):
     check_permissions(self.doctypeName, "View")
     print("PASSES PARAMETER: "+get_filters(self))
     #is_maker_checker_required(self, "INSERT")
-    create_trigger(self.table, self.pars)
+    #create_trigger(self.table, self.pars)
     mydb = mysql_connection()
     cur = mydb.cursor(dictionary=True)
     user = frappe.get_user().doc.email

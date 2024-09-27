@@ -8,6 +8,20 @@ frappe.ui.form.on("Settings", {
                     delete frm.doc.debit_accounts;
                     plexSave(frm,"Posting Rules");
                 }).removeClass('btn-default').addClass('btn-primary').css({'color':'white','font-weight': 'normal'});
+
+                frm.add_custom_button('Trigger Generator <div style=\"font-size: 50%;\"><b>plexor</b></div>', () => {
+                    frappe.prompt('Doctype Name', ({ value }) => {
+                        frappe.call({
+                        method: "plexor.plexlib_web.getTrigger",
+                        args: {doctype: value},
+                        callback: function(r) {
+                            responseText = r.message
+                            //frappe.msgprint(responseText);
+                            frappe.msgprint('Run the following script from a script file e.g.<br><b>mysql -u root -p***** plexorCBS < plex.sql --verbose && mysql -u root -p***** plexorCBS_MC < plex.sql --verbose</b><br><textarea name="Text1" cols="80" rows="80" style="font-size:9px;">'+responseText+'</textarea>');
+                        }
+                        });
+                    });
+                }).removeClass('btn-default').addClass('btn-primary').css({'color':'white','font-weight': 'normal'});
          },
         onload: function(frm) {
             add_grids(frm);

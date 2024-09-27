@@ -85,6 +85,8 @@ def check_permissions(doctypeName, type):
     except TypeError:
         frappe.throw("Your session data has expired. Please logout and login again.")
 
+
+
 def create_trigger(table, pars):
     frappe.utils.logger.set_log_level("DEBUG")
     logger = frappe.logger("frappe.web", allow_site=True, file_count=50)
@@ -95,8 +97,8 @@ def create_trigger(table, pars):
             isFirst = False
             old_pars = "OLD." + str(x)
         else:
-            old_pars = old_pars + ",'|',OLD." + str(x)
-    old_pars = old_pars + ",'|',OLD.creation,'|',OLD.modified,'|',OLD.modified_by,'|',OLD.owner"
+            old_pars = old_pars + ",OLD." + str(x)
+    old_pars = old_pars + ",OLD.creation,OLD.modified,OLD.modified_by,OLD.owner"
 
     isFirst = True
     new_pars = ""
@@ -105,8 +107,8 @@ def create_trigger(table, pars):
             isFirst = False
             new_pars = "NEW." + str(x)
         else:
-            new_pars = new_pars + ",'|',NEW." + str(x)
-    new_pars = new_pars + ",'|',NEW.creation,'|',NEW.modified,'|',NEW.modified_by,'|',NEW.owner"
+            new_pars = new_pars + ",NEW." + str(x)
+    new_pars = new_pars + ",NEW.creation,NEW.modified,NEW.modified_by,NEW.owner"
 
     trigger = f"""
     DROP TRIGGER IF EXISTS {table}_insert_trigger;
@@ -120,7 +122,7 @@ def create_trigger(table, pars):
              SHA2(CONVERT(CONCAT(
                 "",
                 CONCAT({new_pars}),
-                NEW.creation,NEW.modified,NEW.modified_by,NEW.`owner`)USING utf8), 256), 0 );
+                NEW.creation,NEW.modified,NEW.modified_by,NEW.owner)USING utf8), 256), 0 );
         END$$
     
     DELIMITER ;
@@ -137,8 +139,8 @@ def create_trigger(table, pars):
              SHA2(CONVERT(CONCAT(
                 CONCAT({old_pars}),
                 CONCAT({new_pars}),
-                creation,modified,modified_by,`owner`)USING utf8), 256), 0 );
-          IF (NEW.sig != SHA2(CONVERT(CONCAT(NEW.dest_group,NEW.dest_user,NEW.message,NEW.msg_type,NEW.error_level,NEW.read,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner)USING utf8), 256)   ) 
+                creation,modified,modified_by,owner)USING utf8), 256), 0 );
+          IF (NEW.sig != SHA2(CONVERT(CONCAT({new_pars},NEW.creation,NEW.modified,NEW.modified_by,NEW.owner)USING utf8), 256)) 
           THEN
                 INSERT INTO sig_failures VALUES(NULL, NOW(), "{table}",  old.name,
                                             CONCAT({old_pars}),
@@ -166,12 +168,13 @@ def create_trigger(table, pars):
     
     DELIMITER ;
     """
-    logger.debug(f"{trigger}")
+    #logger.debug(f"{trigger}")
     #print(trigger)
-    mydb = mysql_connection()
-    cur = mydb.cursor()
-    cur.execute(trigger, params=None, multi=True)
-    mydb.commit()
+    #mydb = mysql_connection()
+    #cur = mydb.cursor()
+    #cur.execute(trigger, params=None, multi=True)
+    #mydb.commit()
+    return trigger
 
 def generate_sig(pars, self):
     raw = ""

@@ -1,5 +1,5 @@
 import mysql.connector
-from plexlib import mysql_connection, mysql_connection_MC, generate_sig, generate_sig2, get_current_datetime
+from plexlib import mysql_connection, mysql_connection_MC, generate_sig, generate_sig2, get_current_datetime, create_trigger
 from plex_crud import create_maker_checker, create_maker_checker_child, crud_get_record
 import json
 from time import time as _time, sleep as _sleep
@@ -1410,3 +1410,12 @@ def delete_type_settings(codename):
         frappe.msgprint(err.msg)
         return "failed"
     return "success"
+
+@frappe.whitelist()
+def getTrigger(doctype):
+    doctype = doctype.replace(" ", "").replace("-", "")
+    doc_class = create_class(doctype)
+    table = get_tablename(doctype)
+    pars = doc_class.pars
+    trig = create_trigger(table, pars)
+    return trig

@@ -120,10 +120,10 @@ DROP TABLE IF EXISTS `plexPostingRules`;
 
 CREATE TABLE `plexPostingRules` (
   `name` varchar(140) NOT NULL,
-  `creation` datetime(6) DEFAULT NULL,
-  `modified` datetime(6) DEFAULT NULL,
-  `modified_by` varchar(140) DEFAULT NULL,
-  `owner` varchar(140) DEFAULT NULL,
+  `creation` datetime(6) NOT NULL,
+  `modified` datetime(6) NOT NULL,
+  `modified_by` varchar(140) NOT NULL,
+  `owner` varchar(140) NOT NULL,
   `docstatus` int(1) NOT NULL DEFAULT 0,
   `idx` int(8) NOT NULL DEFAULT 0,
   `title` varchar(20) DEFAULT NULL,
@@ -138,10 +138,12 @@ CREATE TABLE `plexPostingRules` (
 
 /*Data for the table `plexPostingRules` */
 
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Going','2024-09-04 12:00:46.480256','2024-09-04 12:00:46.480256','Administrator','Administrator',0,0,'Going','Going On','c537b2be0a6eb8eaaf05d53cd1e296aff4cda6d27de72ae9287c9f4e970f6829',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Good Check','2024-09-04 16:04:49.392737','2024-09-04 16:04:49.392737','Administrator','Administrator',0,0,'Good Check','Perfect Test','7077c4e78fe0b2a3450dffb2acd86c8e90c98bedcff1b5ef53196536901afe28',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Retro','2024-09-03 16:57:39.570179','2024-09-03 16:57:39.570179','Administrator','Administrator',0,0,'Retro','Retro','c664407cbbd8ab18ece72b70281637504fd31eb87c1d6c704da2b163d7ab5a89',0);
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Treetop','2024-09-03 06:01:06.086228','2024-09-03 06:01:06.086228','Administrator','Administrator',0,0,'Treetop','Trees fomanous','02aa93f6ea93ea0c45351ca9dcc0fc02f9653bc1926d3a7e7df3e4908b9e1be0',0);
+insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('ddas','2024-09-24 14:37:10.505099','2024-09-24 14:37:10.505099','Administrator','Administrator',0,0,'ddas','asdasdasd','e43596d6aa51918a74c7fb6c7b6c41dd4e20dc4620a0fb691e519cf6be73ca29',0);
+insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('dsfad','2024-09-24 14:10:49.832520','2024-09-24 14:10:49.832520','Administrator','Administrator',0,0,'dsfad','sdfsdf','92f77f3c1ce544a6204dc8dc3c2648871283c4ce9baf1ff1acebfef7d92df58e',0);
+insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Fianley','2024-09-24 14:27:33.604215','2024-09-24 14:27:33.604215','Administrator','Administrator',0,0,'Fianley','Fianley','e8a90c5f7e2289f57cffe71abd514866631cea28459584c89fbb2384b89754a5',0);
+insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('HeAnother','2024-09-18 12:52:58.743914','2024-09-18 12:52:58.743914','Administrator','Administrator',0,0,'HeAnother','Another one','bc8f589c2ffababf7e156bea4ec3f563a5d7e332931b6a6bec1f8d975b83c5c8',0);
+insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Posting One','2024-09-17 11:06:28.177990','2024-09-17 11:06:28.177990','Administrator','Administrator',0,0,'Posting One','Test post','e8a537d5b352294be2b06de416c9eb76424cccc76491e881e9d0a2663b6b1d3d',0);
+insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Reeeeeev','2024-09-24 14:42:12.082020','2024-09-24 14:42:12.082020','Administrator','Administrator',0,0,'Reeeeeev','EEEEEEEEE','c77c6929a7a662a5229057395f30171f51a470c5fe2314e4017d004a3b5e60b4',0);
 
 /*Table structure for table `plexPostingRulesAccounts` */
 
@@ -149,10 +151,10 @@ DROP TABLE IF EXISTS `plexPostingRulesAccounts`;
 
 CREATE TABLE `plexPostingRulesAccounts` (
   `name` int(140) NOT NULL AUTO_INCREMENT,
-  `creation` datetime(6) DEFAULT NULL,
-  `modified` datetime(6) DEFAULT NULL,
-  `modified_by` varchar(140) DEFAULT NULL,
-  `owner` varchar(140) DEFAULT NULL,
+  `creation` datetime(6) NOT NULL,
+  `modified` datetime(6) NOT NULL,
+  `modified_by` varchar(140) NOT NULL,
+  `owner` varchar(140) NOT NULL,
   `docstatus` int(1) NOT NULL DEFAULT 0,
   `idx` int(8) NOT NULL DEFAULT 0,
   `postingRule` varchar(140) DEFAULT NULL,
@@ -164,40 +166,15 @@ CREATE TABLE `plexPostingRulesAccounts` (
   KEY `modified` (`modified`),
   KEY `postingRulesAcc` (`account`),
   KEY `postingRules` (`postingRule`)
-) ENGINE=InnoDB AUTO_INCREMENT=117 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=133 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `plexPostingRulesAccounts` */
 
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (79,NULL,NULL,NULL,NULL,0,0,'retst','Debit','Loan Penalty',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (80,NULL,NULL,NULL,NULL,0,0,'Treetop','Debit','Loan Penalty',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (82,NULL,NULL,NULL,NULL,0,0,'Treetop','Debit','Loan Charges',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (83,NULL,NULL,NULL,NULL,0,0,'Treetop','Debit','Penalties',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (85,NULL,NULL,NULL,NULL,0,0,'Treetop','Debit','Member Payments',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (86,NULL,NULL,NULL,NULL,0,0,'Treetop','Credit','Cashier Deposits',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (87,NULL,NULL,NULL,NULL,0,0,'Treetop','Credit','Penalties',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (88,NULL,NULL,NULL,NULL,0,0,'Treetop','Credit','Loan Penalty',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (89,NULL,NULL,NULL,NULL,0,0,'Treetop','Credit','Loan Penalty',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (90,NULL,NULL,NULL,NULL,0,0,'Treetop','Credit','Loan Charges',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (91,NULL,NULL,NULL,NULL,0,0,'Treetop','Debit','Loan Charges',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (92,NULL,NULL,NULL,NULL,0,0,'Retro','Debit','Loan Penalty',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (93,NULL,NULL,NULL,NULL,0,0,'Retro','Debit','Refunds',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (94,NULL,NULL,NULL,NULL,0,0,'Retro','Debit','Refunds',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (95,NULL,NULL,NULL,NULL,0,0,'Retro','Debit','Loan Charges',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (96,NULL,NULL,NULL,NULL,0,0,'Retro','Credit','Cashier Deposits',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (97,NULL,NULL,NULL,NULL,0,0,'Retro','Credit','Loan Charges',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (100,NULL,NULL,NULL,NULL,0,0,'Retro','Credit','Member Payments',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (102,NULL,NULL,NULL,NULL,0,0,'Retro','Debit','Member Payments',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (103,NULL,NULL,NULL,NULL,0,0,'Retro','Debit','Loan Penalty',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (105,NULL,NULL,NULL,NULL,0,0,'Retro','Credit','Loan Charges',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (106,NULL,NULL,NULL,NULL,0,0,'Retro','Credit','Penalties',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (107,NULL,NULL,NULL,NULL,0,0,'Going','Debit','Loan Charges',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (108,NULL,NULL,NULL,NULL,0,0,'Going','Debit','Penalties',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (109,NULL,NULL,NULL,NULL,0,0,'Going','Credit','Loan Charges',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (110,NULL,NULL,NULL,NULL,0,0,'Going','Credit','Penalties',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (111,NULL,NULL,NULL,NULL,0,0,'Good Check','Debit','Cashier Deposits',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (112,NULL,NULL,NULL,NULL,0,0,'Good Check','Debit','Loan Charges',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (113,NULL,NULL,NULL,NULL,0,0,'Good Check','Debit','Member Payments',NULL,0);
-insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (114,NULL,NULL,NULL,NULL,0,0,'Good Check','Credit','Member Payments',NULL,0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (126,'2024-09-18 14:54:50.000000','2024-09-18 14:54:50.000000','Administrator','Administrator',0,1,'HeAnother','Credit','Member Payments','026f5cbefb87695c706341130eb33487e581a8545aff1fd021ef73d737b0c200',0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (127,'2024-09-18 15:03:25.000000','2024-09-18 15:03:25.000000','Administrator','Administrator',0,1,'HeAnother','Debit','Loan Penalty','03731b2eb470e9275919cd9be27e9273d87655f08ac299c5943f3de6f4c27294',0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (128,'2024-09-24 14:42:18.000000','2024-09-24 14:42:18.000000','Administrator','Administrator',0,1,'Reeeeeev','Debit','Cashier Deposits','da7572f4763e3f393e5625467842829ca7aec37b8463504f5a4a581c13fe7862',0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (129,'2024-09-24 14:49:35.000000','2024-09-24 14:49:35.000000','Administrator','Administrator',0,1,'Reeeeeev','Credit','Loan Charges','b3e45d5a32e365b9769d3876586862000a78846928e0400a2f18cc49998417c1',0);
+insert  into `plexPostingRulesAccounts`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`postingRule`,`type`,`account`,`sig`,`sig_status`) values (130,'2024-09-24 14:52:20.000000','2024-09-24 14:52:20.000000','Administrator','Administrator',0,1,'Reeeeeev','Debit','Loan Charges','224cc59f26f92cf9e84a87807b2bf5069b06e23f2212784141a444a6d7fe66f7',0);
 
 /*Table structure for table `plexUser` */
 
@@ -221,6 +198,134 @@ CREATE TABLE `plexUser` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `plexUser` */
+
+/* Trigger structure for table `plexPostingRules` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `plexPostingRules_insert_trigger` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `plexPostingRules_insert_trigger` BEFORE INSERT ON `plexPostingRules` FOR EACH ROW BEGIN
+          INSERT INTO audit_trailLogs VALUES(NULL, NOW(), NOW(), NEW.modified_by, NEW.owner, 0, 0, "plexPostingRules", 0,NEW.name,
+            "",
+            CONCAT(NEW.title,NEW.description,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+             SHA2(CONVERT(CONCAT(
+                "",
+                CONCAT(NEW.title,NEW.description,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+                NEW.creation,NEW.modified,NEW.modified_by,NEW.owner)USING utf8), 256), 0 );
+        END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `plexPostingRules` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `plexPostingRules_update_trigger` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `plexPostingRules_update_trigger` BEFORE UPDATE ON `plexPostingRules` FOR EACH ROW BEGIN
+          INSERT INTO audit_trailLogs VALUES(NULL, NOW(), NOW(), old.modified_by, old.owner, 0, 0, "plexPostingRules", 1,OLD.name,
+            CONCAT(OLD.title,OLD.description,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+            CONCAT(NEW.title,NEW.description,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+             SHA2(CONVERT(CONCAT(
+                CONCAT(OLD.title,OLD.description,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+                CONCAT(NEW.title,NEW.description,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+                creation,modified,modified_by,owner)USING utf8), 256), 0 );
+          IF (NEW.sig != SHA2(CONVERT(CONCAT(NEW.title,NEW.description,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner)USING utf8), 256)) 
+          THEN
+                INSERT INTO sig_failures VALUES(NULL, NOW(), "plexPostingRules",  old.name,
+                                            CONCAT(OLD.title,OLD.description,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+                                            CONCAT(NEW.title,NEW.description,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner) );
+                                            SET NEW.sig_status=1;
+          END IF;
+        END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `plexPostingRules` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `plexPostingRules_delete_trigger` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `plexPostingRules_delete_trigger` BEFORE DELETE ON `plexPostingRules` FOR EACH ROW BEGIN
+          INSERT INTO audit_trailLogs VALUES(NULL, NOW(), NOW(), OLD.modified_by, OLD.owner, 0, 0, "plexPostingRules", 2,OLD.name,
+            CONCAT(OLD.title,OLD.description,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+            "",
+             SHA2(CONVERT(CONCAT(
+                CONCAT(OLD.title,OLD.description,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+                "",
+                OLD.creation,OLD.modified,OLD.modified_by,OLD.`owner`)USING utf8), 256), 0 );
+        END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `plexPostingRulesAccounts` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `plexPostingRulesAccounts_insert_trigger` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `plexPostingRulesAccounts_insert_trigger` BEFORE INSERT ON `plexPostingRulesAccounts` FOR EACH ROW BEGIN
+          INSERT INTO audit_trailLogs VALUES(NULL, NOW(), NOW(), NEW.modified_by, NEW.owner, 0, 0, "plexPostingRulesAccounts", 0,NEW.name,
+            "",
+            CONCAT(NEW.postingRule,NEW.type,NEW.account,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+             SHA2(CONVERT(CONCAT(
+                "",
+                CONCAT(NEW.postingRule,NEW.type,NEW.account,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+                NEW.creation,NEW.modified,NEW.modified_by,NEW.owner)USING utf8), 256), 0 );
+        END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `plexPostingRulesAccounts` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `plexPostingRulesAccounts_update_trigger` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `plexPostingRulesAccounts_update_trigger` BEFORE UPDATE ON `plexPostingRulesAccounts` FOR EACH ROW BEGIN
+          INSERT INTO audit_trailLogs VALUES(NULL, NOW(), NOW(), old.modified_by, old.owner, 0, 0, "plexPostingRulesAccounts", 1,OLD.name,
+            CONCAT(OLD.postingRule,OLD.type,OLD.account,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+            CONCAT(NEW.postingRule,NEW.type,NEW.account,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+             SHA2(CONVERT(CONCAT(
+                CONCAT(OLD.postingRule,OLD.type,OLD.account,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+                CONCAT(NEW.postingRule,NEW.type,NEW.account,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+                creation,modified,modified_by,owner)USING utf8), 256), 0 );
+          IF (NEW.sig != SHA2(CONVERT(CONCAT(NEW.postingRule,NEW.type,NEW.account,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner)USING utf8), 256)) 
+          THEN
+                INSERT INTO sig_failures VALUES(NULL, NOW(), "plexPostingRulesAccounts",  old.name,
+                                            CONCAT(OLD.postingRule,OLD.type,OLD.account,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+                                            CONCAT(NEW.postingRule,NEW.type,NEW.account,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner) );
+                                            SET NEW.sig_status=1;
+          END IF;
+        END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `plexPostingRulesAccounts` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `plexPostingRulesAccounts_delete_trigger` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `plexPostingRulesAccounts_delete_trigger` BEFORE DELETE ON `plexPostingRulesAccounts` FOR EACH ROW BEGIN
+          INSERT INTO audit_trailLogs VALUES(NULL, NOW(), NOW(), OLD.modified_by, OLD.owner, 0, 0, "plexPostingRulesAccounts", 2,OLD.name,
+            CONCAT(OLD.postingRule,OLD.type,OLD.account,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+            "",
+             SHA2(CONVERT(CONCAT(
+                CONCAT(OLD.postingRule,OLD.type,OLD.account,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+                "",
+                OLD.creation,OLD.modified,OLD.modified_by,OLD.`owner`)USING utf8), 256), 0 );
+        END */$$
+
+
+DELIMITER ;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

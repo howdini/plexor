@@ -69,7 +69,7 @@ CREATE TABLE `notify_last_alert` (
 /*Data for the table `notify_last_alert` */
 
 insert  into `notify_last_alert`(`id`,`user`,`last_msg_stamp`) values (19,'admin@example.com','2024-07-10 13:51:26');
-insert  into `notify_last_alert`(`id`,`user`,`last_msg_stamp`) values (20,'admin@plexor.com','2024-09-20 14:58:43');
+insert  into `notify_last_alert`(`id`,`user`,`last_msg_stamp`) values (20,'admin@plexor.com','2024-09-24 14:57:22');
 
 /*Table structure for table `notify_messages` */
 
@@ -97,7 +97,7 @@ CREATE TABLE `notify_messages` (
   KEY `notify_messagesusers2` (`owner`),
   CONSTRAINT `notify_messagesusers` FOREIGN KEY (`modified_by`) REFERENCES `plexUser` (`name`),
   CONSTRAINT `notify_messagesusers2` FOREIGN KEY (`owner`) REFERENCES `plexUser` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `notify_messages` */
 
@@ -141,6 +141,36 @@ insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner
 insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (38,'2024-09-21 14:37:15.000000','2024-09-21 14:37:15.000000','admin@plexor.com','admin@plexor.com',0,0,'','Administrator: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2109212024143715379767>View change  </a>',1,6,0,'eecd005f7a4b3e78359f47fa4c5f77a90364b50751b4170cf9b5c150359f2ef0',0);
 insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (39,'2024-09-21 14:37:59.000000','2024-09-21 14:37:59.000000','admin@plexor.com','admin@plexor.com',0,0,'','Administrator: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2109212024143759473114>View change  </a>',1,6,0,'754087cd857741fc62fd425b85f255a99a1118acc0bba5ad9330266e73da9d66',0);
 insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (40,'2024-09-21 14:49:08.000000','2024-09-21 14:49:08.000000','Administrator','Administrator',0,0,'','admin@plexor.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2109212024144908409702>View change  </a>',1,6,0,'3d0c04073cebee3b8f449d9dc49d8fda64e5039c9b6cbdbc24a5034bd8a54bde',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (41,'2024-09-24 14:10:49.000000','2024-09-24 14:10:49.000000','Administrator','Administrator',0,0,'','admin@plexor.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024141049868733>View change </a>',1,6,0,'ee5d416dfbd07cdfbd5a3a464d1cb0e78894a7afa5a5f5437e6eba65a8a0abcd',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (42,'2024-09-24 14:10:49.000000','2024-09-24 14:10:49.000000','Administrator','Administrator',0,0,'',' dena@gmail.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024141049868733>View change </a>',1,6,0,'9c194c41cf1516a78d170e240cbe2589df7559a8230f3258ea52ea09d6e0e0d7',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (43,'2024-09-24 14:10:49.000000','2024-09-24 14:10:49.000000','Administrator','Administrator',0,0,'',' tina@gmail.com','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024141049868733>View change </a>',1,6,0,'23f86703cb1e73f00840993d87f559339dfba6ef6d19fa4dfaff45e63a2b0c63',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (44,'2024-09-24 14:27:33.000000','2024-09-24 14:27:33.000000','Administrator','Administrator',0,0,'','admin@plexor.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024142733658119>View change </a>',1,6,0,'69257cb301714e3648afbd1805f288bb22633f9c6b933bd49778b68a60effa51',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (45,'2024-09-24 14:27:33.000000','2024-09-24 14:27:33.000000','Administrator','Administrator',0,0,'',' dena@gmail.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024142733658119>View change </a>',1,6,0,'dc9630d578fe6a27c7a99f3f23ef9d03e835c38f9cafc0d5cc094aae18a2a77b',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (46,'2024-09-24 14:27:33.000000','2024-09-24 14:27:33.000000','Administrator','Administrator',0,0,'',' tina@gmail.com','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024142733658119>View change </a>',1,6,0,'c6030d702e86641f175d361d88abb25ee71eebf93a3ef5dc51c2732da97b3690',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (47,'2024-09-24 14:37:10.000000','2024-09-24 14:37:10.000000','Administrator','Administrator',0,0,'','admin@plexor.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024143710535747>View change </a>',1,6,0,'8735c13a5b23eb560a1031c4c61f933565ad07cdfd85f4dd8ed037cdb0477063',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (48,'2024-09-24 14:37:10.000000','2024-09-24 14:37:10.000000','Administrator','Administrator',0,0,'',' dena@gmail.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024143710535747>View change </a>',1,6,0,'5d722a3614480cfe15ec1a00218e05883c40d99e20245f2dbc867ebff3d6f307',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (49,'2024-09-24 14:37:10.000000','2024-09-24 14:37:10.000000','Administrator','Administrator',0,0,'',' tina@gmail.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024143710535747>View change </a>',1,6,0,'8d96b350766ad618f25dc1dd597fb1354bccf002fc803ad0396b8e3bef9c62d1',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (50,'2024-09-24 14:42:12.000000','2024-09-24 14:42:12.000000','Administrator','Administrator',0,0,'','admin@plexor.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024144212119985>View change </a>',1,6,0,'2df776fcb4322d4f10767803e85aa7b899536545d57b1d98a6ef697a9dbd04a5',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (51,'2024-09-24 14:42:12.000000','2024-09-24 14:42:12.000000','Administrator','Administrator',0,0,'',' dena@gmail.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024144212119985>View change </a>',1,6,0,'af80dce3eef504ba7ff4b5e5e51cc09306ecb39ca0760c786687a4333493c3e7',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (52,'2024-09-24 14:42:12.000000','2024-09-24 14:42:12.000000','Administrator','Administrator',0,0,'',' tina@gmail.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024144212119985>View change </a>',1,6,0,'538850afaec6fc891cfd08a996bff2628ee0e7e8e7fac900f769f1e453943a21',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (53,'2024-09-24 14:48:54.000000','2024-09-24 14:48:54.000000','Administrator','Administrator',0,0,'','admin@plexor.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024144854988806>View change </a>',1,6,0,'ff6135d0adf50823eae4c199696e37bd62c871b952bab64cedccf03cf898d372',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (54,'2024-09-24 14:48:54.000000','2024-09-24 14:48:54.000000','Administrator','Administrator',0,0,'',' tina@gmail.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024144854988806>View change </a>',1,6,0,'94198ef3b569424c973f4629372c4c689a4fe9556587b1e0fbf06b2d83c18a10',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (55,'2024-09-24 14:57:13.000000','2024-09-24 14:57:13.000000','Administrator','Administrator',0,0,'','admin@plexor.com','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024145713666243>View change  </a>',1,6,1,'a80dd1318cd4a66cbcbac5656dd1a4f11609f4c7795407039901ccdd55ca9e6f',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (56,'2024-09-24 14:57:13.000000','2024-09-24 14:57:13.000000','Administrator','Administrator',0,0,'','dena@gmail.com','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024145713666243>View change  </a>',1,6,0,'3eb534a895ccceb6a827132fe967520c64e6788a44edf3dbfd3ac30d52bf4190',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (57,'2024-09-24 14:57:13.000000','2024-09-24 14:57:13.000000','Administrator','Administrator',0,0,'','tina@gmail.com','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024145713666243>View change  </a>',1,6,0,'d7030c206cd41ada52f57717344a8362c2686cc1f277dbe69fcc7406a375a6fe',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (58,'2024-09-24 14:57:22.000000','2024-09-24 14:57:22.000000','Administrator','Administrator',0,0,'','admin@plexor.com','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024145722897524>View change  </a>',1,6,1,'7969e84a0adea76482885955c892c3049f854f021bb88555d29c666ff7b34e30',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (59,'2024-09-24 14:57:22.000000','2024-09-24 14:57:22.000000','Administrator','Administrator',0,0,'','dena@gmail.com','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024145722897524>View change  </a>',1,6,0,'a67f27664d7d10a27f8f784b41ab283d2a473a6f12374281228f8e4be37498bb',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (60,'2024-09-24 14:57:22.000000','2024-09-24 14:57:22.000000','Administrator','Administrator',0,0,'','tina@gmail.com','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024145722897524>View change  </a>',1,6,0,'985e57f54b0399754f01ca5e7380c463392912dfcf8f46b715772ac7a8584c06',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (61,'2024-09-24 14:58:30.000000','2024-09-24 14:58:30.000000','Administrator','Administrator',0,0,'','admin@plexor.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024145830720512>View change </a>',1,6,0,'540aab4c7402128cb5e9034653f1969d103e39827ca98696588d9327dbbee043',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (62,'2024-09-24 14:58:30.000000','2024-09-24 14:58:30.000000','Administrator','Administrator',0,0,'',' tina@gmail.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024145830720512>View change </a>',1,6,0,'f89a93bc0795dd4f50b24ffdc712a0d23eff271d1b56677c1700da9889fcae36',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (63,'2024-09-24 14:59:22.000000','2024-09-24 14:59:22.000000','Administrator','Administrator',0,0,'','admin@plexor.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024145922091199>View change </a>',1,6,0,'3ea17ecdacb8c82e7f2442b7e30326be8ae5ce764df2f8246c988117dda4e066',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (64,'2024-09-24 14:59:22.000000','2024-09-24 14:59:22.000000','Administrator','Administrator',0,0,'',' tina@gmail.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024145922091199>View change </a>',1,6,0,'55e85756610870df3537798a7e0285c4ad5fd56b6a82fc5fb1a40f0c5514a2ae',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (65,'2024-09-24 15:02:30.000000','2024-09-24 15:02:30.000000','Administrator','Administrator',0,0,'','admin@plexor.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024150230399957>View change  </a>',1,6,0,'4f1526d1a0cd22d447ce1b89d1d6a47dc0a8d90520f1a5a67f196dd640b94ba4',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (66,'2024-09-24 15:02:30.000000','2024-09-24 15:02:30.000000','Administrator','Administrator',0,0,'','tina@gmail.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024150230399957>View change  </a>',1,6,0,'2a91c3c6b9bc560f7e8ebe95de2450693e6763a06d3490fff284c2cb61d59984',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (67,'2024-09-24 15:03:21.000000','2024-09-24 15:03:21.000000','Administrator','Administrator',0,0,'','admin@plexor.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024150321334108>View change  </a>',1,6,0,'956eee6b04cdc7e9f3da99504e99af3992a6d6121ed8be8bb57881ade2ce8ce3',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (68,'2024-09-24 15:03:21.000000','2024-09-24 15:03:21.000000','Administrator','Administrator',0,0,'','tina@gmail.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2409242024150321334108>View change  </a>',1,6,0,'aa54c19b01bb5df9bb3ee4bffec0c8261fc87316cf06fc401130cf06f8fa7798',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (69,'2024-09-25 16:48:08.000000','2024-09-25 16:48:08.000000','Administrator','Administrator',0,0,'','admin@plexor.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2509252024164808054310>View change </a>',1,6,0,'a774fd8b930d82926efb17e1fe7cdf8adba2ee5173d69c778a5a29b858f550c0',0);
+insert  into `notify_messages`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`dest_group`,`dest_user`,`message`,`msg_type`,`error_level`,`read`,`sig`,`sig_status`) values (70,'2024-09-25 16:48:08.000000','2024-09-25 16:48:08.000000','Administrator','Administrator',0,0,'',' tina@gmail.com: pending','A record has been created/modified and your approval is required before it can be posted.<br><a target=_blank href=/app/maker-checker/2509252024164808054310>View change </a>',1,6,0,'c13ac00b14b4493828bec12c9de6de65f92cf5437c7a47d1439b8c69a063af5f',0);
 
 /*Table structure for table `plexAccountMapping` */
 
@@ -1554,6 +1584,15 @@ insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owne
 insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2109212024143715379767','2024-09-21 14:37:15.000000','2024-09-21 14:37:15.000000','admin@plexor.com','admin@plexor.com',0,1,'admin@plexor.com','2024-09-21 14:37:15.000000','PostingRulesAccounts','101','UPDATE','DELETE','{\"parent\":{\"title\" :\"Posting One\", \"description\" :\"Test post\"}, \"child\":{\"postingRule\" :\"Posting One\", \"type\" :\"Debit\", \"account\" :\"Loan Charges\"}}','{Administrator: pending,}',0,NULL,0,NULL,'Posting One','99c4c2892136a8d9dbbf4cfeaadb8f65c5bf3831ac54ee45af3054ebb2db22b8',0);
 insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2109212024143759473114','2024-09-21 14:37:59.000000','2024-09-21 14:37:59.000000','admin@plexor.com','admin@plexor.com',0,1,'admin@plexor.com','2024-09-21 14:37:59.000000','PostingRulesAccounts','102','UPDATE','DELETE','{\"parent\":{\"title\" :\"Posting One\", \"description\" :\"Test post\"}, \"child\":{\"postingRule\" :\"Posting One\", \"type\" :\"Debit\", \"account\" :\"Loan Penalty\"}}','{Administrator: pending,}',0,NULL,0,NULL,'Posting One','2cc6a2049924de9c3495fb35f3cb08a4792eb917db5c84623f9ef465a70f8c82',0);
 insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2109212024144908409702','2024-09-21 14:49:08.000000','2024-09-21 14:49:08.000000','Administrator','Administrator',0,1,'Administrator','2024-09-21 14:49:08.000000','PostingRulesAccounts','101','UPDATE','DELETE','{\"parent\":{\"title\" :\"Posting One\", \"description\" :\"Test post\"}, \"child\":{\"postingRule\" :\"Posting One\", \"type\" :\"Debit\", \"account\" :\"Loan Charges\"}}','{admin@plexor.com: pending,}',0,NULL,0,NULL,'Posting One','ac4914771e5f26e99af1d592958dd60bbb7cb3b9dfd409fce1b52a27da5e2494',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2409242024141049868733','2024-09-24 14:10:49.832520','2024-09-24 14:10:49.832520','Administrator','Administrator',0,0,'Administrator','2024-09-24 14:10:49.832520','PostingRules','dsfad','INSERT','','{\"title\" :\"dsfad\", \"description\" :\"sdfsdf\"}','{admin@plexor.com: pending, dena@gmail.com: pending, tina@gmail.com}',0,'',0,NULL,'','cde34aaf60645f608220b4c2116b889968902494833978296ca7007ae9163d50',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2409242024142733658119','2024-09-24 14:27:33.604215','2024-09-24 14:27:33.604215','Administrator','Administrator',0,0,'Administrator','2024-09-24 14:27:33.604215','PostingRules','Fianley','INSERT','','{\"title\" :\"Fianley\", \"description\" :\"Fianley\"}','{admin@plexor.com: pending, dena@gmail.com: pending, tina@gmail.com}',0,'',0,NULL,'','90706cabadb6479ce77e429e03718edd4d042f00c395daeecfe6390f4ab73708',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2409242024143710535747','2024-09-24 14:37:10.505099','2024-09-24 14:37:10.505099','Administrator','Administrator',0,0,'Administrator','2024-09-24 14:37:10.505099','PostingRules','ddas','INSERT','','{\"title\" :\"ddas\", \"description\" :\"asdasdasd\"}','{admin@plexor.com: pending, dena@gmail.com: pending, tina@gmail.com: pending, }',0,'',0,NULL,'','4b1180b7b239b37d7675ef8ca808e578cae46d6a711d639533b96a44def295c7',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2409242024144212119985','2024-09-24 14:42:12.082020','2024-09-24 15:24:04.570147','Administrator','Administrator',0,0,'Administrator','2024-09-24 14:42:12.082020','PostingRules','Reeeeeev','INSERT','','{\"title\" :\"Reeeeeev\", \"description\" :\"EEEEEEEEE\"}','{ Administrator: pending,\nadmin@plexor.com: approved}',2,'\n\nadmin@plexor.com @24/9/2024 15:5:30\n  -  Approved this update.\n\nAdministrator @24/9/2024 15:19:6\n  -  Approved this update.\n\nAdministrator @24/9/2024 15:19:19\n  -  Approved this update.\n\nAdministrator @24/9/2024 15:20:14\n  -  Approved this update.\n\nAdministrator @24/9/2024 15:24:4\n  -  Approved this update.',0,'None','','ccf618a7f56c9b836a56e44d8c045c3492f76db92156216d6c8eb32c5bbe3e08',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2409242024144854988806','2024-09-24 14:42:12.082020','2024-09-24 15:05:54.895198','admin@plexor.com','Administrator',0,0,'Administrator','2024-09-24 14:42:12.082020','PostingRules','Reeeeeev','UPDATE','','{\"title\" :\"Reeeeeev\", \"description\" :\"EEEEEEEEE\"}','{ Administrator: pending,\nadmin@plexor.com: approved, }',2,'\n\nadmin@plexor.com @24/9/2024 15:5:54\n  -  Approved this update.',0,'None','','8395949bcec64ee63906d39ed1b95f6d6c775f8a6e9f80bd9802010463585ea4',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2409242024145830720512','2024-09-24 14:42:12.082020','2024-09-24 15:23:50.340275','Administrator','Administrator',0,0,'Administrator','2024-09-24 14:42:12.082020','PostingRules','Reeeeeev','UPDATE','','{\"title\" :\"Reeeeeev\", \"description\" :\"Enomous\"}','{ Administrator: pending,\nadmin@plexor.com: approved}',2,'\n\nadmin@plexor.com @24/9/2024 15:6:9\n  -  Approved this update.\n\nAdministrator @24/9/2024 15:23:50\n  -  Approved this update.',0,'None','','9066ddfbeb30094bf48a46e8e6cef8cddedb9ffe11b2e54b268c79d2252f0d39',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2409242024145922091199','2024-09-17 11:06:28.177990','2024-09-24 15:04:21.120711','admin@plexor.com','Administrator',0,0,'Administrator','2024-09-17 11:06:28.177990','PostingRules','Posting One','UPDATE','','{\"title\" :\"Posting One\", \"description\" :\"Test post2\"}','{ Administrator: pending,\nadmin@plexor.com: approved, }',2,'\n\nadmin@plexor.com @24/9/2024 15:4:21\n  -  Approved this update.',0,'None','','b3e13c2ae71ad57b242f040ee01058dfc5f1494f8041c1cbd24dac8461a0ae53',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2409242024150230399957','2024-09-24 15:02:30.000000','2024-09-24 15:23:32.675275','Administrator','Administrator',0,1,'Administrator','2024-09-24 15:02:30.000000','PostingRulesAccounts','','UPDATE','INSERT','{\"child\":{\"postingRule\" :\"Posting One\", \"type\" :\"Debit\", \"account\" :\"Member Payments\"}}','{admin@plexor.com: approved,\nAdministrator: approved, }',2,'undefined\n\nadmin@plexor.com @24/9/2024 15:6:35\n  -  Approved this update.\n\nAdministrator @24/9/2024 15:23:32\n  -  Approved this update.',0,'None','Posting One','f4aba7f9f8c65a533c295eba565785fe07da1fe0cbc9a0595505659901965aab',0);
+insert  into `plexMakerChecker`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2409242024150321334108','2024-09-24 15:03:21.000000','2024-09-24 15:21:17.176908','Administrator','Administrator',0,1,'Administrator','2024-09-24 15:03:21.000000','PostingRulesAccounts','104','UPDATE','DELETE','{\"parent\":{\"title\" :\"Posting One\", \"description\" :\"Test post\"}, \"child\":{\"postingRule\" :\"Posting One\", \"type\" :\"Credit\", \"account\" :\"Penalties\"}}','{admin@plexor.com: approved,\nAdministrator: approved, }',2,'undefined\n\nadmin@plexor.com @24/9/2024 15:6:43\n  -  Approved this update.\n\nAdministrator @24/9/2024 15:21:17\n  -  Approved this update.',0,'None','Posting One','e030cfcc4574284f23aa81806cdfe0502a5d7ef4aa196297eebc4b74055f58a3',0);
 
 /*Table structure for table `plexMakerCheckerLogs` */
 
@@ -1655,6 +1694,7 @@ insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`
 insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2408242024150821890396','2024-08-24 15:08:21.000000','2024-08-24 15:08:21.000000','Administrator','Administrator',0,1,'Administrator','2024-08-24 15:08:21.000000','PostingRulesAccounts','53','UPDATE','INSERT','{postingRule :\"hward\",\n type :\"Debit\",\n account :\"Loan Charges\"}','{admin@plexor.com: pending,}',0,NULL,1,'ok','hward','',0);
 insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2408242024150833354770','2024-08-24 15:08:33.000000','2024-08-24 15:08:33.000000','Administrator','Administrator',0,1,'Administrator','2024-08-24 15:08:33.000000','PostingRulesAccounts','54','UPDATE','INSERT','{postingRule :\"hward\",\n type :\"Debit\",\n account :\"Member Payments\"}','{admin@plexor.com: pending,}',0,NULL,1,'ok','hward','',0);
 insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2408242024154837472592','2024-08-24 15:48:37.000000','2024-08-24 15:48:37.000000','Administrator','Administrator',0,1,'Administrator','2024-08-24 15:48:37.000000','PostingRulesAccounts','65','UPDATE','DELETE','{}','{admin@plexor.com: pending,}',0,NULL,1,'ok','hward','',0);
+insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2509252024164808054310','2024-09-17 11:06:28.177990','2024-09-25 16:48:08.028654','Administrator','Administrator',0,0,'Administrator','2024-09-17 11:06:28.177990','PostingRules','Posting One','UPDATE','','{\"title\" :\"Posting One\", \"description\" :\"Test post er\"}','{admin@plexor.com: pending, }',0,'',1,'ok','','071c60b6350abf063fb7e8b9aec3728144be988e9bad44a203dc44954f0764f1',0);
 insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2708272024143323573383','2024-08-27 14:33:23.000000','2024-08-27 14:33:23.000000','Administrator','Administrator',0,1,'Administrator','2024-08-27 14:33:23.000000','PostingRulesAccounts','43','UPDATE','DELETE','{\"parent\":{title :\"Savings Deposits\",\n description :\"Savings Deposits Tsken\"}, \"child\":{parent_value :\"Savings Deposits\",\n type :\"Debit\",\n child_value :\"Loan Charges\"}}','{admin@plexor.com: pending,}',0,NULL,1,'ok','Savings Deposits','',0);
 insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2708272024152839248278','2024-08-27 15:28:39.000000','2024-08-27 15:28:39.000000','Administrator','Administrator',0,1,'Administrator','2024-08-27 15:28:39.000000','PostingRulesAccounts','48','UPDATE','DELETE','{\"parent\":{title :\"Savings Deposits\",\n description :\"Savings Deposits Tsken\"}, \"child\":{parent_value :\"Savings Deposits\",\n type :\"Credit\",\n child_value :\"Loan Penalty\"}}','{admin@plexor.com: pending,}',0,NULL,1,'ok','Savings Deposits','',0);
 insert  into `plexMakerCheckerLogs`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`creator`,`stamp`,`document`,`document_id`,`trx_type`,`child_trx_type`,`values`,`checkers`,`check_status`,`checker_comments`,`posted_status`,`posted_result`,`parent`,`sig`,`sig_status`) values ('2708272024163533308525','2024-08-27 16:35:33.000000','2024-08-27 16:35:33.000000','Administrator','Administrator',0,1,'Administrator','2024-08-27 16:35:33.000000','PostingRulesAccounts','49','UPDATE','DELETE','{\"parent\":{title :\"Savings Deposits\",\n description :\"Savings Deposits Tsken\"}, \"child\":{parent_value :\"Savings Deposits\",\n type :\"Credit\",\n child_value :\"Penalties\"}}','{admin@plexor.com: pending,}',0,NULL,1,'ok','Savings Deposits','',0);
@@ -1806,7 +1846,7 @@ CREATE TABLE `plexPostingRules` (
 
 /*Data for the table `plexPostingRules` */
 
-insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Posting One','2024-09-17 11:06:28.177990','2024-09-17 11:06:28.177990','Administrator','Administrator',0,0,'Posting One','Test post','e8a537d5b352294be2b06de416c9eb76424cccc76491e881e9d0a2663b6b1d3d',0);
+insert  into `plexPostingRules`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`title`,`description`,`sig`,`sig_status`) values ('Posting One','2024-09-17 11:06:28.177990','2024-09-17 11:06:28.177990','Administrator','Administrator',0,0,'Posting One','Test post er','d51e22f514171a5ed8595a9868b19d5a1266a823498ceb65178d97da80065881',0);
 
 /*Table structure for table `plexPostingRulesAccounts` */
 
@@ -2168,11 +2208,9 @@ CREATE TABLE `plexSetting` (
 
 insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`value2`,`value3`,`status`,`sig`,`sig_status`) values ('1',NULL,NULL,NULL,NULL,0,0,'GENERAL','Enable maker-checker','ENABLE_MKCHKR','yes','3',NULL,1,NULL,0);
 insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`value2`,`value3`,`status`,`sig`,`sig_status`) values ('2',NULL,NULL,NULL,NULL,0,0,'MCHECKER','Maker-Checker - Edit','MAKERCHECKER_EDIT','yes','3',NULL,1,NULL,0);
-insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`value2`,`value3`,`status`,`sig`,`sig_status`) values ('3',NULL,NULL,NULL,NULL,0,0,'MCHECKER','Posting Rules - Delete','POSTINGRULES_DELETE','yes','3',NULL,1,NULL,0);
-insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`value2`,`value3`,`status`,`sig`,`sig_status`) values ('4',NULL,NULL,NULL,NULL,0,0,'MCHECKER','Posting Rules - Insert','POSTINGRULES_INSERT','yes','3',NULL,1,NULL,0);
-insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`value2`,`value3`,`status`,`sig`,`sig_status`) values ('5',NULL,NULL,NULL,NULL,0,0,'MCHECKER','Posting Rules - Update','POSTINGRULES_UPDATE','yes','2',NULL,1,NULL,0);
-insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`value2`,`value3`,`status`,`sig`,`sig_status`) values ('6',NULL,NULL,NULL,NULL,0,0,'MCHECKER','Posting Rules - Apprpvers Count','POSTINGRULES_APPROVERS_COUNT','yes','3',NULL,1,NULL,0);
-insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`value2`,`value3`,`status`,`sig`,`sig_status`) values ('7',NULL,NULL,NULL,NULL,0,0,'MCHECKER','Posting Rules - Fixed Approvers','POSTINGRULES_FIXED_APPROVERS','yes','3',NULL,0,NULL,0);
+insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`value2`,`value3`,`status`,`sig`,`sig_status`) values ('3',NULL,NULL,NULL,NULL,0,0,'MCHECKER','Posting Rules - Delete','POSTINGRULES_DELETE','yes','-1','dena@gmail.com,admin@plexor.com',1,NULL,0);
+insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`value2`,`value3`,`status`,`sig`,`sig_status`) values ('4',NULL,NULL,NULL,NULL,0,0,'MCHECKER','Posting Rules - Insert','POSTINGRULES_INSERT','yes','-1','dena@gmail.com,admin@plexor.com,tina@gmail.com',1,NULL,0);
+insert  into `plexSetting`(`name`,`creation`,`modified`,`modified_by`,`owner`,`docstatus`,`idx`,`type`,`setting`,`codename`,`value`,`value2`,`value3`,`status`,`sig`,`sig_status`) values ('5',NULL,NULL,NULL,NULL,0,0,'MCHECKER','Posting Rules - Update','POSTINGRULES_UPDATE','yes','-1','admin@plexor.com,tina@gmail.com',1,NULL,0);
 
 /*Table structure for table `plexSettingType` */
 
@@ -2366,9 +2404,197 @@ CREATE TABLE `sig_failures` (
 
 /*Data for the table `sig_failures` */
 
-insert  into `sig_failures`(`id`,`stamp`,`table`,`name`,`before_data`,`after_data`) values (219,'2024-07-10 12:16:35','notify_messages','0.04570142183983831','System Manager|admin@example.com|The new finest test|1|1|0|2024-07-06 12:56:56.000000|2024-07-06 12:56:56.000000|Administrator|Administrator','System Manager|admin@example.com|The new finest testff|1|1|0|2024-07-06 12:56:56.000000|2024-07-06 12:56:56.000000|Administrator|Administrator');
-insert  into `sig_failures`(`id`,`stamp`,`table`,`name`,`before_data`,`after_data`) values (220,'2024-07-10 13:22:59','notify_messages','0.05074797296034915','System Manager|admin@example.com|The new finest test|1|1|0|2024-07-06 13:23:05.000000|2024-07-06 13:23:05.000000|Administrator|Administrator','System Manager|admin@example.com|The new finest testvv|1|1|0|2024-07-06 13:23:05.000000|2024-07-06 13:23:05.000000|Administrator|Administrator');
-insert  into `sig_failures`(`id`,`stamp`,`table`,`name`,`before_data`,`after_data`) values (221,'2024-07-10 13:51:39','notify_messages','0.10727468981153769','System Manager|admin@example.com|The new finest test|3|4|0|2024-07-06 15:25:44.000000|2024-07-06 15:25:44.000000|Administrator|Administrator','System Manager|admin@example.com|The new finest testvbg|3|4|0|2024-07-06 15:25:44.000000|2024-07-06 15:25:44.000000|Administrator|Administrator');
+/* Trigger structure for table `plexMakerChecker` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `plexMakerChecker_insert_trigger` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `plexMakerChecker_insert_trigger` BEFORE INSERT ON `plexMakerChecker` FOR EACH ROW BEGIN
+          INSERT INTO audit_trailLogs VALUES(NULL, NOW(), NOW(), NEW.modified_by, NEW.owner, 0, 0, "plexMakerChecker", 0,NEW.name,
+            "",
+            CONCAT(NEW.creator,NEW.stamp,NEW.document,NEW.trx_type,NEW.child_trx_type,NEW.values,NEW.checkers,NEW.check_status,NEW.checker_comments,NEW.posted_result,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+             SHA2(CONVERT(CONCAT(
+                "",
+                CONCAT(NEW.creator,NEW.stamp,NEW.document,NEW.trx_type,NEW.child_trx_type,NEW.values,NEW.checkers,NEW.check_status,NEW.checker_comments,NEW.posted_result,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+                NEW.creation,NEW.modified,NEW.modified_by,NEW.owner)USING utf8), 256), 0 );
+        END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `plexMakerChecker` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `plexMakerChecker_update_trigger` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `plexMakerChecker_update_trigger` BEFORE UPDATE ON `plexMakerChecker` FOR EACH ROW BEGIN
+          INSERT INTO audit_trailLogs VALUES(NULL, NOW(), NOW(), old.modified_by, old.owner, 0, 0, "plexMakerChecker", 1,OLD.name,
+            CONCAT(OLD.creator,OLD.stamp,OLD.document,OLD.trx_type,OLD.child_trx_type,OLD.values,OLD.checkers,OLD.check_status,OLD.checker_comments,OLD.posted_result,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+            CONCAT(NEW.creator,NEW.stamp,NEW.document,NEW.trx_type,NEW.child_trx_type,NEW.values,NEW.checkers,NEW.check_status,NEW.checker_comments,NEW.posted_result,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+             SHA2(CONVERT(CONCAT(
+                CONCAT(OLD.creator,OLD.stamp,OLD.document,OLD.trx_type,OLD.child_trx_type,OLD.values,OLD.checkers,OLD.check_status,OLD.checker_comments,OLD.posted_result,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+                CONCAT(NEW.creator,NEW.stamp,NEW.document,NEW.trx_type,NEW.child_trx_type,NEW.values,NEW.checkers,NEW.check_status,NEW.checker_comments,NEW.posted_result,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+                creation,modified,modified_by,owner)USING utf8), 256), 0 );
+          IF (NEW.sig != SHA2(CONVERT(CONCAT(NEW.creator,NEW.stamp,NEW.document,NEW.trx_type,NEW.child_trx_type,NEW.values,NEW.checkers,NEW.check_status,NEW.checker_comments,NEW.posted_result,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner)USING utf8), 256)) 
+          THEN
+                INSERT INTO sig_failures VALUES(NULL, NOW(), "plexMakerChecker",  old.name,
+                                            CONCAT(OLD.creator,OLD.stamp,OLD.document,OLD.trx_type,OLD.child_trx_type,OLD.values,OLD.checkers,OLD.check_status,OLD.checker_comments,OLD.posted_result,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+                                            CONCAT(NEW.creator,NEW.stamp,NEW.document,NEW.trx_type,NEW.child_trx_type,NEW.values,NEW.checkers,NEW.check_status,NEW.checker_comments,NEW.posted_result,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner) );
+                                            SET NEW.sig_status=1;
+          END IF;
+        END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `plexMakerChecker` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `plexMakerChecker_delete_trigger` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `plexMakerChecker_delete_trigger` BEFORE DELETE ON `plexMakerChecker` FOR EACH ROW BEGIN
+          INSERT INTO audit_trailLogs VALUES(NULL, NOW(), NOW(), OLD.modified_by, OLD.owner, 0, 0, "plexMakerChecker", 2,OLD.name,
+            CONCAT(OLD.creator,OLD.stamp,OLD.document,OLD.trx_type,OLD.child_trx_type,OLD.values,OLD.checkers,OLD.check_status,OLD.checker_comments,OLD.posted_result,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+            "",
+             SHA2(CONVERT(CONCAT(
+                CONCAT(OLD.creator,OLD.stamp,OLD.document,OLD.trx_type,OLD.child_trx_type,OLD.values,OLD.checkers,OLD.check_status,OLD.checker_comments,OLD.posted_result,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+                "",
+                OLD.creation,OLD.modified,OLD.modified_by,OLD.`owner`)USING utf8), 256), 0 );
+        END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `plexPostingRules` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `plexPostingRules_insert_trigger` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `plexPostingRules_insert_trigger` BEFORE INSERT ON `plexPostingRules` FOR EACH ROW BEGIN
+          INSERT INTO audit_trailLogs VALUES(NULL, NOW(), NOW(), NEW.modified_by, NEW.owner, 0, 0, "plexPostingRules", 0,NEW.name,
+            "",
+            CONCAT(NEW.title,NEW.description,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+             SHA2(CONVERT(CONCAT(
+                "",
+                CONCAT(NEW.title,NEW.description,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+                NEW.creation,NEW.modified,NEW.modified_by,NEW.owner)USING utf8), 256), 0 );
+        END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `plexPostingRules` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `plexPostingRules_update_trigger` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `plexPostingRules_update_trigger` BEFORE UPDATE ON `plexPostingRules` FOR EACH ROW BEGIN
+          INSERT INTO audit_trailLogs VALUES(NULL, NOW(), NOW(), old.modified_by, old.owner, 0, 0, "plexPostingRules", 1,OLD.name,
+            CONCAT(OLD.title,OLD.description,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+            CONCAT(NEW.title,NEW.description,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+             SHA2(CONVERT(CONCAT(
+                CONCAT(OLD.title,OLD.description,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+                CONCAT(NEW.title,NEW.description,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+                creation,modified,modified_by,owner)USING utf8), 256), 0 );
+          IF (NEW.sig != SHA2(CONVERT(CONCAT(NEW.title,NEW.description,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner)USING utf8), 256)) 
+          THEN
+                INSERT INTO sig_failures VALUES(NULL, NOW(), "plexPostingRules",  old.name,
+                                            CONCAT(OLD.title,OLD.description,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+                                            CONCAT(NEW.title,NEW.description,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner) );
+                                            SET NEW.sig_status=1;
+          END IF;
+        END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `plexPostingRules` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `plexPostingRules_delete_trigger` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `plexPostingRules_delete_trigger` BEFORE DELETE ON `plexPostingRules` FOR EACH ROW BEGIN
+          INSERT INTO audit_trailLogs VALUES(NULL, NOW(), NOW(), OLD.modified_by, OLD.owner, 0, 0, "plexPostingRules", 2,OLD.name,
+            CONCAT(OLD.title,OLD.description,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+            "",
+             SHA2(CONVERT(CONCAT(
+                CONCAT(OLD.title,OLD.description,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+                "",
+                OLD.creation,OLD.modified,OLD.modified_by,OLD.`owner`)USING utf8), 256), 0 );
+        END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `plexPostingRulesAccounts` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `plexPostingRulesAccounts_insert_trigger` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `plexPostingRulesAccounts_insert_trigger` BEFORE INSERT ON `plexPostingRulesAccounts` FOR EACH ROW BEGIN
+          INSERT INTO audit_trailLogs VALUES(NULL, NOW(), NOW(), NEW.modified_by, NEW.owner, 0, 0, "plexPostingRulesAccounts", 0,NEW.name,
+            "",
+            CONCAT(NEW.postingRule,NEW.type,NEW.account,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+             SHA2(CONVERT(CONCAT(
+                "",
+                CONCAT(NEW.postingRule,NEW.type,NEW.account,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+                NEW.creation,NEW.modified,NEW.modified_by,NEW.owner)USING utf8), 256), 0 );
+        END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `plexPostingRulesAccounts` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `plexPostingRulesAccounts_update_trigger` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `plexPostingRulesAccounts_update_trigger` BEFORE UPDATE ON `plexPostingRulesAccounts` FOR EACH ROW BEGIN
+          INSERT INTO audit_trailLogs VALUES(NULL, NOW(), NOW(), old.modified_by, old.owner, 0, 0, "plexPostingRulesAccounts", 1,OLD.name,
+            CONCAT(OLD.postingRule,OLD.type,OLD.account,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+            CONCAT(NEW.postingRule,NEW.type,NEW.account,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+             SHA2(CONVERT(CONCAT(
+                CONCAT(OLD.postingRule,OLD.type,OLD.account,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+                CONCAT(NEW.postingRule,NEW.type,NEW.account,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner),
+                creation,modified,modified_by,owner)USING utf8), 256), 0 );
+          IF (NEW.sig != SHA2(CONVERT(CONCAT(NEW.postingRule,NEW.type,NEW.account,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner)USING utf8), 256)) 
+          THEN
+                INSERT INTO sig_failures VALUES(NULL, NOW(), "plexPostingRulesAccounts",  old.name,
+                                            CONCAT(OLD.postingRule,OLD.type,OLD.account,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+                                            CONCAT(NEW.postingRule,NEW.type,NEW.account,NEW.creation,NEW.modified,NEW.modified_by,NEW.owner) );
+                                            SET NEW.sig_status=1;
+          END IF;
+        END */$$
+
+
+DELIMITER ;
+
+/* Trigger structure for table `plexPostingRulesAccounts` */
+
+DELIMITER $$
+
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `plexPostingRulesAccounts_delete_trigger` */$$
+
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `plexPostingRulesAccounts_delete_trigger` BEFORE DELETE ON `plexPostingRulesAccounts` FOR EACH ROW BEGIN
+          INSERT INTO audit_trailLogs VALUES(NULL, NOW(), NOW(), OLD.modified_by, OLD.owner, 0, 0, "plexPostingRulesAccounts", 2,OLD.name,
+            CONCAT(OLD.postingRule,OLD.type,OLD.account,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+            "",
+             SHA2(CONVERT(CONCAT(
+                CONCAT(OLD.postingRule,OLD.type,OLD.account,OLD.creation,OLD.modified,OLD.modified_by,OLD.owner),
+                "",
+                OLD.creation,OLD.modified,OLD.modified_by,OLD.`owner`)USING utf8), 256), 0 );
+        END */$$
+
+
+DELIMITER ;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
