@@ -472,8 +472,10 @@ function selectCheckers(frm, data, checkers_count=1)
 }
 
 
-function selectCheckersChild(frm, datas, add_title, add_filter_function, add_args, add_function, grid_name, add_grids, checkers_count=1)
+function selectCheckersChild(frm, datas, add_title, add_filter_function, add_args, add_function, grid_name, add_grids, checkers_count=1, edit_action=false)
 {
+    console.log("PRINTING FORM.DOC");
+    console.log(frm);
     if(checkers_count == -1)
     {
         // Extracting the checker values and creating a string
@@ -486,7 +488,7 @@ function selectCheckersChild(frm, datas, add_title, add_filter_function, add_arg
             function(){
                 checkers = datas.map(obj => obj.checker).join(": pending,")
                 checkers = checkers + ": pending,"
-                grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name, checkers, add_grids);
+                grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name, checkers, add_grids, edit_action);
             },
             function(){
             }
@@ -535,7 +537,7 @@ function selectCheckersChild(frm, datas, add_title, add_filter_function, add_arg
             if(count == checkers_count)
             {
                 d.hide();
-                grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name, checkers, add_grids);
+                grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name, checkers, add_grids, edit_action);
             }
             else if(count != checkers_count)
             {
@@ -776,7 +778,7 @@ function selectCheckersChildDelete(frm, data, del_title, title, args,  grid_name
 }
 
 
-function setup_grid(frm, grid_name, load_args, add_title, add_filter_function, add_args ,add_grids)
+function setup_grid(frm, grid_name, load_args, add_title, add_filter_function, add_args ,add_grids, actions="ADD|DEL|UPD")
 {
     load_function = "plexor.plexlib_web.get_child_row";
     add_function = "plexor.plexlib_web.save_child_row";
@@ -817,6 +819,7 @@ function setup_grid(frm, grid_name, load_args, add_title, add_filter_function, a
                 });
     //=====================================DELETING GRID ROWS===================================================
             //if (!frm.is_new())
+            if(actions.includes("DEL"))
             frm.fields_dict[grid_name].grid.add_custom_button(__('Delete'),
                 function() {
                 var grid = frm.fields_dict[grid_name].grid.grid_rows;
@@ -913,8 +916,10 @@ function setup_grid(frm, grid_name, load_args, add_title, add_filter_function, a
                 });
             });
 
-    //=====================================ADDING GRID ROWS===================================================
+            //=====================================ADDING GRID ROWS===================================================
             //if (!frm.is_new())
+
+            if(actions.includes("ADD"))
             frm.fields_dict[grid_name].grid.add_custom_button(__('Add'),
                 function() {
                     if (frm.is_new())
@@ -959,27 +964,95 @@ function setup_grid(frm, grid_name, load_args, add_title, add_filter_function, a
                                 }
                                 else  // No maker checker dialog required
                                 {
-                                    //if(add_doctype=="ALLOW_FORM" || add_doctype=="CUSTOM_FORM")
                                         grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name, "", add_grids);
-                                    //else
-                                    //    grid_addrow_select(frm, add_title, add_field, add_doctype, add_filter_function, add_args, add_function, grid_name);
                                 }
                             }
                         });
-                    //if(add_doctype=="ALLOW_FORM" || add_doctype=="CUSTOM_FORM")
-                    //    grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name);
-                    //else
-                    //    grid_addrow_select(frm, add_title, add_field, add_doctype, add_filter_function, add_args, add_function, grid_name);
+            });
+
+            //=====================================EDIT GRID ROWS===================================================
+            //if (!frm.is_new())
+
+            if(actions.includes("UPD"))
+            frm.fields_dict[grid_name].grid.add_custom_button(__('Edit'),
+                function() {
+                    if (frm.is_new())
+                    {
+                        frappe.msgprint("You need to save this document first before you can add and edit items on this table.");
+                        return;
+                    }
+                    //doctype = doctypeName.replace(" ","");
+                    frappe.call({
+                            method: "plexor.plexlib_web.check_parent_makerchecker_status",
+                            args: {form: frm.doc, type: "UPDATE"},
+                            callback: function(r) {
+                                responseText = r.message
+                                console.log("IS MAKE CHECKER:::"+responseText);
+                                if(responseText=="is_mc_req")
+                                {
+                                    console.log("GETTING CHECKERS");
+                                    frappe.call({
+                                        method: "plexor.plexlib_web.get_checkers",
+                                        args: {form: frm.doc, type: "UPDATE"},
+                                        callback: function(r) {
+                                            responseText = r.message
+                                            console.log(responseText);
+                                            data = "[";
+                                            isFirst = true;
+                                            for(let x in responseText)
+                                                {
+                                                    if(isFirst)
+                                                    {
+                                                        isFirst = false
+                                                        checkers_count = responseText[x]
+                                                        continue;
+                                                    }
+                                                    data = data + "{\"checker\":\""+responseText[x]+"\"},";
+                                                }
+                                                data = data.substring(0, data.length - 1);
+                                            data = data + "]";
+                                            console.log(data);
+                                            selectCheckersChild(frm, JSON.parse(data), add_title, add_filter_function, add_args, add_function, grid_name, add_grids, checkers_count, edit_action=true);
+                                        }
+                                    });
+                                }
+                                else  // No maker checker dialog required
+                                {
+                                        grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name, "", add_grids, edit_action=true);
+                                }
+                            }
+                        });
             });
             frm.fields_dict[grid_name].grid.grid_buttons.find('.btn-custom').removeClass('btn-default').addClass('btn-primary');
 }
 
-function grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name, checkers, add_grids)
+function grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name, checkers, add_grids, edit_action=false)
 {
-    //console.log("HELLO 2.1");
+    add_filter_function_temp = JSON.parse(JSON.stringify(add_filter_function));
+    if(edit_action==true)
+    {
+         var grid = frm.fields_dict[grid_name].grid.grid_rows;
+         var curr_row;
+         grid.forEach(function(row) {
+            if (row && row.wrapper.find('.grid-row-check').is(':checked')) {
+                row.wrapper.find('.grid-row-check').click();
+                curr_row = row;
+            }
+         });
+        console.log("CURRENT ROW:");
+        console.log(curr_row);
+        isFirst = true;
+        add_filter_function_temp.forEach(item => {
+                if(isFirst)
+                    isFirst = false;
+                    item.child_id = curr_row.doc["child_id"];
+                item.default = curr_row.doc[item.fieldname];
+                console.log(item.fieldname);
+        });
+    }
     let d = new frappe.ui.Dialog({
         title: add_title,
-        fields: add_filter_function,
+        fields: (edit_action)?add_filter_function_temp:add_filter_function,
         size: 'small', // small, large, extra-large
         primary_action_label: 'Save',
         primary_action(values) {
@@ -1004,6 +1077,14 @@ function grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, 
                }
             }
             //args["row"] = JSON.stringify(frm.doc);
+            if(edit_action==true)
+            {
+                args["edit_action"] = "True"
+                args["child_mc_id"] = values["child_id"];
+            }
+            console.log("Printing values: ");
+            console.log(values);
+            args["name"] = values["child_id"];
             args["row"] = JSON.stringify(args)
             args["checkers"] = checkers;
             args["parent_id"] = frm.doc.name;

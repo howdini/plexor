@@ -24,7 +24,7 @@ class MakerChecker(Document):
 				 "alphanumericwithdash,1,150",
 				 "alphanumericwithdash,1,150",
 				 "alphanumericwithdash,1,150",
-				 "any,1,150",
+				 "any,1,2500",
 				 "any,1,150",
 				 "alphanumericwithdash,1,150",
 				 "any,1,1500",

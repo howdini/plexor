@@ -868,14 +868,32 @@ def post_mc_transaction(docname):
             elif (rv["child_trx_type"] == "DELETE"):
                 print("CHILD Delete detected")
                 table_name = get_tablename(rv["document"])
-                #json_String = json_format_correction(rv["values"])
-                #data = json.loads(json_String)
-                #parent_field = data["parent_field"]
-                #child_field = data["child_field"]
-                #qry = "DELETE FROM plexorCBS.`" + table_name + "` WHERE `" + parent_field + "` = '" + rv["parent"] + "' and `" + child_field + "` = '" + rv["document"] + "'"
                 qry = "DELETE FROM plexorCBS.`" + table_name + "` WHERE `name` = '" + rv["document_id"] + "' "
                 print(qry)
                 cur.execute(qry)
+                mydb.commit()
+            elif (rv["child_trx_type"] == "UPDATE"):
+                print("CHILD Update detected")
+                table_name = get_tablename(rv["document"])
+                # Given JSON string
+                json_string = rv["values"]
+
+                # Parse the JSON string
+                data = json.loads(json_string)
+
+                # Extract the child element
+                child = data["child"]
+
+                # Format the key-value pairs with specified quotes
+                result = ', '.join(f"`{key}`=\"{value}\"" for key, value in child.items())
+
+                # Print the result
+                print(result)
+                sql = "UPDATE plexorCBS.`" + table_name + "` SET "+result+" WHERE `name`='" + rv["document_id"] + "' "
+                print(sql)
+                mydb = mysql_connection()
+                cur = mydb.cursor(dictionary=True)
+                cur.execute(sql)
                 mydb.commit()
     elif (rv["trx_type"] == "DELETE"):
         print("DELETE PARENT logic!!!")
@@ -1230,7 +1248,7 @@ def get_role_permission(role):
     return rv
 
 @frappe.whitelist()
-def save_child_row(doctype, parent_id, row, checkers):
+def save_child_row(doctype, parent_id, row, checkers, edit_action="False"):
     print(row)
     #frappe.throw(row)
     child_id = ""
@@ -1253,14 +1271,24 @@ def save_child_row(doctype, parent_id, row, checkers):
     first = True
     qry = ""
     qry_vals = ""
-    for x in pars:
-        if (first):
-            qry = "`" + x + "`"
-            qry_vals = " '" + str(jdoc[x]) + "'"
-            first = False
-        else:
-            qry = qry + ", " + "`" + x + "`"
-            qry_vals = qry_vals + ", \"" + str(jdoc[x]).replace('"', '\\"') + "\""
+    if (edit_action == "False"):
+        for x in pars:
+            if (first):
+                qry = "`" + x + "`"
+                qry_vals = " '" + str(jdoc[x]) + "'"
+                first = False
+            else:
+                qry = qry + ", " + "`" + x + "`"
+                qry_vals = qry_vals + ", \"" + str(jdoc[x]).replace('"', '\\"') + "\""
+    else:
+        print("JDOC")
+        print(jdoc)
+        for x in pars:
+            if (first):
+                qry = "`" + x + "`="+" '" + str(jdoc[x]) + "'"
+                first = False
+            else:
+                qry = qry + ", " + "`" + x + "`="+" \"" + str(jdoc[x]).replace('"', '\\"') + "\""
 
     cur = mydb.cursor()
     creator = frappe.get_user().doc.name
@@ -1270,18 +1298,32 @@ def save_child_row(doctype, parent_id, row, checkers):
     jdoc["modified_by"]=creator
     jdoc["owner"]=creator
     sig = generate_sig2(pars, jdoc)
-    sql = "insert into "+child_table+"(name, creation, modified, modified_by, owner, docstatus, idx, sig, sig_status, "+qry+") values(NULL, '"+nowtime+"', '"+nowtime+"', '"+frappe.get_user().doc.name+"', '"+frappe.get_user().doc.name+"',  0, 1, '"+sig+"', 0, " + qry_vals +") "
+    if(edit_action == "False"):
+        sql = "insert into `"+child_table+"`(name, creation, modified, modified_by, owner, docstatus, idx, sig, sig_status, "+qry+") values(NULL, '"+nowtime+"', '"+nowtime+"', '"+frappe.get_user().doc.name+"', '"+frappe.get_user().doc.name+"',  0, 1, '"+sig+"', 0, " + qry_vals +") "
+    else:
+        sql = "update `"+child_table+"` set " + qry + " where `name`='"+str(jdoc["name"])+"'"
     print(sql)
     try:
         if(is_maker_checker(parent_table, parent_id)==False and is_maker_checker_required(doctype_parent, "UPDATE")): # If is not a new doc, no
             pass
         else:
             cur.execute(sql)
-            child_id = cur.lastrowid
-            #child_id = mydb.insert_id()
+            if (edit_action == "False"):
+                child_id = cur.lastrowid
+                #child_id = mydb.insert_id()
+            else:
+                child_id = str(jdoc["child_mc_id"])
             mydb.commit()
         if(maker_check == True):
-            create_maker_checker_child("UPDATE", doctype, jdoc, parent_class.pars, child_class.pars, checkers, child_trx_type="INSERT", parent_id=parent_id, child_mc_id=child_id)
+            if (edit_action == "False"):
+                child_trx_type_val = "INSERT"
+            else:
+                child_trx_type_val = "UPDATE"
+            if(child_trx_type_val=="UPDATE"):
+                jdoc["child"] = json.loads(row);
+                create_maker_checker_child("UPDATE", doctype, jdoc, None, child_class.pars, checkers, child_trx_type=child_trx_type_val, parent_id=parent_id, child_mc_id=child_id)
+            else:
+                create_maker_checker_child("UPDATE", doctype, jdoc, parent_class.pars, child_class.pars, checkers, child_trx_type=child_trx_type_val, parent_id=parent_id, child_mc_id=child_id)
     except mysql.connector.Error as err:
         frappe.msgprint(err.msg)
         return "failed"
@@ -1290,6 +1332,10 @@ def save_child_row(doctype, parent_id, row, checkers):
 @frappe.whitelist()
 def delete_child_row(checkers, form):
     jdoc = json.loads(form)
+    print("PRINTING JDOC")
+    print("")
+    print("")
+    print(jdoc)
     doctype = jdoc["child"]["doctype"].replace(" ", "").replace("-", "")
     doctype_parent = jdoc["doctype"].replace(" ", "").replace("-", "")
     parent_table = get_tablename(doctype_parent)
@@ -1347,7 +1393,10 @@ def get_child_row(parent_value, parent_field, conds, child_doctype_name):
     else:
         mydb = mysql_connection()
     cur = mydb.cursor(dictionary=True)
-    sql = "SELECT *, `name` as child_id FROM `"+child_table+"` where `"+parent_field+"` = '"+parent_value+"' and "+conds
+    if(parent_field==""):
+        sql = "SELECT *, `name` as child_id FROM `" + child_table + "` where " + conds
+    else:
+        sql = "SELECT *, `name` as child_id FROM `"+child_table+"` where `"+parent_field+"` = '"+parent_value+"' and "+conds
     print(sql)
     cur.execute(sql)
     rv = cur.fetchall()

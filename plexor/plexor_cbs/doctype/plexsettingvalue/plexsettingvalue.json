@@ -10,7 +10,11 @@
   "setting",
   "codename",
   "value",
-  "status"
+  "sig_status",
+  "value2",
+  "value3",
+  "status",
+  "child_id"
  ],
  "fields": [
   {
@@ -49,13 +53,35 @@
    "fieldname": "codename",
    "fieldtype": "Data",
    "label": "Codename"
+  },
+  {
+   "fieldname": "sig_status",
+   "fieldtype": "Data",
+   "label": "sig_status"
+  },
+  {
+   "fieldname": "child_id",
+   "fieldtype": "Data",
+   "label": "child_id"
+  },
+  {
+   "fieldname": "value2",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Value2"
+  },
+  {
+   "fieldname": "value3",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Value3"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_virtual": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-07-29 14:32:45.937859",
+ "modified": "2024-09-29 12:04:01.728743",
  "modified_by": "Administrator",
  "module": "Plexor CBS",
  "name": "plexSettingValue",

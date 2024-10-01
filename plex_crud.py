@@ -12,6 +12,16 @@ from frappe.modules import load_doctype_module
 
 def create_maker_checker_child(type, doctype,  self, pars, c_pars, checkers, child_trx_type="INSERT", parent_id="", child_mc_id=""):
     jself = self #json.loads(self)
+    print("SHOWING JSELF VALUES:")
+    print(jself)
+    print("SHOWING PARENT VALUES:")
+    print(parent_id)
+    print("SHOWING CHILD VALUES:")
+    if(child_trx_type=="UPDATE"):
+        child_mc_id = jself["name"]
+    elif(child_trx_type=="DELETE"):
+        child_mc_id = jself["child"]["child_id"]
+    print("CHILD ID::: "+str(child_mc_id))
     #checkers = str(jself["checkers"]).replace(",", ": pending,\n")
     #print("CHECKERS FOR INSERT  "+checkers)
     mydb = mysql_connection()
@@ -31,16 +41,19 @@ def create_maker_checker_child(type, doctype,  self, pars, c_pars, checkers, chi
                 values = values + ", \\\"" + x + "\\\" :\\\"" + str(jself[x]).replace('"', '\\"') + "\\\""
         values = "{\\\"child\\\":{" + values + "}}"
     else:
-        first = True
-        for x in pars:
-            if (first):
-                qry = "`" + x + "`"
-                values = "\\\"" + x + "\\\" :\\\"" + str(jself[x]) + "\\\""
-                first = False
-            else:
-                qry = qry + ", " + "`" + x + "`"
-                values = values + ", \\\"" + x + "\\\" :\\\"" + str(jself[x]).replace('"', '\\"') + "\\\""
-        values = "{\\\"parent\\\":{" + values + "}"
+        if(pars is None):
+            values = "{\\\"parent\\\":{}"
+        else:
+            first = True
+            for x in pars:
+                if (first):
+                    qry = "`" + x + "`"
+                    values = "\\\"" + x + "\\\" :\\\"" + str(jself[x]) + "\\\""
+                    first = False
+                else:
+                    qry = qry + ", " + "`" + x + "`"
+                    values = values + ", \\\"" + x + "\\\" :\\\"" + str(jself[x]).replace('"', '\\"') + "\\\""
+            values = "{\\\"parent\\\":{" + values + "}"
         values2 = ""
         first = True
         for x in c_pars:
@@ -55,7 +68,10 @@ def create_maker_checker_child(type, doctype,  self, pars, c_pars, checkers, chi
     if (parent_id == ""):
         print("JSELF CONTENT")
         print(jself)
-        child_id = jself["child"]["child_id"]
+        if(child_mc_id==""):
+            child_id = jself["child"]["name"]
+        else:
+            child_id = child_mc_id
         parent_id = jself["name"]
     else:
         child_id = child_mc_id
