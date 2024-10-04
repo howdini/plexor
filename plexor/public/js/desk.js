@@ -1028,10 +1028,9 @@ function setup_grid(frm, grid_name, load_args, add_title, add_filter_function, a
 
 function grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, add_function, grid_name, checkers, add_grids, edit_action=false)
 {
-    add_filter_function_temp = JSON.parse(JSON.stringify(add_filter_function));
     if(edit_action==true)
     {
-         var grid = frm.fields_dict[grid_name].grid.grid_rows;
+        var grid = frm.fields_dict[grid_name].grid.grid_rows;
          var curr_row;
          grid.forEach(function(row) {
             if (row && row.wrapper.find('.grid-row-check').is(':checked')) {
@@ -1041,18 +1040,24 @@ function grid_addrow_custom_form(frm, add_title, add_filter_function, add_args, 
          });
         console.log("CURRENT ROW:");
         console.log(curr_row);
-        isFirst = true;
-        add_filter_function_temp.forEach(item => {
-                if(isFirst)
-                    isFirst = false;
-                    item.child_id = curr_row.doc["child_id"];
+        add_filter_function.forEach(item => {
+                item.child_id = curr_row.doc["child_id"];
                 item.default = curr_row.doc[item.fieldname];
                 console.log(item.fieldname);
         });
     }
+    else
+    {
+         add_filter_function.forEach(item => {
+                item.default = "";
+                console.log(item.fieldname);
+        });
+    }
+    console.log("DIALOGN FORM : ");
+    console.log(add_filter_function);
     let d = new frappe.ui.Dialog({
         title: add_title,
-        fields: (edit_action)?add_filter_function_temp:add_filter_function,
+        fields: add_filter_function,
         size: 'small', // small, large, extra-large
         primary_action_label: 'Save',
         primary_action(values) {

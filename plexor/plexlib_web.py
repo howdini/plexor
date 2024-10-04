@@ -714,6 +714,7 @@ def get_credit_account(doctype, txt, searchfield, start, page_len, filters):
     mydb = mysql_connection()
     cur = mydb.cursor()
     sql = "SELECT `name` FROM `plexAccountMapping` where `name` LIKE '%"+txt+"%' ORDER BY `name`"
+    print(sql)
     cur.execute(sql)
     rv = cur.fetchall()
     return rv
@@ -1249,6 +1250,7 @@ def get_role_permission(role):
 
 @frappe.whitelist()
 def save_child_row(doctype, parent_id, row, checkers, edit_action="False"):
+    print("GETTING GET/POST PARS :" + json.dumps(frappe.local.form_dict))
     print(row)
     #frappe.throw(row)
     child_id = ""
@@ -1272,6 +1274,8 @@ def save_child_row(doctype, parent_id, row, checkers, edit_action="False"):
     qry = ""
     qry_vals = ""
     if (edit_action == "False"):
+        print("JDOC1")
+        print(pars)
         for x in pars:
             if (first):
                 qry = "`" + x + "`"
@@ -1281,7 +1285,7 @@ def save_child_row(doctype, parent_id, row, checkers, edit_action="False"):
                 qry = qry + ", " + "`" + x + "`"
                 qry_vals = qry_vals + ", \"" + str(jdoc[x]).replace('"', '\\"') + "\""
     else:
-        print("JDOC")
+        print("JDOC2")
         print(jdoc)
         for x in pars:
             if (first):
