@@ -64,7 +64,7 @@ def reg_user():
 
 @frappe.whitelist()
 def load_permissions():
-    print("LOADING ....")
+    print("LOADING PERMISSIONS AND MAPPINGS ....")
     user = str(frappe.session.user)
     print(user)
     role = get_role(user)
@@ -814,6 +814,7 @@ def check_parent_makerchecker_status(form,  type):
 
 def get_current_table(doctype):
     mappings = frappe.cache.get_value("TableMapping")
+    print("TABLE MAPPINGS")
     print(mappings)
     # Parse the JSON string into a Python dictionary
     try:
@@ -1075,6 +1076,7 @@ def get_tablename(classname):
     mydb = mysql_connection()
     cur = mydb.cursor(dictionary=True)
     sql = ("SELECT * FROM plexTableMapping where `doctype_name`='" + classname + "' limit 1")
+    print(sql)
     cur.execute(sql)
     rv = cur.fetchone()
     if cur.rowcount > 0:

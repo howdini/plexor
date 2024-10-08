@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "Plexor CBS",
  "links": [],
- "modified": "2024-08-15 15:50:36.012107",
+ "modified": "2024-10-05 14:18:17.556841",
  "modified_by": "Administrator",
  "module": "Plexor CBS",
  "name": "Plexor CBS",
@@ -88,16 +88,16 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Posting Rules",
-   "link_to": "Posting Rules",
+   "label": "Country",
+   "link_to": "plexCountry",
    "stats_filter": "[]",
    "type": "DocType"
   },
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Country",
-   "link_to": "plexCountry",
+   "label": "Posting Rules",
+   "link_to": "Posting Rules",
    "stats_filter": "[]",
    "type": "DocType"
   }

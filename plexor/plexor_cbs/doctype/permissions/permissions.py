@@ -3,6 +3,7 @@ from frappe.model.document import Document
 
 class Permissions(Document):
 	table = "plexPermissions"
+	doctypeName = "User Roles"
 	pars = ["title",
 			"description"]
 

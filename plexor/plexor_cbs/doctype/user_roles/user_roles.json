@@ -9,7 +9,7 @@
   "section_break_feed",
   "title",
   "description",
-  "permissions",
+  "permissions_grid",
   "checkers",
   "sig_status"
  ],
@@ -32,12 +32,6 @@
    "label": "Description"
   },
   {
-   "fieldname": "permissions",
-   "fieldtype": "Table",
-   "label": "Permissions",
-   "options": "User Roles Permissions"
-  },
-  {
    "fieldname": "checkers",
    "fieldtype": "Data",
    "hidden": 1,
@@ -48,12 +42,18 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "sig_status"
+  },
+  {
+   "fieldname": "permissions_grid",
+   "fieldtype": "Table",
+   "label": "Permissions",
+   "options": "User Roles Permissions"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_virtual": 1,
  "links": [],
- "modified": "2024-08-08 13:55:44.882149",
+ "modified": "2024-10-08 17:00:39.842913",
  "modified_by": "Administrator",
  "module": "Plexor CBS",
  "name": "User Roles",

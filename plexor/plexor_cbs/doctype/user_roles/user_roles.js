@@ -1,20 +1,34 @@
-
-doctypeName = "User Roles";
-
-frappe.ui.form.on(doctypeName, {
+frappe.ui.form.on("User Roles", {
 
          refresh: function(frm) {
                 frm.disable_save();
                 frm.add_custom_button('Submit', () => {
+                    delete frm.doc.permissions_grid;
                     plexSave(frm,doctypeName);
                 }).removeClass('btn-default').addClass('btn-primary').css({'color':'white','font-weight': 'normal'});
+                frm.add_custom_button('Delete <div style=\"font-size: 50%;\"><b>plexor</b></div>', () => {
+                    prepare_delete(frm, children="Posting Rules Accounts", children_fields="postingRule");
+                }).removeClass('btn-default').addClass('btn-primary').css({'color':'white','font-weight': 'normal'});
+         },
+         before_discard: function(frm) {
+            frappe.throw("OVERRIDING DELETION FUNCTION");
          },
         onload: function(frm) {
+            add_grids(frm);
+        },
+        after_save: function(frm) {
+            add_grids(frm);
+        }
+
+});
+
+function add_grids(frm)
+{
             row = frm;
             add_filter_function = [
                                         {
                                             label: 'Select Permission',
-                                            fieldname: 'name',
+                                            fieldname: 'permission',
                                             fieldtype: 'Link',
                                             options: "Permissions",
                                             get_query() {
@@ -25,12 +39,16 @@ frappe.ui.form.on(doctypeName, {
                                               }
                                         }
                                     ];
+            delete frm.doc.permissions_grid;
 
-            setup_grid(frm, 'permissions',
-                            "plexor.plexlib_web.get_role_permission", JSON.stringify({role: "frm.doc.name"}),
-                            'Enter Role Permission', 'CUSTOM_FORM', add_filter_function,
-                            "name", "plexor.plexlib_web.save_role_permission", JSON.stringify({doc: "THIS_FORM", postingRule: "frm.doc.name",permission: "values.name"}),
-                            "plexor.plexlib_web.delete_role_permission", JSON.stringify({role: "frm.doc.name", permission: "row.doc.account"}));
+            setup_grid(     frm,
+                            'permissions_grid',
+                            JSON.stringify({parent_value: "frm.doc.name", parent_field: "role", conds: " 1=1", child_doctype_name: "UserRolesPermissions"}),
+                            'Select Role Permission',
+                             add_filter_function,
+                             JSON.stringify({doctype: "UserRolesPermissions", role: "frm.doc.name",permission: "values.permission"}),
+                             add_grids,							// ADD GRIDS FUNCTION CALLBACK
+				             actions="ADD|DEL"
+                            );
             document.getElementsByClassName('indicator-pill')[0].remove();
-        }
-});
+}
