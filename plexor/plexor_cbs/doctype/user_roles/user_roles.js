@@ -2,9 +2,9 @@ frappe.ui.form.on("User Roles", {
 
          refresh: function(frm) {
                 frm.disable_save();
-                frm.add_custom_button('Submit', () => {
+                frm.add_custom_button('Save <div style=\"font-size: 50%;\"><b>plexor</b></div>', () => {
                     delete frm.doc.permissions_grid;
-                    plexSave(frm,doctypeName);
+                    plexSave(frm);
                 }).removeClass('btn-default').addClass('btn-primary').css({'color':'white','font-weight': 'normal'});
                 frm.add_custom_button('Delete <div style=\"font-size: 50%;\"><b>plexor</b></div>', () => {
                     prepare_delete(frm, children="Posting Rules Accounts", children_fields="postingRule");

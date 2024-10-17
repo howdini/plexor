@@ -4,6 +4,7 @@ from frappe.model.document import Document
 
 class Addresses(Document):
 	table = "plexAddress"
+	doctypeName = "Addresses"
 	pars = ["short_name",
 			"street",
 			"address_line_1",
@@ -43,7 +44,8 @@ class Addresses(Document):
 
 	@staticmethod
 	def get_list(args):
-		return crud_get_list(args,Addresses)
+		query = "SELECT * FROM `" + Addresses.table + "` ORDER BY creation DESC"
+		return crud_get_list(args, Addresses, query)
 
 	@staticmethod
 	def get_count(args):

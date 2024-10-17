@@ -9,6 +9,7 @@
   "section_break_xhb1",
   "user",
   "status",
+  "role",
   "sig_status"
  ],
  "fields": [
@@ -18,25 +19,40 @@
   },
   {
    "fieldname": "user",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
+   "in_list_view": 1,
    "label": " User",
+   "options": "User",
+   "reqd": 1,
    "unique": 1
   },
   {
    "fieldname": "status",
-   "fieldtype": "Int",
-   "label": "Status"
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Active\nDisabled",
+   "reqd": 1
   },
   {
    "fieldname": "sig_status",
    "fieldtype": "Int",
+   "hidden": 1,
    "label": "sig_status"
+  },
+  {
+   "fieldname": "role",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User Role",
+   "options": "User Roles",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_virtual": 1,
  "links": [],
- "modified": "2024-07-20 14:00:21.436258",
+ "modified": "2024-10-09 11:27:20.354428",
  "modified_by": "Administrator",
  "module": "Plexor CBS",
  "name": "plexUser",

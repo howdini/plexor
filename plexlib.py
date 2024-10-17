@@ -180,7 +180,7 @@ def generate_sig(pars, self):
     raw = ""
     for x in pars:
             raw = raw + str(self.get(x))
-    raw = raw + self.creation + self.modified + self.modified_by + self.owner
+    raw = raw + str(self.creation) + str(self.modified) + str(self.modified_by) + str(self.owner)
     hash = hashlib.sha256(raw.encode("utf-8")).hexdigest()
     #frappe.msgprint(raw+"<br>"+hash)
     return hash 
@@ -206,7 +206,7 @@ def validate_document(document, var_list, validator):
         if(str(document.get(field))=="None" or str(document.get(field))==""):
             pos = pos + 1
             continue
-        #frappe.msgprint("Validating "+field+" : "+str(document.get(field)))
+        print("Validating "+field+" : "+str(document.get(field)))
         validators = validator[pos].split(",")
         #test type
         validate_type(document.get(field), field, validators[0])

@@ -624,6 +624,18 @@ def get_unread(msg_type,my_dest_group):
         return "0"
     return 0
 
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_list(doctype, txt, searchfield, start, page_len, filters):
+    table = get_tablename(doctype.replace(" ",""))
+    print("GETTING DOCTYPE LIST")
+    mydb = mysql_connection()
+    cur = mydb.cursor()
+    sql = "SELECT `name` FROM `"+table+"` where `name` LIKE '%"+txt+"%' ORDER BY `name`"
+    cur.execute(sql)
+    rv = cur.fetchall()
+    return rv
+
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
@@ -737,7 +749,7 @@ def is_maker_checker(table, name):
     cur = mydb.cursor(dictionary=True)
     cur.execute(sql)
     rv = cur.fetchall()
-    print("MAKER CHEKER FOUND RECORDS:  " + str(cur.rowcount))
+    print("MAKER CHEKER TEST FOUND RECORDS APPROVED:  " + str(cur.rowcount))
     if (cur.rowcount > 0):
         return False
     else:
@@ -1390,6 +1402,7 @@ def delete_child_row(checkers, form):
 
 @frappe.whitelist()
 def get_child_row(parent_value, parent_field, conds, child_doctype_name):
+    print("GETTING GET/POST PARS :" + json.dumps(frappe.local.form_dict))
     doctype_parent = get_parent(child_doctype_name)
     parent_table = get_tablename(doctype_parent)
     child_table = get_tablename(child_doctype_name)

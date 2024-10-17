@@ -5,7 +5,8 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_spyh",
-  "country_name"
+  "country_name",
+  "sig_status"
  ],
  "fields": [
   {
@@ -16,12 +17,18 @@
    "fieldname": "country_name",
    "fieldtype": "Data",
    "label": "Title"
+  },
+  {
+   "fieldname": "sig_status",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "sig_status"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_virtual": 1,
  "links": [],
- "modified": "2024-07-17 15:03:41.609159",
+ "modified": "2024-10-09 12:35:00.447258",
  "modified_by": "Administrator",
  "module": "Plexor CBS",
  "name": "plexCountry",

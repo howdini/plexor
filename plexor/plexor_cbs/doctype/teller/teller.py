@@ -5,6 +5,7 @@ from frappe.model.document import Document
 class Teller(Document):
 	
 	table = "plexTeller"
+	doctypeName = "Teller"
 	pars = ["user",
 			"branch",
 			"debit_account",
@@ -39,7 +40,8 @@ class Teller(Document):
 
 	@staticmethod
 	def get_list(args):
-		return crud_get_list(args,Teller)
+		query = "SELECT * FROM `" + Teller.table + "` ORDER BY creation DESC"
+		return crud_get_list(args, Teller, query)
 
 	@staticmethod
 	def get_count(args):

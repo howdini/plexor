@@ -795,6 +795,8 @@ function setup_grid(frm, grid_name, load_args, add_title, add_filter_function, a
     //=====================================LOADING GRIDS===================================================
             //Load debit accounts
             var docname = row.doc.name;
+            if(frm.is_new())
+                args["parent_value"] = "NEW";
             args = JSON.parse(load_args);
             for (let x in args) {
                console.log(x + ": "+ args[x])

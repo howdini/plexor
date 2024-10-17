@@ -4,6 +4,7 @@ from frappe.model.document import Document
 
 class Branches(Document):
 	table = "plexBranch"
+	doctypeName = "Branches"
 	pars = ["fullname",
 			"external_id",
 			"status",
@@ -36,7 +37,8 @@ class Branches(Document):
 
 	@staticmethod
 	def get_list(args):
-		return crud_get_list(args,Branches)
+		query = "SELECT * FROM `" + Branches.table + "` ORDER BY creation DESC"
+		return crud_get_list(args, Branches, query)
 
 	@staticmethod
 	def get_count(args):
