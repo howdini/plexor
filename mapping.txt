@@ -1,48 +1,209 @@
-CREATE TABLE `tabmapper` (
-  `name` varchar(140) NOT NULL,
-  `creation` datetime(6) DEFAULT NULL,
-  `modified` datetime(6) DEFAULT NULL,
-  `modified_by` varchar(140) DEFAULT NULL,
-  `owner` varchar(140) DEFAULT NULL,
-  `docstatus` int(1) NOT NULL DEFAULT 0,
-  `idx` int(8) NOT NULL DEFAULT 0,
-  `_user_tags` text DEFAULT NULL,
-  `_comments` text DEFAULT NULL,
-  `_assign` text DEFAULT NULL,
-  `_liked_by` text DEFAULT NULL,
-  `autocomplete` varchar(140) DEFAULT NULL,
-  `attach` text DEFAULT NULL,
-  `attach_image` text DEFAULT NULL,
-  `barcode` longtext DEFAULT NULL,
-  `check` int(1) NOT NULL DEFAULT 0,
-  `code` longtext DEFAULT NULL,
-  `color` varchar(140) DEFAULT NULL,
-  `currency` decimal(21,9) NOT NULL DEFAULT 0.000000000,
-  `data` varchar(140) DEFAULT NULL,
-  `date` date DEFAULT NULL,
-  `datetime` datetime(6) DEFAULT NULL,
-  `duration` decimal(21,9) DEFAULT NULL,
-  `float` decimal(21,9) NOT NULL DEFAULT 0.000000000,
-  `geolocation` longtext DEFAULT NULL,
-  `html_editor` longtext DEFAULT NULL,
-  `icon` varchar(140) DEFAULT NULL,
-  `int` int(11) NOT NULL DEFAULT 0,
-  `json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`json`)),
-  `link` varchar(140) DEFAULT NULL,
-  `long_text` longtext DEFAULT NULL,
-  `markdown_editor` longtext DEFAULT NULL,
-  `password` text DEFAULT NULL,
-  `percent` decimal(21,9) NOT NULL DEFAULT 0.000000000,
-  `phone` varchar(140) DEFAULT NULL,
-  `read_only` varchar(140) DEFAULT NULL,
-  `rating` decimal(3,2) DEFAULT NULL,
-  `select` varchar(140) DEFAULT NULL,
-  `signature` longtext DEFAULT NULL,
-  `small_text` text DEFAULT NULL,
-  `text` text DEFAULT NULL,
-  `text_editor` longtext DEFAULT NULL,
-  `time` time(6) DEFAULT NULL,
-  PRIMARY KEY (`name`),
-  KEY `modified` (`modified`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC
+MariaDB [fineract_default]> select * from m_loan\G
+*************************** 1. row ***************************
+                                          id: 1
+                                  account_no: 000000001
+                                 external_id: 5556666
+                                   client_id: 1
+                                    group_id: NULL
+                                     glim_id: NULL
+                                  product_id: 1
+                                     fund_id: NULL
+                             loan_officer_id: NULL
+                           loanpurpose_cv_id: NULL
+                              loan_status_id: 100
+                              loan_type_enum: 1
+                               currency_code: USD
+                             currency_digits: 2
+                        currency_multiplesof: 0
+                   principal_amount_proposed: 15.000000
+                            principal_amount: 15.000000
+                          approved_principal: 15.000000
+                        net_disbursal_amount: 15.000000
+                     arrearstolerance_amount: 10.000000
+                   is_floating_interest_rate: NULL
+                  interest_rate_differential: NULL
+            nominal_interest_rate_per_period: 15.000000
+              interest_period_frequency_enum: 2
+                annual_nominal_interest_rate: 180.000000
+                        interest_method_enum: 0
+          interest_calculated_in_period_enum: 1
+   allow_partial_period_interest_calcualtion: 1
+                              term_frequency: 40
+                  term_period_frequency_enum: 2
+                                 repay_every: 1
+             repayment_period_frequency_enum: 2
+                        number_of_repayments: 40
+                  grace_on_principal_periods: 10
+      recurring_moratorium_principal_periods: NULL
+                   grace_on_interest_periods: 10
+                 grace_interest_free_periods: 10
+                    amortization_method_enum: 1
+                            submittedon_date: 2024-10-23
+                             approvedon_date: NULL
+                           approvedon_userid: NULL
+                   expected_disbursedon_date: 2024-10-31
+              expected_firstrepaymenton_date: NULL
+               interest_calculated_from_date: NULL
+                            disbursedon_date: NULL
+                          disbursedon_userid: NULL
+                     expected_maturedon_date: 2028-02-29
+                              maturedon_date: 2028-02-29
+                               closedon_date: NULL
+                             closedon_userid: NULL
+   total_charges_due_at_disbursement_derived: 0.000000
+                 principal_disbursed_derived: 0.000000
+                    principal_repaid_derived: 0.000000
+                principal_writtenoff_derived: 0.000000
+               principal_outstanding_derived: 0.000000
+                    interest_charged_derived: 0.000000
+                     interest_repaid_derived: 0.000000
+                     interest_waived_derived: 0.000000
+                 interest_writtenoff_derived: 0.000000
+                interest_outstanding_derived: 0.000000
+                 fee_charges_charged_derived: 0.000000
+                  fee_charges_repaid_derived: 0.000000
+                  fee_charges_waived_derived: 0.000000
+              fee_charges_writtenoff_derived: 0.000000
+             fee_charges_outstanding_derived: 0.000000
+             penalty_charges_charged_derived: 0.000000
+              penalty_charges_repaid_derived: 0.000000
+              penalty_charges_waived_derived: 0.000000
+          penalty_charges_writtenoff_derived: 0.000000
+         penalty_charges_outstanding_derived: 0.000000
+            total_expected_repayment_derived: 0.000000
+                     total_repayment_derived: 0.000000
+           total_expected_costofloan_derived: 0.000000
+                    total_costofloan_derived: 0.000000
+                        total_waived_derived: 0.000000
+                    total_writtenoff_derived: 0.000000
+                   total_outstanding_derived: 0.000000
+                      total_overpaid_derived: NULL
+                             rejectedon_date: NULL
+                           rejectedon_userid: NULL
+                          rescheduledon_date: NULL
+                        rescheduledon_userid: NULL
+                            withdrawnon_date: NULL
+                          withdrawnon_userid: NULL
+                           writtenoffon_date: NULL
+                loan_transaction_strategy_id: NULL
+              sync_disbursement_with_meeting: NULL
+                                loan_counter: NULL
+                        loan_product_counter: NULL
+                            fixed_emi_amount: NULL
+                max_outstanding_loan_balance: NULL
+                     grace_on_arrears_ageing: 5
+                                      is_npa: 0
+                     total_recovered_derived: NULL
+                                accrued_till: NULL
+                   interest_recalcualated_on: NULL
+                          days_in_month_enum: 1
+                           days_in_year_enum: 1
+              interest_recalculation_enabled: 1
+                    guarantee_amount_derived: NULL
+ create_standing_instruction_at_disbursement: 0
+                                     version: 2
+                       writeoff_reason_cv_id: NULL
+                          loan_sub_status_id: NULL
+                                    is_topup: 0
+                       is_equal_amortization: 0
+  fixed_principal_percentage_per_installment: NULL
+                              created_on_utc: 2024-10-23 10:28:17.394173
+                                  created_by: 1
+                            last_modified_by: 1
+                        last_modified_on_utc: 2024-10-23 10:28:18.044884
+               principal_adjustments_derived: 0.000000
+                                    is_fraud: 0
+              loan_transaction_strategy_code: creocore-strategy
+              loan_transaction_strategy_name: Creocore Unique
+                   last_closed_business_date: NULL
+                             overpaidon_date: NULL
+                              is_charged_off: 0
+                         charged_off_on_date: NULL
+                     charge_off_reason_cv_id: NULL
+                       charged_off_by_userid: NULL
+                         enable_down_payment: 1
+disbursed_amount_percentage_for_down_payment: 5.000000
+        enable_installment_level_delinquency: 0
+      enable_auto_repayment_for_down_payment: 0
+ disable_schedule_extension_for_down_payment: 1
+                          loan_schedule_type: CUMULATIVE
+               loan_schedule_processing_type: HORIZONTAL
+
+
+MariaDB [fineract_default]> select * from m_product_loan\G
+*************************** 1. row ***************************
+                                                 id: 1
+                                         short_name: HLP
+                                      currency_code: USD
+                                    currency_digits: 2
+                               currency_multiplesof: 0
+                                   principal_amount: 15.000000
+                               min_principal_amount: 10.000000
+                               max_principal_amount: 20.000000
+                            arrearstolerance_amount: 10.000000
+                                               name: Housing Loan
+                                        description: Product or purchasing housing products
+                                            fund_id: NULL
+               is_linked_to_floating_interest_rates: 0
+                         allow_variabe_installments: 0
+                   nominal_interest_rate_per_period: 15.000000
+               min_nominal_interest_rate_per_period: 10.000000
+               max_nominal_interest_rate_per_period: 20.000000
+                     interest_period_frequency_enum: 2
+                       annual_nominal_interest_rate: 180.000000
+                               interest_method_enum: 0
+                 interest_calculated_in_period_enum: 1
+          allow_partial_period_interest_calcualtion: 1
+                                        repay_every: 1
+                    repayment_period_frequency_enum: 2
+                               number_of_repayments: 40
+                           min_number_of_repayments: 30
+                           max_number_of_repayments: 52
+                         grace_on_principal_periods: 10
+             recurring_moratorium_principal_periods: NULL
+                          grace_on_interest_periods: 10
+                        grace_interest_free_periods: 10
+                           amortization_method_enum: 1
+                                    accounting_type: 1
+                       loan_transaction_strategy_id: NULL
+                                        external_id: NULL
+                          include_in_borrower_cycle: 1
+                                 use_borrower_cycle: 0
+                                         start_date: 2024-10-09
+                                         close_date: 2032-10-12
+                          allow_multiple_disbursals: 0
+                                     max_disbursals: NULL
+                       max_outstanding_loan_balance: NULL
+                            grace_on_arrears_ageing: 5
+                               overdue_days_for_npa: 10
+                                 days_in_month_enum: 1
+                                  days_in_year_enum: 1
+                     interest_recalculation_enabled: 1
+     min_days_between_disbursal_and_first_repayment: NULL
+                               hold_guarantee_funds: 0
+           principal_threshold_for_last_installment: 10.00
+account_moves_out_of_npa_only_on_arrears_completion: 1
+                        can_define_fixed_emi_amount: 1
+                  instalment_amount_in_multiples_of: NULL
+                                  can_use_for_topup: 0
+               sync_expected_with_disbursement_date: 0
+                              is_equal_amortization: 0
+         fixed_principal_percentage_per_installment: NULL
+                    disallow_expected_disbursements: 0
+      allow_approved_disbursed_amounts_over_applied: 0
+                      over_applied_calculation_type: NULL
+                                over_applied_number: NULL
+                              delinquency_bucket_id: NULL
+                     loan_transaction_strategy_code: creocore-strategy
+                     loan_transaction_strategy_name: Creocore Unique
+                       due_days_for_repayment_event: 1
+                   overdue_days_for_repayment_event: 1
+                                enable_down_payment: 1
+       disbursed_amount_percentage_for_down_payment: 5.000000
+               enable_installment_level_delinquency: 0
+             enable_auto_repayment_for_down_payment: 0
+                     repayment_start_date_type_enum: 1
+        disable_schedule_extension_for_down_payment: 1
+                                 loan_schedule_type: CUMULATIVE
+                      loan_schedule_processing_type: HORIZONTAL
 

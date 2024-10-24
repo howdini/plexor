@@ -7,6 +7,9 @@ class PostingRules(Document):
 	pars = [
 			"title",
 			"description"]
+	_table_fieldnames = [
+			"title",
+			"description"]
 
 	# type, min, max, allowed,
 	validator = [

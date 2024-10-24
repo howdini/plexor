@@ -341,7 +341,7 @@ def crud_db_insert(self, selfclass, *args, **kwargs):
             first = False
         else:
             qry = qry + ", " + "`" + x + "`"
-            qry_vals = qry_vals + ", \"" + str(self.get(x)).replace('"', '\\"') + "\""
+            qry_vals = qry_vals + ", \"" + ("" if (str(self.get(x))=="None") else str(self.get(x)).replace('"', '\\"')) + "\""
 
     mycursor = mydb.cursor()
     sql = ("INSERT INTO `" + str(self.table )+ "` (name, creation, modified, modified_by, owner, docstatus, idx,"
@@ -357,6 +357,8 @@ def crud_db_insert(self, selfclass, *args, **kwargs):
 def crud_load_from_db(self, selfclass, mappers=""):
     check_permissions(selfclass.doctypeName, "View")
     selfname = str(self.name)
+    if(selfname.startswith("new-")):
+        return
     if is_maker_checker(self.table, selfname):
         print("DETECTED maker checker")
         mydb = mysql_connection_MC()
@@ -384,7 +386,7 @@ def crud_db_update(self, selfclass):
             qry_vals = x + "= '" + str(self.get(x)) + "'"
             first = False
         else:
-            qry_vals = qry_vals + ", `" + x + "`=\"" + str(self.get(x)).replace('"', '\\"') + "\""
+            qry_vals = qry_vals + ", `" + x + "`=\"" + ("" if (str(self.get(x))=="None") else str(self.get(x)).replace('"', '\\"'))+ "\""
 
     selfname = str(self.name)
     if is_maker_checker(self.table, selfname) or is_maker_checker_required(selfclass, "UPDATE"):

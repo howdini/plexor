@@ -206,8 +206,8 @@ def validate_document(document, var_list, validator):
         if(str(document.get(field))=="None" or str(document.get(field))==""):
             pos = pos + 1
             continue
-        print("Validating "+field+" : "+str(document.get(field)))
         validators = validator[pos].split(",")
+        print("Validating "+field+" : "+str(document.get(field))+" [ "+validators[0]+" ]")
         #test type
         validate_type(document.get(field), field, validators[0])
         #test min
@@ -289,11 +289,16 @@ def validate_type(val, field, type):
         # compiling the pattern for mysql date or datetime Y-M-D H:M:S string
         pat = re.compile(r"^([0-9]{2,4})-([0-1][0-9])-([0-3][0-9])(?:( [0-2][0-9]):([0-5][0-9]):([0-5][0-9]))?$")
         translate = "datetime (Y-M-D H:M:S)"
+    elif (type == "mysqldate"):
+        # compiling the pattern for mysql date or datetime Y-M-D H:M:S string
+        pat = re.compile(r"^([0-9]{2,4})-([0-1][0-9])-([0-3][0-9])?$")
+        translate = "datetime (Y-M-D H:M:S)"
     elif(type=="mysqltime"):
         # compiling the pattern for mysql time H:M:S string
         pat = re.compile(r"^([0-2][0-9]):([0-5][0-9]):([0-5][0-9])?$")
         translate = "time (H:M:S)"
 
+        frappe.msgprint(f"'{field}={val}' is of type {type}")
     if re.fullmatch(pat, str(val)):
         valid = True
         #frappe.msgprint(f"'{field}={val}' is of type {type}")

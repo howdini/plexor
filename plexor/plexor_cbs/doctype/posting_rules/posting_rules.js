@@ -12,6 +12,11 @@ frappe.ui.form.on("Posting Rules", {
                 frm.add_custom_button('Delete <div style=\"font-size: 50%;\"><b>plexor</b></div>', () => {
                     prepare_delete(frm, children="Posting Rules Accounts", children_fields="postingRule");
                 }).removeClass('btn-default').addClass('btn-primary').css({'color':'white','font-weight': 'normal'});
+                if(frm.is_new())
+                {
+                    frm.toggle_display("credit_accounts", false);
+                    frm.toggle_display("debit_accounts", false);
+                }
          },
          before_discard: function(frm) {
             frappe.throw("OVERRIDING DELETION FUNCTION");
@@ -20,6 +25,8 @@ frappe.ui.form.on("Posting Rules", {
             add_grids(frm);
         },
         after_save: function(frm) {
+            frm.toggle_display("credit_accounts", true);
+            frm.toggle_display("debit_accounts", true);
             add_grids(frm);
         }
 });

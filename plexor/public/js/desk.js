@@ -331,6 +331,7 @@ function prepare_delete(frm, children="", children_fields="")
                             if(responseText=="success")
                             {
                                 frappe.msgprint("Document deleted successfully.");
+                                frappe.set_route("List", frm.doc.doctype);
                             }
                         }
                     });
@@ -574,7 +575,10 @@ function selectCheckersParentDelete(frm, data, del_title, title, args, children=
                         callback: function(r) {
                             responseText = r.message
                             if(args["checkers"].length >= 2 )
+                            {
                                 frappe.msgprint("Deletion request has been successfully queued.");
+                                frappe.set_route("List", frm.doc.doctype);
+                            }
                             else
                             {
                                 frm.refresh_field(grid_name);
@@ -642,7 +646,10 @@ function selectCheckersParentDelete(frm, data, del_title, title, args, children=
                     callback: function(r) {
                         responseText = r.message
                         if(args["checkers"].length >= 2 )
+                        {
                             frappe.msgprint("Deletion request has been successfully queued.");
+                            frappe.set_route("List", frm.doc.doctype);
+                        }
                         else
                         {
                             //frm.add_child(grid_name, args);
